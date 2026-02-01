@@ -1,0 +1,13 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "nuxiox"
+main = "./.output/server/index.mjs"
+compatibility_date = "2024-11-01"
+
+# This defines where your static assets (images, JS, CSS) live after building
+assets = { directory = "./.output/public/", binding = "ASSETS" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nuxiox_db"
+database_id = "04846cd3-3b98-4e55-97c8-74327a72160e"
+migrations_dir = "./server/database/migrations"
