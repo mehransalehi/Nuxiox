@@ -7,17 +7,22 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "db:sync": "tsx scripts/sync-schema.ts",
+    "db:generate": "pnpm run db:sync && drizzle-kit generate"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.3.0",
+    "nuxt-auth-utils": "0.5.28",
+    "tsx": "^4.21.0",
     "vue": "^3.5.27",
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@tailwindcss/vite": "^4.1.18",
+    "@types/node": "^25.2.0",
     "drizzle-kit": "^0.31.8",
     "nitro-cloudflare-dev": "^0.2.2",
     "tailwindcss": "^4.1.18",

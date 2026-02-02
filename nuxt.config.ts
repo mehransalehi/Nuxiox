@@ -2,7 +2,7 @@
 import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   // 1. Enable the dev proxy module
-  modules: ['nitro-cloudflare-dev',],
+  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils'],
 
   nitro: {
     // 2. Tell Nitro to build for Cloudflare Workers
@@ -16,4 +16,8 @@ export default defineNuxtConfig({
       (tailwindcss as any)(),
     ],
   },
+  extends: [
+    // Extend from a local layer
+    './layers/base',
+  ]
 })
