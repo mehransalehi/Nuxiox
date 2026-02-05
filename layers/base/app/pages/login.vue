@@ -24,9 +24,10 @@ const login = async () => {
       },
     })
 
-    console.log(res)
     // Redirect based on role
     if (res.user.role === 'admin') {
+      await refreshNuxtData()
+await nextTick()
       navigateTo('/admin')
     } else {
       navigateTo('/')
@@ -43,7 +44,7 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center px-4 bg-green-500">
+  <div class="min-h-screen flex items-center justify-center px-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
       <h1 class="text-2xl font-bold text-gray-900 mb-2 text-center">
         Sign in
