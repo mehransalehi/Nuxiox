@@ -1,4 +1,3 @@
 <template>
-    this is default layout
-    <slot/>
+  <slot />
 </template>

@@ -1,2 +1,16 @@
 @import "tailwindcss";
 @source "../../../layers/**/*.{vue,js,ts}";
+
+:root {
+  --bg: 255 255 255;
+  --bg-soft: 248 250 252;
+  --text: 15 23 42;
+  --border: 226 232 240;
+}
+
+[data-theme='dark'] {
+  --bg: 15 23 42;
+  --bg-soft: 30 41 59;
+  --text: 241 245 249;
+  --border: 71 85 105;
+}
