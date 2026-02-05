@@ -1,10 +1,15 @@
 <script setup lang="ts">
-defineProps<{ sidebarCollapsed: boolean; isDark: boolean }>()
+defineProps<{
+  sidebarCollapsed: boolean
+  isDark: boolean
+  userEmail?: string | null
+}>()
 
 const emit = defineEmits<{
   toggleSidebar: []
   toggleMobileSidebar: []
   toggleTheme: []
+  logout: []
 }>()
 </script>
 
@@ -16,9 +21,7 @@ const emit = defineEmits<{
         aria-label="Open sidebar"
         @click="emit('toggleMobileSidebar')"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <i class="fa-solid fa-bars" aria-hidden="true" />
       </button>
 
       <div class="hidden lg:block">
@@ -33,7 +36,26 @@ const emit = defineEmits<{
 
     <div class="flex items-center gap-2">
       <AdminThemeToggleButton :is-dark="isDark" @toggle="emit('toggleTheme')" />
-      <button class="rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:opacity-90">New Report</button>
+
+      <details class="dropdown dropdown-end">
+        <summary class="list-none">
+          <button class="flex items-center gap-2 rounded-lg border border-slate-300 px-2 py-1.5" type="button">
+            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-slate-700">
+              <i class="fa-solid fa-user" aria-hidden="true" />
+            </div>
+            <i class="fa-solid fa-chevron-down text-xs opacity-70" aria-hidden="true" />
+          </button>
+        </summary>
+        <ul class="menu dropdown-content z-[50] mt-2 w-56 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-2 shadow">
+          <li class="menu-title !px-2 !py-1 text-xs normal-case opacity-70">{{ userEmail }}</li>
+          <li>
+            <button type="button" class="text-red-600" @click="emit('logout')">
+              <i class="fa-solid fa-right-from-bracket" aria-hidden="true" />
+              Logout
+            </button>
+          </li>
+        </ul>
+      </details>
     </div>
   </header>
 </template>

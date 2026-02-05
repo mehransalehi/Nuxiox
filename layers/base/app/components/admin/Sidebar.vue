@@ -5,22 +5,29 @@ interface NavItem {
   icon?: string
 }
 
-defineProps<{ collapsed: boolean }>()
+defineProps<{
+  collapsed: boolean
+  userEmail?: string | null
+}>()
+
+const emit = defineEmits<{
+  logout: []
+}>()
 
 const sections: { title: string; items: NavItem[] }[] = [
   {
     title: 'Main',
     items: [
-      { to: '/admin', label: 'Dashboard', icon: '🏠' },
-      { to: '/admin/orders', label: 'Orders', icon: '🧾' },
-      { to: '/admin/customers', label: 'Customers', icon: '👥' },
+      { to: '/admin', label: 'Dashboard', icon: 'fa-solid fa-gauge' },
+      { to: '/admin/orders', label: 'Orders', icon: 'fa-solid fa-file-invoice' },
+      { to: '/admin/customers', label: 'Customers', icon: 'fa-solid fa-users' },
     ],
   },
   {
     title: 'Management',
     items: [
-      { to: '/admin/products', label: 'Products', icon: '📦' },
-      { to: '/admin/settings', label: 'Settings', icon: '⚙️' },
+      { to: '/admin/products', label: 'Products', icon: 'fa-solid fa-box' },
+      { to: '/admin/settings', label: 'Settings', icon: 'fa-solid fa-gear' },
     ],
   },
 ]
@@ -30,7 +37,9 @@ const sections: { title: string; items: NavItem[] }[] = [
   <aside class="h-full border-r border-[rgb(var(--border))] bg-[rgb(var(--bg))] text-[rgb(var(--text))]">
     <div class="flex h-full flex-col gap-6 p-3">
       <div class="flex items-center gap-3 px-2 pt-2">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">A</div>
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
+          <i class="fa-solid fa-user-shield" aria-hidden="true" />
+        </div>
         <div v-if="!collapsed" class="overflow-hidden">
           <p class="font-bold leading-5">Admin Panel</p>
           <p class="text-xs opacity-60">Base Layer</p>
@@ -45,6 +54,18 @@ const sections: { title: string; items: NavItem[] }[] = [
           :items="section.items"
           :collapsed="collapsed"
         />
+      </div>
+
+      <div class="mt-auto border-t border-[rgb(var(--border))] pt-3">
+        <p v-if="!collapsed" class="mb-2 truncate px-3 text-xs opacity-60">{{ userEmail }}</p>
+        <button
+          class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+          type="button"
+          @click="emit('logout')"
+        >
+          <i class="fa-solid fa-right-from-bracket w-4 text-center" aria-hidden="true" />
+          <span v-if="!collapsed">Logout</span>
+        </button>
       </div>
     </div>
   </aside>

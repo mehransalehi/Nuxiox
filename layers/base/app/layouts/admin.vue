@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import type { UserSession } from '~~/layers/base/types/user-session'
+
 const mobileSidebarOpen = ref(false)
 const sidebarCollapsed = ref(false)
 const isDark = ref(false)
+
+const { user, clear: clearSession } = useUserSession() as {
+  user: Ref<UserSession | null>
+  clear: () => Promise<void>
+}
 
 const applyTheme = (darkMode: boolean) => {
   if (import.meta.client) {
@@ -21,6 +28,11 @@ const toggleSidebar = () => {
 
 const toggleMobileSidebar = () => {
   mobileSidebarOpen.value = !mobileSidebarOpen.value
+}
+
+const logout = async () => {
+  await clearSession()
+  await navigateTo('/login')
 }
 
 onMounted(() => {
@@ -45,16 +57,18 @@ onMounted(() => {
         sidebarCollapsed ? 'w-24' : 'w-72',
       ]"
     >
-      <AdminSidebar :collapsed="sidebarCollapsed" />
+      <AdminSidebar :collapsed="sidebarCollapsed" :user-email="user?.email" @logout="logout" />
     </div>
 
     <div class="flex min-w-0 flex-1 flex-col">
       <AdminTopbar
         :sidebar-collapsed="sidebarCollapsed"
         :is-dark="isDark"
+        :user-email="user?.email"
         @toggle-sidebar="toggleSidebar"
         @toggle-mobile-sidebar="toggleMobileSidebar"
         @toggle-theme="toggleTheme"
+        @logout="logout"
       />
 
       <main class="p-4 sm:p-6">
