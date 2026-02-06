@@ -12,8 +12,8 @@ const props = defineProps<{
     <NuxtLink
       :to="props.to"
       :title="props.collapsed ? props.label : ''"
-      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-      active-class="bg-slate-900 text-white hover:bg-slate-900 hover:text-white"
+      class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium"
+      active-class="active"
     >
       <i v-if="props.icon" :class="props.icon" class="w-4 text-center" aria-hidden="true" />
       <span v-if="!props.collapsed">{{ props.label }}</span>

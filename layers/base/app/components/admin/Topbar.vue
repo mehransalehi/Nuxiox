@@ -14,10 +14,10 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <header class="flex items-center justify-between border-b border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-3 sm:px-6">
+  <header class="flex items-center justify-between border-b border-base-300 bg-base-100 px-4 py-3 sm:px-6">
     <div class="flex items-center gap-3">
       <button
-        class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 lg:hidden"
+        class="btn btn-ghost btn-square btn-sm border border-base-300 lg:hidden"
         aria-label="Open sidebar"
         @click="emit('toggleMobileSidebar')"
       >
@@ -37,25 +37,26 @@ const emit = defineEmits<{
     <div class="flex items-center gap-2">
       <AdminThemeToggleButton :is-dark="isDark" @toggle="emit('toggleTheme')" />
 
-      <details class="dropdown dropdown-end">
-        <summary class="list-none">
-          <button class="flex items-center gap-2 rounded-lg border border-slate-300 px-2 py-1.5" type="button">
-            <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-200 text-slate-700">
+      <div class="dropdown dropdown-end">
+        <button tabindex="0" class="btn btn-ghost btn-sm border border-base-300 px-2" type="button" aria-label="Open user menu">
+          <div class="avatar placeholder">
+            <div class="h-8 w-8 rounded-full bg-base-300 text-base-content">
               <i class="fa-solid fa-user" aria-hidden="true" />
             </div>
-            <i class="fa-solid fa-chevron-down text-xs opacity-70" aria-hidden="true" />
-          </button>
-        </summary>
-        <ul class="menu dropdown-content z-[50] mt-2 w-56 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-2 shadow">
-          <li class="menu-title !px-2 !py-1 text-xs normal-case opacity-70">{{ userEmail }}</li>
+          </div>
+          <i class="fa-solid fa-chevron-down text-xs opacity-70" aria-hidden="true" />
+        </button>
+
+        <ul tabindex="0" class="menu dropdown-content z-[60] mt-2 w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow">
+          <li class="menu-title px-2 py-1 text-xs normal-case opacity-70">{{ userEmail }}</li>
           <li>
-            <button type="button" class="text-red-600" @click="emit('logout')">
+            <button type="button" class="text-error" @click="emit('logout')">
               <i class="fa-solid fa-right-from-bracket" aria-hidden="true" />
               Logout
             </button>
           </li>
         </ul>
-      </details>
+      </div>
     </div>
   </header>
 </template>

@@ -43,10 +43,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative flex min-h-screen bg-[rgb(var(--bg-soft))] text-[rgb(var(--text))]">
+  <div class="relative flex min-h-screen bg-base-200 text-base-content">
     <div
       v-if="mobileSidebarOpen"
-      class="fixed inset-0 z-30 bg-slate-900/50 lg:hidden"
+      class="fixed inset-0 z-30 bg-base-content/40 lg:hidden"
       @click="mobileSidebarOpen = false"
     />
 
@@ -72,7 +72,7 @@ onMounted(() => {
       />
 
       <main class="p-4 sm:p-6">
-        <div class="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-4 shadow-sm sm:p-6">
+        <div class="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm sm:p-6">
           <slot />
         </div>
       </main>

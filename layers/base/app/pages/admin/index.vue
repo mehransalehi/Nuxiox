@@ -21,7 +21,7 @@ async function logout() {
         <h2 class="text-2xl font-bold">Welcome back</h2>
         <p class="opacity-70">{{ user?.email ?? 'No user loaded' }}</p>
       </div>
-      <button class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium" @click="logout">
+      <button class="btn btn-outline btn-sm" @click="logout">
         Logout
       </button>
     </div>
@@ -30,18 +30,22 @@ async function logout() {
       <article
         v-for="card in ['Revenue', 'Orders', 'Users', 'Conversion']"
         :key="card"
-        class="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-soft))] p-4"
+        class="card border border-base-300 bg-base-200"
       >
-        <p class="text-sm opacity-60">{{ card }}</p>
-        <p class="text-2xl font-bold">+24%</p>
+        <div class="card-body p-4">
+          <p class="text-sm opacity-60">{{ card }}</p>
+          <p class="text-2xl font-bold">+24%</p>
+        </div>
       </article>
     </div>
 
-    <article class="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg-soft))] p-5">
-      <h3 class="mb-2 text-lg font-semibold">Overview</h3>
-      <p>
-        This is the main content section where each admin page details can be rendered inside the reusable admin base layout.
-      </p>
+    <article class="card border border-base-300 bg-base-200">
+      <div class="card-body">
+        <h3 class="card-title">Overview</h3>
+        <p>
+          This is the main content section where each admin page details can be rendered inside the reusable admin base layout.
+        </p>
+      </div>
     </article>
   </section>
 </template>

@@ -34,11 +34,13 @@ const sections: { title: string; items: NavItem[] }[] = [
 </script>
 
 <template>
-  <aside class="h-full border-r border-[rgb(var(--border))] bg-[rgb(var(--bg))] text-[rgb(var(--text))]">
+  <aside class="h-full border-r border-base-300 bg-base-100 text-base-content">
     <div class="flex h-full flex-col gap-6 p-3">
       <div class="flex items-center gap-3 px-2 pt-2">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
-          <i class="fa-solid fa-user-shield" aria-hidden="true" />
+        <div class="avatar placeholder">
+          <div class="h-10 w-10 rounded-xl bg-primary text-primary-content">
+            <i class="fa-solid fa-user-shield" aria-hidden="true" />
+          </div>
         </div>
         <div v-if="!collapsed" class="overflow-hidden">
           <p class="font-bold leading-5">Admin Panel</p>
@@ -56,10 +58,10 @@ const sections: { title: string; items: NavItem[] }[] = [
         />
       </div>
 
-      <div class="mt-auto border-t border-[rgb(var(--border))] pt-3">
+      <div class="mt-auto border-t border-base-300 pt-3">
         <p v-if="!collapsed" class="mb-2 truncate px-3 text-xs opacity-60">{{ userEmail }}</p>
         <button
-          class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+          class="btn btn-ghost w-full justify-start text-error hover:bg-error/10"
           type="button"
           @click="emit('logout')"
         >

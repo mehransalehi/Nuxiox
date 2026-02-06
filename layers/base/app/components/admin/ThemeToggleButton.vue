@@ -5,7 +5,7 @@ const emit = defineEmits<{ toggle: [] }>()
 
 <template>
   <button
-    class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition hover:bg-slate-100"
+    class="btn btn-ghost btn-square btn-sm border border-base-300"
     type="button"
     :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
     @click="emit('toggle')"
