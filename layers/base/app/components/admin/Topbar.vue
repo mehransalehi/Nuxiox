@@ -38,16 +38,15 @@ const emit = defineEmits<{
       <AdminThemeToggleButton :is-dark="isDark" @toggle="emit('toggleTheme')" />
 
       <div class="dropdown dropdown-end">
-        <button tabindex="0" class="btn btn-ghost btn-sm border border-base-300 px-2" type="button" aria-label="Open user menu">
+        <button tabindex="0" class="btn btn-ghost btn-sm border px-2" type="button" aria-label="Open user menu">
           <div class="avatar placeholder">
-            <div class="h-8 w-8 rounded-full bg-base-300 text-base-content">
+            <div class="h-8 w-8 rounded-full bg-base-300 text-base-content flex justify-center items-center">
               <i class="fa-solid fa-user" aria-hidden="true" />
             </div>
           </div>
-          <i class="fa-solid fa-chevron-down text-xs opacity-70" aria-hidden="true" />
         </button>
 
-        <ul tabindex="0" class="menu dropdown-content z-[60] mt-2 w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow">
+        <ul tabindex="0" class="menu dropdown-content z-60 mt-2 w-56 rounded-box border border-base-300 bg-base-100 p-2 shadow">
           <li class="menu-title px-2 py-1 text-xs normal-case opacity-70">{{ userEmail }}</li>
           <li>
             <button type="button" class="text-error" @click="emit('logout')">

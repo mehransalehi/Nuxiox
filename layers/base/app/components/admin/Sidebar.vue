@@ -38,7 +38,7 @@ const sections: { title: string; items: NavItem[] }[] = [
     <div class="flex h-full flex-col gap-6 p-3">
       <div class="flex items-center gap-3 px-2 pt-2">
         <div class="avatar placeholder">
-          <div class="h-10 w-10 rounded-xl bg-primary text-primary-content">
+          <div class="h-10 w-10 rounded-xl bg-primary text-primary-content flex justify-center items-center">
             <i class="fa-solid fa-user-shield" aria-hidden="true" />
           </div>
         </div>

@@ -13,7 +13,7 @@ const props = defineProps<{
       :to="props.to"
       :title="props.collapsed ? props.label : ''"
       class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium"
-      active-class="active"
+      active-class="menu-active"
     >
       <i v-if="props.icon" :class="props.icon" class="w-4 text-center" aria-hidden="true" />
       <span v-if="!props.collapsed">{{ props.label }}</span>

@@ -13,7 +13,7 @@ defineProps<{ title: string; items: NavItem[]; collapsed: boolean }>()
     <p v-if="!collapsed" class="px-3 text-xs font-semibold uppercase tracking-wide opacity-50">
       {{ title }}
     </p>
-    <ul class="menu menu-sm space-y-1">
+    <ul class="menu menu-sm space-y-1 w-full">
       <AdminSidebarNavItem
         v-for="item in items"
         :key="item.to"
