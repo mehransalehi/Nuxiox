@@ -1,3 +1,4 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
-import * as main from './schema';
-export const users = main.users.table;
+import * as base from '../../layers/base/server/database/schema';
+export const settings = base.settings.table;
+export const users = base.users.table;

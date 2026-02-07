@@ -15,6 +15,13 @@
       "when": 1770193514109,
       "tag": "0001_late_hiroim",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1770451597935,
+      "tag": "0002_loving_gladiator",
+      "breakpoints": true
     }
   ]
 }
