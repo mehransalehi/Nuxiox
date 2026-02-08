@@ -11,7 +11,7 @@ const typeClassMap: Record<ToastType, string> = {
 </script>
 
 <template>
-  <div class="toast toast-top toast-end z-50">
+  <div class="toast z-50">
     <div
       v-for="toast in toastStore.toasts"
       :key="toast.id"
