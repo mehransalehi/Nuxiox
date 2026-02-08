@@ -44,6 +44,7 @@ onMounted(() => {
 
 <template>
   <div class="relative flex min-h-screen bg-base-200 text-base-content">
+    <ToastStack />
     <div
       v-if="mobileSidebarOpen"
       class="fixed inset-0 z-30 bg-base-content/40 lg:hidden"

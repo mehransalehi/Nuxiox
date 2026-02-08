@@ -2,7 +2,7 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
-  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils'],
+  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils', '@pinia/nuxt'],
 
   nitro: {
     preset: 'cloudflare-module',
