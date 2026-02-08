@@ -1,11 +1,11 @@
 <script setup lang="ts">
 interface NavItem {
   to: string
-  label: string
+  label: any
   icon?: string
 }
 
-defineProps<{ title: string; items: NavItem[]; collapsed: boolean }>()
+defineProps<{ title: any; items: NavItem[]; collapsed: boolean }>()
 </script>
 
 <template>

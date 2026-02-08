@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   to: string
-  label: string
+  label: any
   icon?: string
   collapsed?: boolean
 }>()

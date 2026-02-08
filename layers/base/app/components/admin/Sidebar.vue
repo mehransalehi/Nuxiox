@@ -16,7 +16,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const sections = computed<{ title: string; items: NavItem[] }[]>(() => [
+const sections = computed(() => [
   {
     title: t('admin.sidebar.main'),
     items: [
@@ -49,8 +49,8 @@ const sections = computed<{ title: string; items: NavItem[] }[]>(() => [
 
       <div class="space-y-4 overflow-y-auto">
         <AdminSidebarSection
-          v-for="section in sections"
-          :key="section.title"
+          v-for="(section,index) in sections"
+          :key="index"
           :title="section.title"
           :items="section.items"
           :collapsed="collapsed"
