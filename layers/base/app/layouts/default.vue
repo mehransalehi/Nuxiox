@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { settings } = useSiteSettings()
 const { locale, setLocaleFromSettings, t } = useI18n()
+const layoutOverrides = useLayoutOverrides()
 
 const direction = computed(() => settings.value.general.direction ?? 'ltr')
 
@@ -26,6 +27,7 @@ useHead(() => ({
     <input id="main-drawer" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content flex min-h-screen flex-col">
       <SiteNavbar
+        v-if="!layoutOverrides.hideNavbar"
         :menus="settings.navbar.menus"
         :dark-logo="settings.navbar.darkLogo"
         :light-logo="settings.navbar.lightLogo"
@@ -36,6 +38,7 @@ useHead(() => ({
         <slot />
       </main>
       <SiteFooter
+        v-if="!layoutOverrides.hideFooter"
         :menus="settings.footer.menus"
         :dark-logo="settings.footer.darkLogo"
         :light-logo="settings.footer.lightLogo"
@@ -50,6 +53,7 @@ useHead(() => ({
 
   <div v-else class="flex min-h-screen flex-col">
     <SiteNavbar
+      v-if="!layoutOverrides.hideNavbar"
       :menus="settings.navbar.menus"
       :dark-logo="settings.navbar.darkLogo"
       :light-logo="settings.navbar.lightLogo"
@@ -60,6 +64,7 @@ useHead(() => ({
       <slot />
     </main>
     <SiteFooter
+      v-if="!layoutOverrides.hideFooter"
       :menus="settings.footer.menus"
       :dark-logo="settings.footer.darkLogo"
       :light-logo="settings.footer.lightLogo"

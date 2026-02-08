@@ -68,3 +68,31 @@ export const settings = defineTable({
     isPublicIdx: index("settings_is_public_idx").on(table.isPublic),
   })),
 });
+
+export const pages = defineTable({
+  name: "pages",
+  priority: 10,
+  layer,
+  table: sqliteTable("pages", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+
+    slug: text("slug").notNull().unique(),
+    title: text("title").notNull(),
+
+    status: text("status")
+      .$type<"draft" | "published">()
+      .default("draft")
+      .notNull(),
+
+    seo: text("seo", { mode: "json" }).notNull(),
+    builder: text("builder", { mode: "json" }).notNull(),
+
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .notNull()
+      .defaultNow(),
+
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .notNull()
+      .defaultNow(),
+  }),
+});
