@@ -43,7 +43,7 @@ useHead(() => ({
       />
     </div>
     <div class="drawer-side">
-      <label for="main-drawer" :aria-label="t('common.closeSidebar')" class="drawer-overlay" />
+      <label for="main-drawer" :aria-label="t('common.closeSidebar') as any" class="drawer-overlay" />
       <SiteSidebar :menus="settings.navbar.menus" />
     </div>
   </div>

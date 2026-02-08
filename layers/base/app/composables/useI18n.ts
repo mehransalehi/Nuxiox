@@ -241,7 +241,7 @@ export const useI18n = () => {
     return value ?? key
   }
 
-  const availableLocales = computed<{ value: Locale; label: string }[]>(() => [
+  const availableLocales = computed(() => [
     { value: 'en', label: t('languages.english') },
     { value: 'fa', label: t('languages.persian') },
   ])
