@@ -12,6 +12,7 @@
     "db:generate": "pnpm run db:sync && drizzle-kit generate"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.0",
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.1",
     "pinia": "^3.0.3",
