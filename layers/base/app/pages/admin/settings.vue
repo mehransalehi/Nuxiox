@@ -41,7 +41,8 @@ const removeFooterInfo = (index: number) => form.footer.info.splice(index, 1)
 const reorderMenus = (section: 'navbar' | 'footer', fromIndex: number, toIndex: number) => {
   const menus = form[section].menus
   const [moved] = menus.splice(fromIndex, 1)
-  menus.splice(toIndex, 0, moved)
+  if (moved)
+    menus.splice(toIndex, 0, moved)
 }
 
 const handleDragStart = (section: 'navbar' | 'footer', index: number) => {
@@ -94,25 +95,13 @@ const saveSettings = async () => {
     </div>
 
     <div class="tabs tabs-boxed border border-base-300 bg-base-100 p-1">
-      <button
-        class="tab"
-        :class="{ 'tab-active': activeTab === 'general' }"
-        @click="activeTab = 'general'"
-      >
+      <button class="tab" :class="{ 'tab-active': activeTab === 'general' }" @click="activeTab = 'general'">
         {{ t('admin.settings.generalTab') }}
       </button>
-      <button
-        class="tab"
-        :class="{ 'tab-active': activeTab === 'navbar' }"
-        @click="activeTab = 'navbar'"
-      >
+      <button class="tab" :class="{ 'tab-active': activeTab === 'navbar' }" @click="activeTab = 'navbar'">
         {{ t('admin.settings.navbarTab') }}
       </button>
-      <button
-        class="tab"
-        :class="{ 'tab-active': activeTab === 'footer' }"
-        @click="activeTab = 'footer'"
-      >
+      <button class="tab" :class="{ 'tab-active': activeTab === 'footer' }" @click="activeTab = 'footer'">
         {{ t('admin.settings.footerTab') }}
       </button>
     </div>
@@ -127,11 +116,7 @@ const saveSettings = async () => {
       <div class="card-body space-y-4">
         <h3 class="card-title">{{ t('admin.settings.generalTitle') }}</h3>
         <label class="flex items-center gap-4">
-          <input
-            type="checkbox"
-            class="toggle toggle-primary"
-            v-model="form.general.showSidebar"
-          />
+          <input type="checkbox" class="toggle toggle-primary" v-model="form.general.showSidebar" />
           <span class="font-medium">{{ t('admin.settings.showSidebar') }}</span>
         </label>
         <div class="grid gap-4 md:grid-cols-2">
@@ -176,25 +161,18 @@ const saveSettings = async () => {
             <h4 class="font-semibold">{{ t('common.menus') }}</h4>
             <button class="btn btn-sm" @click="addNavbarMenu">{{ t('common.addMenu') }}</button>
           </div>
-          <div
-            v-for="(menu, index) in form.navbar.menus"
-            :key="`navbar-menu-${index}`"
-            class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]"
-            draggable="true"
-            @dragstart="handleDragStart('navbar', index)"
-            @dragend="resetDrag"
-            @dragover.prevent
-            @drop="handleDrop('navbar', index)"
-          >
-            <button
-              class="btn btn-ghost btn-square cursor-grab"
-              type="button"
-              :aria-label="t('common.dragToReorder')"
-            >
+          <div v-for="(menu, index) in form.navbar.menus" :key="`navbar-menu-${index}`"
+            class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]" draggable="true"
+            @dragstart="handleDragStart('navbar', index)" @dragend="resetDrag" @dragover.prevent
+            @drop="handleDrop('navbar', index)">
+            <button class="btn btn-ghost btn-square cursor-grab" type="button"
+              :aria-label="t('common.dragToReorder') as any">
               <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
             </button>
-            <input v-model="menu.label" class="input input-bordered" type="text" :placeholder="t('common.label')" />
-            <input v-model="menu.href" class="input input-bordered" type="text" :placeholder="t('common.pathPlaceholder')" />
+            <input v-model="menu.label" class="input input-bordered" type="text"
+              :placeholder="t('common.label') as any" />
+            <input v-model="menu.href" class="input input-bordered" type="text"
+              :placeholder="t('common.pathPlaceholder') as any" />
             <button class="btn btn-ghost btn-square" @click="removeNavbarMenu(index)">✕</button>
           </div>
         </div>
@@ -204,9 +182,12 @@ const saveSettings = async () => {
             <h4 class="font-semibold">{{ t('common.infoList') }}</h4>
             <button class="btn btn-sm" @click="addNavbarInfo">{{ t('common.addInfo') }}</button>
           </div>
-          <div v-for="(info, index) in form.navbar.info" :key="`navbar-info-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-            <input v-model="info.key" class="input input-bordered" type="text" :placeholder="t('common.label')" />
-            <input v-model="info.value" class="input input-bordered" type="text" :placeholder="t('common.valueOrUrl')" />
+          <div v-for="(info, index) in form.navbar.info" :key="`navbar-info-${index}`"
+            class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+            <input v-model="info.key" class="input input-bordered" type="text"
+              :placeholder="t('common.label') as any" />
+            <input v-model="info.value" class="input input-bordered" type="text"
+              :placeholder="t('common.valueOrUrl') as any" />
             <button class="btn btn-ghost btn-square" @click="removeNavbarInfo(index)">✕</button>
           </div>
         </div>
@@ -236,25 +217,18 @@ const saveSettings = async () => {
             <h4 class="font-semibold">{{ t('common.menus') }}</h4>
             <button class="btn btn-sm" @click="addFooterMenu">{{ t('common.addMenu') }}</button>
           </div>
-          <div
-            v-for="(menu, index) in form.footer.menus"
-            :key="`footer-menu-${index}`"
-            class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]"
-            draggable="true"
-            @dragstart="handleDragStart('footer', index)"
-            @dragend="resetDrag"
-            @dragover.prevent
-            @drop="handleDrop('footer', index)"
-          >
-            <button
-              class="btn btn-ghost btn-square cursor-grab"
-              type="button"
-              :aria-label="t('common.dragToReorder')"
-            >
+          <div v-for="(menu, index) in form.footer.menus" :key="`footer-menu-${index}`"
+            class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]" draggable="true"
+            @dragstart="handleDragStart('footer', index)" @dragend="resetDrag" @dragover.prevent
+            @drop="handleDrop('footer', index)">
+            <button class="btn btn-ghost btn-square cursor-grab" type="button"
+              :aria-label="t('common.dragToReorder') as any">
               <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
             </button>
-            <input v-model="menu.label" class="input input-bordered" type="text" :placeholder="t('common.label')" />
-            <input v-model="menu.href" class="input input-bordered" type="text" :placeholder="t('common.pathPlaceholder')" />
+            <input v-model="menu.label" class="input input-bordered" type="text"
+              :placeholder="t('common.label') as any" />
+            <input v-model="menu.href" class="input input-bordered" type="text"
+              :placeholder="t('common.pathPlaceholder') as any" />
             <button class="btn btn-ghost btn-square" @click="removeFooterMenu(index)">✕</button>
           </div>
         </div>
@@ -264,9 +238,12 @@ const saveSettings = async () => {
             <h4 class="font-semibold">{{ t('common.infoList') }}</h4>
             <button class="btn btn-sm" @click="addFooterInfo">{{ t('common.addInfo') }}</button>
           </div>
-          <div v-for="(info, index) in form.footer.info" :key="`footer-info-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-            <input v-model="info.key" class="input input-bordered" type="text" :placeholder="t('common.label')" />
-            <input v-model="info.value" class="input input-bordered" type="text" :placeholder="t('common.valueOrUrl')" />
+          <div v-for="(info, index) in form.footer.info" :key="`footer-info-${index}`"
+            class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+            <input v-model="info.key" class="input input-bordered" type="text"
+              :placeholder="t('common.label') as any" />
+            <input v-model="info.value" class="input input-bordered" type="text"
+              :placeholder="t('common.valueOrUrl') as any" />
             <button class="btn btn-ghost btn-square" @click="removeFooterInfo(index)">✕</button>
           </div>
         </div>

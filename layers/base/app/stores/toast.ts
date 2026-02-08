@@ -11,7 +11,7 @@ export type ToastMessage = {
 export const useToastStore = defineStore('toast', () => {
   const toasts = ref<ToastMessage[]>([])
 
-  const push = (message: string, type: ToastType = 'info') => {
+  const push = (message: any, type: ToastType = 'info') => {
     const id = crypto.randomUUID()
     toasts.value.push({ id, message, type })
 
