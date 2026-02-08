@@ -16,9 +16,18 @@ export default defineEventHandler(async (event) => {
   }, {})
 
   const response: SiteSettings = {
-    general: (values.general as typeof defaultSettings.general) ?? defaultSettings.general,
-    navbar: (values.navbar as typeof defaultSettings.navbar) ?? defaultSettings.navbar,
-    footer: (values.footer as typeof defaultSettings.footer) ?? defaultSettings.footer,
+    general: {
+      ...defaultSettings.general,
+      ...((values.general as typeof defaultSettings.general) ?? {}),
+    },
+    navbar: {
+      ...defaultSettings.navbar,
+      ...((values.navbar as typeof defaultSettings.navbar) ?? {}),
+    },
+    footer: {
+      ...defaultSettings.footer,
+      ...((values.footer as typeof defaultSettings.footer) ?? {}),
+    },
   }
 
   return response

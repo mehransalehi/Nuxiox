@@ -10,6 +10,8 @@ export type InfoItem = {
 
 export type GeneralSettings = {
   showSidebar: boolean
+  direction: 'ltr' | 'rtl'
+  language: 'en' | 'fa'
 }
 
 export type NavbarSettings = {
@@ -35,6 +37,8 @@ export type SiteSettings = {
 export const defaultSettings: SiteSettings = {
   general: {
     showSidebar: true,
+    direction: 'ltr',
+    language: 'en',
   },
   navbar: {
     menus: [

@@ -7,6 +7,7 @@ definePageMeta({
 })
 
 const { user, clear: clearSession } = useUserSession() as { user: Ref<UserSession | null>, clear: () => Promise<void> }
+const { t } = useI18n()
 
 async function logout() {
   await clearSession()
@@ -18,17 +19,17 @@ async function logout() {
   <section class="space-y-6">
     <div class="flex items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">Welcome back</h2>
-        <p class="opacity-70">{{ user?.email ?? 'No user loaded' }}</p>
+        <h2 class="text-2xl font-bold">{{ t('admin.dashboard.welcomeBack') }}</h2>
+        <p class="opacity-70">{{ user?.email ?? t('admin.dashboard.noUser') }}</p>
       </div>
       <button class="btn btn-outline btn-sm" @click="logout">
-        Logout
+        {{ t('admin.dashboard.logout') }}
       </button>
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <article
-        v-for="card in ['Revenue', 'Orders', 'Users', 'Conversion']"
+        v-for="card in [t('admin.dashboard.revenue'), t('admin.dashboard.orders'), t('admin.dashboard.users'), t('admin.dashboard.conversion')]"
         :key="card"
         class="card border border-base-300 bg-base-200"
       >
@@ -41,10 +42,8 @@ async function logout() {
 
     <article class="card border border-base-300 bg-base-200">
       <div class="card-body">
-        <h3 class="card-title">Overview</h3>
-        <p>
-          This is the main content section where each admin page details can be rendered inside the reusable admin base layout.
-        </p>
+        <h3 class="card-title">{{ t('admin.dashboard.overview') }}</h3>
+        <p>{{ t('admin.dashboard.overviewBody') }}</p>
       </div>
     </article>
   </section>

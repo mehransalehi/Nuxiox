@@ -1,15 +1,28 @@
 <script setup lang="ts">
-import { defaultSettings } from '~~/layers/base/utils/settings'
+const { settings } = useSiteSettings()
+const { locale, setLocaleFromSettings, t } = useI18n()
 
-const { data: settingsData } = await useFetch('/api/settings/public', {
-  default: () => structuredClone(defaultSettings),
-})
+const direction = computed(() => settings.value.general.direction ?? 'ltr')
 
-const settings = computed(() => settingsData.value ?? structuredClone(defaultSettings))
+watch(
+  () => settings.value.general.language,
+  (value) => {
+    setLocaleFromSettings(value)
+  },
+  { immediate: true }
+)
+
+useHead(() => ({
+  htmlAttrs: {
+    dir: direction.value,
+    lang: locale.value,
+    class: direction.value,
+  },
+}))
 </script>
 
 <template>
-  <div v-if="settings.general.showSidebar" class="drawer lg:drawer-open">
+  <div v-if="settings.general.showSidebar" class="drawer lg:drawer-open rtl:drawer-end">
     <input id="main-drawer" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content flex min-h-screen flex-col">
       <SiteNavbar
@@ -30,7 +43,7 @@ const settings = computed(() => settingsData.value ?? structuredClone(defaultSet
       />
     </div>
     <div class="drawer-side">
-      <label for="main-drawer" aria-label="Close sidebar" class="drawer-overlay" />
+      <label for="main-drawer" :aria-label="t('common.closeSidebar')" class="drawer-overlay" />
       <SiteSidebar :menus="settings.navbar.menus" />
     </div>
   </div>

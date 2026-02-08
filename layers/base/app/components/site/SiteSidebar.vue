@@ -6,12 +6,13 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+const { t } = useI18n()
 </script>
 
 <template>
   <aside class="min-h-full w-72 bg-base-200 p-4">
     <div class="text-xs uppercase tracking-widest text-base-content/50 mb-4">
-      Main Menu
+      {{ t('site.mainMenu') }}
     </div>
     <ul class="menu menu-vertical gap-1">
       <li v-for="menu in props.menus" :key="menu.label">
