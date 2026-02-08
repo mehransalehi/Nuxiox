@@ -4,6 +4,10 @@ import type { UserSession } from '~~/layers/base/types/user-session'
 const mobileSidebarOpen = ref(false)
 const sidebarCollapsed = ref(false)
 const isDark = ref(false)
+const { settings } = useSiteSettings()
+const { locale, setLocaleFromSettings } = useI18n()
+
+const direction = computed(() => settings.value.general.direction ?? 'ltr')
 
 const { user, clear: clearSession } = useUserSession() as {
   user: Ref<UserSession | null>
@@ -40,6 +44,22 @@ onMounted(() => {
   isDark.value = savedTheme ? savedTheme === 'dark' : false
   applyTheme(isDark.value)
 })
+
+watch(
+  () => settings.value.general.language,
+  (value) => {
+    setLocaleFromSettings(value)
+  },
+  { immediate: true }
+)
+
+useHead(() => ({
+  htmlAttrs: {
+    dir: direction.value,
+    lang: locale.value,
+    class: direction.value,
+  },
+}))
 </script>
 
 <template>
@@ -53,8 +73,9 @@ onMounted(() => {
 
     <div
       :class="[
-        'fixed inset-y-0 left-0 z-40 transform transition-all duration-300 lg:static lg:translate-x-0',
-        mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+        'fixed inset-y-0 z-40 transform transition-all duration-300 lg:static lg:translate-x-0',
+        'ltr:left-0 rtl:right-0',
+        mobileSidebarOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full lg:translate-x-0',
         sidebarCollapsed ? 'w-24' : 'w-72',
       ]"
     >

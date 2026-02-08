@@ -11,6 +11,8 @@ const emit = defineEmits<{
   toggleTheme: []
   logout: []
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -18,7 +20,7 @@ const emit = defineEmits<{
     <div class="flex items-center gap-3">
       <button
         class="btn btn-ghost btn-square btn-sm border border-base-300 lg:hidden"
-        aria-label="Open sidebar"
+        :aria-label="t('admin.topbar.openSidebar')"
         @click="emit('toggleMobileSidebar')"
       >
         <i class="fa-solid fa-bars" aria-hidden="true" />
@@ -29,16 +31,21 @@ const emit = defineEmits<{
       </div>
 
       <div>
-        <h1 class="text-lg font-bold">Dashboard</h1>
-        <p class="text-xs opacity-60">Welcome to your admin workspace</p>
+        <h1 class="text-lg font-bold">{{ t('admin.topbar.title') }}</h1>
+        <p class="text-xs opacity-60">{{ t('admin.topbar.subtitle') }}</p>
       </div>
     </div>
 
     <div class="flex items-center gap-2">
       <AdminThemeToggleButton :is-dark="isDark" @toggle="emit('toggleTheme')" />
 
-      <div class="dropdown dropdown-end">
-        <button tabindex="0" class="btn btn-ghost btn-sm border px-2" type="button" aria-label="Open user menu">
+      <div class="dropdown ltr:dropdown-end rtl:dropdown-start">
+        <button
+          tabindex="0"
+          class="btn btn-ghost btn-sm border px-2"
+          type="button"
+          :aria-label="t('admin.topbar.openUserMenu')"
+        >
           <div class="avatar placeholder">
             <div class="h-8 w-8 rounded-full bg-base-300 text-base-content flex justify-center items-center">
               <i class="fa-solid fa-user" aria-hidden="true" />
@@ -51,7 +58,7 @@ const emit = defineEmits<{
           <li>
             <button type="button" class="text-error" @click="emit('logout')">
               <i class="fa-solid fa-right-from-bracket" aria-hidden="true" />
-              Logout
+              {{ t('admin.topbar.logout') }}
             </button>
           </li>
         </ul>

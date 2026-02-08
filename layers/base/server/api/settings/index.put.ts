@@ -10,9 +10,18 @@ export default defineEventHandler(async (event) => {
 
   const body = (await readBody(event)) as Partial<SiteSettings>
   const payload: SiteSettings = {
-    general: body.general ?? defaultSettings.general,
-    navbar: body.navbar ?? defaultSettings.navbar,
-    footer: body.footer ?? defaultSettings.footer,
+    general: {
+      ...defaultSettings.general,
+      ...(body.general ?? {}),
+    },
+    navbar: {
+      ...defaultSettings.navbar,
+      ...(body.navbar ?? {}),
+    },
+    footer: {
+      ...defaultSettings.footer,
+      ...(body.footer ?? {}),
+    },
   }
 
   const db = useDb(event)

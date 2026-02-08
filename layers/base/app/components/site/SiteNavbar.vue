@@ -10,6 +10,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+const { t } = useI18n()
 
 const isLinkValue = (value: string) =>
   value.startsWith('http://') ||
@@ -28,7 +29,7 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
         for="main-drawer"
         class="btn btn-ghost btn-square lg:hidden"
       >
-        <span class="sr-only">Toggle sidebar</span>
+        <span class="sr-only">{{ t('site.toggleSidebar') }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -48,7 +49,9 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
           alt="Logo"
           class="hidden h-8 w-auto dark:block"
         />
-        <span v-if="!props.lightLogo && !props.darkLogo" class="text-lg font-semibold">Brand</span>
+        <span v-if="!props.lightLogo && !props.darkLogo" class="text-lg font-semibold">
+          {{ t('site.brand') }}
+        </span>
       </NuxtLink>
 
       <nav class="hidden lg:block">
@@ -74,9 +77,9 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
       </div>
     </div>
 
-    <div class="dropdown dropdown-end lg:hidden">
+    <div class="dropdown ltr:dropdown-end rtl:dropdown-start lg:hidden">
       <label tabindex="0" class="btn btn-ghost btn-circle">
-        <span class="sr-only">Open menu</span>
+        <span class="sr-only">{{ t('site.openMenu') }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />

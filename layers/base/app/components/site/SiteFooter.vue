@@ -9,6 +9,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+const { locale, setLocale, t, availableLocales } = useI18n()
 
 const isLinkValue = (value: string) =>
   value.startsWith('http://') ||
@@ -38,12 +39,26 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
           />
         </NuxtLink>
         <p class="text-sm text-base-content/70">
-          {{ props.info.length ? 'Stay connected with us through the links below.' : 'Thanks for visiting.' }}
+          {{ props.info.length ? t('site.stayConnected') : t('site.thanks') }}
         </p>
+        <div class="form-control w-full max-w-xs">
+          <label class="label">
+            <span class="label-text">{{ t('site.language') }}</span>
+          </label>
+          <select
+            class="select select-bordered"
+            :value="locale"
+            @change="setLocale(($event.target as HTMLSelectElement).value as 'en' | 'fa')"
+          >
+            <option v-for="item in availableLocales" :key="item.value" :value="item.value">
+              {{ item.label }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div>
-        <h3 class="footer-title text-base-content">Menu</h3>
+        <h3 class="footer-title text-base-content">{{ t('site.menu') }}</h3>
         <ul class="menu menu-vertical">
           <li v-for="menu in props.menus" :key="menu.label">
             <NuxtLink :to="menu.href">{{ menu.label }}</NuxtLink>
@@ -52,7 +67,7 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
       </div>
 
       <div>
-        <h3 class="footer-title text-base-content">Information</h3>
+        <h3 class="footer-title text-base-content">{{ t('site.information') }}</h3>
         <ul class="space-y-2 text-sm text-base-content/70">
           <li v-for="item in props.info" :key="item.key">
             <span class="font-semibold text-base-content">{{ formatInfoLabel(item) }}</span>

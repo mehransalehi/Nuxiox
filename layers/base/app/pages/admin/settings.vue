@@ -13,6 +13,7 @@ const activeTab = ref<'general' | 'navbar' | 'footer'>('general')
 const saving = ref(false)
 const toastStore = useToastStore()
 const draggingMenu = ref<{ section: 'navbar' | 'footer'; index: number } | null>(null)
+const { t } = useI18n()
 
 watch(
   () => data.value,
@@ -69,10 +70,10 @@ const saveSettings = async () => {
       method: 'PUT',
       body: form,
     })
-    toastStore.push('Settings saved successfully.', 'success')
+    toastStore.push(t('admin.settings.settingsSaved'), 'success')
     await refresh()
   } catch (err) {
-    toastStore.push(err instanceof Error ? err.message : 'Failed to save settings.', 'error')
+    toastStore.push(err instanceof Error ? err.message : t('admin.settings.settingsFailed'), 'error')
   } finally {
     saving.value = false
   }
@@ -83,12 +84,12 @@ const saveSettings = async () => {
   <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">Settings</h2>
-        <p class="opacity-70">Configure general layout, navbar, and footer settings.</p>
+        <h2 class="text-2xl font-bold">{{ t('admin.settings.title') }}</h2>
+        <p class="opacity-70">{{ t('admin.settings.description') }}</p>
       </div>
       <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="saveSettings">
         <span v-if="saving" class="loading loading-spinner"></span>
-        Save Settings
+        {{ t('common.saveSettings') }}
       </button>
     </div>
 
@@ -98,66 +99,82 @@ const saveSettings = async () => {
         :class="{ 'tab-active': activeTab === 'general' }"
         @click="activeTab = 'general'"
       >
-        General Settings
+        {{ t('admin.settings.generalTab') }}
       </button>
       <button
         class="tab"
         :class="{ 'tab-active': activeTab === 'navbar' }"
         @click="activeTab = 'navbar'"
       >
-        Navbar Settings
+        {{ t('admin.settings.navbarTab') }}
       </button>
       <button
         class="tab"
         :class="{ 'tab-active': activeTab === 'footer' }"
         @click="activeTab = 'footer'"
       >
-        Footer Settings
+        {{ t('admin.settings.footerTab') }}
       </button>
     </div>
 
     <div v-if="pending" class="flex items-center gap-2">
       <span class="loading loading-spinner"></span>
-      <span>Loading settings...</span>
+      <span>{{ t('common.loadingSettings') }}</span>
     </div>
-    <div v-if="error" class="alert alert-error">Unable to load settings.</div>
+    <div v-if="error" class="alert alert-error">{{ t('common.unableToLoadSettings') }}</div>
 
     <section v-if="activeTab === 'general'" class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
-        <h3 class="card-title">General Settings</h3>
+        <h3 class="card-title">{{ t('admin.settings.generalTitle') }}</h3>
         <label class="flex items-center gap-4">
           <input
             type="checkbox"
             class="toggle toggle-primary"
             v-model="form.general.showSidebar"
           />
-          <span class="font-medium">Show main sidebar</span>
+          <span class="font-medium">{{ t('admin.settings.showSidebar') }}</span>
         </label>
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="form-control">
+            <span class="label-text">{{ t('admin.settings.direction') }}</span>
+            <select v-model="form.general.direction" class="select select-bordered">
+              <option value="ltr">{{ t('admin.settings.directionLtr') }}</option>
+              <option value="rtl">{{ t('admin.settings.directionRtl') }}</option>
+            </select>
+          </label>
+          <label class="form-control">
+            <span class="label-text">{{ t('admin.settings.language') }}</span>
+            <select v-model="form.general.language" class="select select-bordered">
+              <option value="en">{{ t('languages.english') }}</option>
+              <option value="fa">{{ t('languages.persian') }}</option>
+            </select>
+          </label>
+        </div>
       </div>
     </section>
 
     <section v-if="activeTab === 'navbar'" class="card bg-base-100 shadow">
       <div class="card-body space-y-6">
         <div>
-          <h3 class="card-title">Navbar Settings</h3>
-          <p class="text-sm opacity-70">Manage menu items, logos, and info links.</p>
+          <h3 class="card-title">{{ t('admin.settings.navbarTitle') }}</h3>
+          <p class="text-sm opacity-70">{{ t('admin.settings.navbarDescription') }}</p>
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
           <label class="form-control">
-            <span class="label-text">Light logo URL</span>
+            <span class="label-text">{{ t('common.lightLogoUrl') }}</span>
             <input v-model="form.navbar.lightLogo" class="input input-bordered" type="text" />
           </label>
           <label class="form-control">
-            <span class="label-text">Dark logo URL</span>
+            <span class="label-text">{{ t('common.darkLogoUrl') }}</span>
             <input v-model="form.navbar.darkLogo" class="input input-bordered" type="text" />
           </label>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">Menus</h4>
-            <button class="btn btn-sm" @click="addNavbarMenu">Add menu</button>
+            <h4 class="font-semibold">{{ t('common.menus') }}</h4>
+            <button class="btn btn-sm" @click="addNavbarMenu">{{ t('common.addMenu') }}</button>
           </div>
           <div
             v-for="(menu, index) in form.navbar.menus"
@@ -169,23 +186,27 @@ const saveSettings = async () => {
             @dragover.prevent
             @drop="handleDrop('navbar', index)"
           >
-            <button class="btn btn-ghost btn-square cursor-grab" type="button" aria-label="Drag to reorder">
+            <button
+              class="btn btn-ghost btn-square cursor-grab"
+              type="button"
+              :aria-label="t('common.dragToReorder')"
+            >
               <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
             </button>
-            <input v-model="menu.label" class="input input-bordered" type="text" placeholder="Label" />
-            <input v-model="menu.href" class="input input-bordered" type="text" placeholder="/path" />
+            <input v-model="menu.label" class="input input-bordered" type="text" :placeholder="t('common.label')" />
+            <input v-model="menu.href" class="input input-bordered" type="text" :placeholder="t('common.pathPlaceholder')" />
             <button class="btn btn-ghost btn-square" @click="removeNavbarMenu(index)">✕</button>
           </div>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">Info list</h4>
-            <button class="btn btn-sm" @click="addNavbarInfo">Add info</button>
+            <h4 class="font-semibold">{{ t('common.infoList') }}</h4>
+            <button class="btn btn-sm" @click="addNavbarInfo">{{ t('common.addInfo') }}</button>
           </div>
           <div v-for="(info, index) in form.navbar.info" :key="`navbar-info-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-            <input v-model="info.key" class="input input-bordered" type="text" placeholder="Label" />
-            <input v-model="info.value" class="input input-bordered" type="text" placeholder="Value or URL" />
+            <input v-model="info.key" class="input input-bordered" type="text" :placeholder="t('common.label')" />
+            <input v-model="info.value" class="input input-bordered" type="text" :placeholder="t('common.valueOrUrl')" />
             <button class="btn btn-ghost btn-square" @click="removeNavbarInfo(index)">✕</button>
           </div>
         </div>
@@ -195,25 +216,25 @@ const saveSettings = async () => {
     <section v-if="activeTab === 'footer'" class="card bg-base-100 shadow">
       <div class="card-body space-y-6">
         <div>
-          <h3 class="card-title">Footer Settings</h3>
-          <p class="text-sm opacity-70">Manage footer menus, logos, and info links.</p>
+          <h3 class="card-title">{{ t('admin.settings.footerTitle') }}</h3>
+          <p class="text-sm opacity-70">{{ t('admin.settings.footerDescription') }}</p>
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
           <label class="form-control">
-            <span class="label-text">Light logo URL</span>
+            <span class="label-text">{{ t('common.lightLogoUrl') }}</span>
             <input v-model="form.footer.lightLogo" class="input input-bordered" type="text" />
           </label>
           <label class="form-control">
-            <span class="label-text">Dark logo URL</span>
+            <span class="label-text">{{ t('common.darkLogoUrl') }}</span>
             <input v-model="form.footer.darkLogo" class="input input-bordered" type="text" />
           </label>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">Menus</h4>
-            <button class="btn btn-sm" @click="addFooterMenu">Add menu</button>
+            <h4 class="font-semibold">{{ t('common.menus') }}</h4>
+            <button class="btn btn-sm" @click="addFooterMenu">{{ t('common.addMenu') }}</button>
           </div>
           <div
             v-for="(menu, index) in form.footer.menus"
@@ -225,23 +246,27 @@ const saveSettings = async () => {
             @dragover.prevent
             @drop="handleDrop('footer', index)"
           >
-            <button class="btn btn-ghost btn-square cursor-grab" type="button" aria-label="Drag to reorder">
+            <button
+              class="btn btn-ghost btn-square cursor-grab"
+              type="button"
+              :aria-label="t('common.dragToReorder')"
+            >
               <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
             </button>
-            <input v-model="menu.label" class="input input-bordered" type="text" placeholder="Label" />
-            <input v-model="menu.href" class="input input-bordered" type="text" placeholder="/path" />
+            <input v-model="menu.label" class="input input-bordered" type="text" :placeholder="t('common.label')" />
+            <input v-model="menu.href" class="input input-bordered" type="text" :placeholder="t('common.pathPlaceholder')" />
             <button class="btn btn-ghost btn-square" @click="removeFooterMenu(index)">✕</button>
           </div>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">Info list</h4>
-            <button class="btn btn-sm" @click="addFooterInfo">Add info</button>
+            <h4 class="font-semibold">{{ t('common.infoList') }}</h4>
+            <button class="btn btn-sm" @click="addFooterInfo">{{ t('common.addInfo') }}</button>
           </div>
           <div v-for="(info, index) in form.footer.info" :key="`footer-info-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-            <input v-model="info.key" class="input input-bordered" type="text" placeholder="Label" />
-            <input v-model="info.value" class="input input-bordered" type="text" placeholder="Value or URL" />
+            <input v-model="info.key" class="input input-bordered" type="text" :placeholder="t('common.label')" />
+            <input v-model="info.value" class="input input-bordered" type="text" :placeholder="t('common.valueOrUrl')" />
             <button class="btn btn-ghost btn-square" @click="removeFooterInfo(index)">✕</button>
           </div>
         </div>

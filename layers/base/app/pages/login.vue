@@ -3,6 +3,7 @@ const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
+const { t } = useI18n()
 
 const login = async () => {
   errorMessage.value = null
@@ -36,7 +37,7 @@ await nextTick()
     errorMessage.value =
       err?.data?.statusMessage ||
       err?.message ||
-      'Login failed'
+      t('auth.loginFailed')
   } finally {
     loading.value = false
   }
@@ -47,17 +48,17 @@ await nextTick()
   <div class="min-h-screen flex items-center justify-center px-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
       <h1 class="text-2xl font-bold text-gray-900 mb-2 text-center">
-        Sign in
+        {{ t('auth.signIn') }}
       </h1>
       <p class="text-sm text-gray-500 mb-6 text-center">
-        Login to your admin panel
+        {{ t('auth.loginToPanel') }}
       </p>
 
       <form @submit.prevent="login" class="space-y-4">
         <!-- Email -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Email
+            {{ t('auth.email') }}
           </label>
           <input v-model="email" type="email" required placeholder="admin@example.com" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
@@ -66,7 +67,7 @@ await nextTick()
         <!-- Password -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Password
+            {{ t('auth.password') }}
           </label>
           <input v-model="password" type="password" required placeholder="••••••••" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
@@ -81,8 +82,8 @@ await nextTick()
         <button type="submit" :disabled="loading" class="w-full flex justify-center items-center rounded-lg
                  bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium
                  px-4 py-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
-          <span v-if="!loading">Login</span>
-          <span v-else class="animate-pulse">Signing in…</span>
+          <span v-if="!loading">{{ t('auth.login') }}</span>
+          <span v-else class="animate-pulse">{{ t('auth.signingIn') }}</span>
         </button>
       </form>
     </div>

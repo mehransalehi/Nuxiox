@@ -14,24 +14,26 @@ const emit = defineEmits<{
   logout: []
 }>()
 
-const sections: { title: string; items: NavItem[] }[] = [
+const { t } = useI18n()
+
+const sections = computed<{ title: string; items: NavItem[] }[]>(() => [
   {
-    title: 'Main',
+    title: t('admin.sidebar.main'),
     items: [
-      { to: '/admin', label: 'Dashboard', icon: 'fa-solid fa-gauge' },
+      { to: '/admin', label: t('admin.sidebar.dashboard'), icon: 'fa-solid fa-gauge' },
     ],
   },
   {
-    title: 'Management',
+    title: t('admin.sidebar.management'),
     items: [
-      { to: '/admin/settings', label: 'Settings', icon: 'fa-solid fa-gear' },
+      { to: '/admin/settings', label: t('admin.sidebar.settings'), icon: 'fa-solid fa-gear' },
     ],
   },
-]
+])
 </script>
 
 <template>
-  <aside class="h-full border-r border-base-300 bg-base-100 text-base-content">
+  <aside class="h-full border-base-300 bg-base-100 text-base-content ltr:border-r rtl:border-l">
     <div class="flex h-full flex-col gap-6 p-3">
       <div class="flex items-center gap-3 px-2 pt-2">
         <div class="avatar placeholder">
@@ -40,8 +42,8 @@ const sections: { title: string; items: NavItem[] }[] = [
           </div>
         </div>
         <div v-if="!collapsed" class="overflow-hidden">
-          <p class="font-bold leading-5">Admin Panel</p>
-          <p class="text-xs opacity-60">Base Layer</p>
+          <p class="font-bold leading-5">{{ t('admin.sidebar.adminPanel') }}</p>
+          <p class="text-xs opacity-60">{{ t('admin.sidebar.baseLayer') }}</p>
         </div>
       </div>
 
@@ -63,7 +65,7 @@ const sections: { title: string; items: NavItem[] }[] = [
           @click="emit('logout')"
         >
           <i class="fa-solid fa-right-from-bracket w-4 text-center" aria-hidden="true" />
-          <span v-if="!collapsed">Logout</span>
+          <span v-if="!collapsed">{{ t('admin.sidebar.logout') }}</span>
         </button>
       </div>
     </div>
