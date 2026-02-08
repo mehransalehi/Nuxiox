@@ -27,6 +27,8 @@ const sections = computed(() => [
     title: t('admin.sidebar.management'),
     items: [
       { to: '/admin/settings', label: t('admin.sidebar.settings'), icon: 'fa-solid fa-gear' },
+      { to: '/admin/home-builder', label: t('admin.sidebar.homeBuilder'), icon: 'fa-solid fa-layer-group' },
+      { to: '/admin/pages', label: t('admin.sidebar.pages'), icon: 'fa-solid fa-file-lines' },
     ],
   },
 ])
