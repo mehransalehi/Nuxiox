@@ -19,14 +19,11 @@ const sections: { title: string; items: NavItem[] }[] = [
     title: 'Main',
     items: [
       { to: '/admin', label: 'Dashboard', icon: 'fa-solid fa-gauge' },
-      { to: '/admin/orders', label: 'Orders', icon: 'fa-solid fa-file-invoice' },
-      { to: '/admin/customers', label: 'Customers', icon: 'fa-solid fa-users' },
     ],
   },
   {
     title: 'Management',
     items: [
-      { to: '/admin/products', label: 'Products', icon: 'fa-solid fa-box' },
       { to: '/admin/settings', label: 'Settings', icon: 'fa-solid fa-gear' },
     ],
   },
