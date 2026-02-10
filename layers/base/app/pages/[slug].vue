@@ -1,6 +1,21 @@
 <script setup lang="ts">
 import type { PageRecord, PageBlock } from '~~/layers/base/types/page-builder'
 
+//import default sections
+import Hero from '../components/sections/Hero.vue'
+import About from '../components/sections/About.vue'
+import Service from '../components/sections/Service.vue'
+import Testimonial from '../components/sections/Testimonial.vue'
+import Contact from '../components/sections/Contact.vue'
+
+const defaultSection = {
+  hero : Hero,
+  about : About,
+  service : Service,
+  testimonial : Testimonial,
+  contact : Contact
+}
+
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 
@@ -14,7 +29,7 @@ const page = computed(() => data.value as PageRecord)
 const layoutOverrides = useLayoutOverrides()
 
 const sectionComponentName = (block: Extract<PageBlock, { type: 'section' | 'navbar' | 'footer' }>) =>
-  `Sections${block.sectionId}`
+  defaultSection[block.sectionId.toLowerCase()]
 
 watch(
   () => page.value?.builder?.blocks ?? [],
