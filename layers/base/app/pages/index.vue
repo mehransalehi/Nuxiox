@@ -2,29 +2,30 @@
 import type { HomeBuilder, HomeSectionItem } from '~~/layers/base/types/page-builder'
 import { defaultHomeBuilder } from '~~/layers/base/utils/page-builder'
 
-//import default sections
-import Hero from '../components/sections/Hero.vue'
-import About from '../components/sections/About.vue'
-import Service from '../components/sections/Service.vue'
-import Testimonial from '../components/sections/Testimonial.vue'
-import Contact from '../components/sections/Contact.vue'
+const modules = import.meta.glob('../components/sections/*.vue')
+const components: Record<string, Component> = {}
 
-const defaultSection = {
-  hero : Hero,
-  about : About,
-  service : Service,
-  testimonial : Testimonial,
-  contact : Contact
+for (const path in modules) {
+  const loader = modules[path]
+  if (!loader) continue
+
+  const fileName = path.split('/').pop()
+  if (!fileName) continue
+
+  const name = fileName.replace('.vue', '')
+
+  components[name] = defineAsyncComponent(() =>
+    loader().then((m:any) => m.default)
+  )
 }
 
 const { data } = await useFetch<HomeBuilder>('/api/home-builder/public', {
   default: () => structuredClone(defaultHomeBuilder),
 })
-
 const builder = computed(() => data.value ?? structuredClone(defaultHomeBuilder))
 const layoutOverrides = useLayoutOverrides()
 
-const sectionComponentName = (section: string) => defaultSection[section]
+const sectionComponentName = (section: string) => components[section]
 
 watch(
   () => builder.value.sections,
@@ -45,8 +46,9 @@ onBeforeUnmount(() => {
   <div class="space-y-8">
     <component
       v-for="section in builder.sections"
-      :is="sectionComponentName(section.uid)"
+      :is="sectionComponentName(section.sectionId)"
       :key="section.uid"
     />
+
   </div>
 </template>

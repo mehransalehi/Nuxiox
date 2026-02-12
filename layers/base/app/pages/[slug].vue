@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import type { PageRecord, PageBlock } from '~~/layers/base/types/page-builder'
 
-//import default sections
-import Hero from '../components/sections/Hero.vue'
-import About from '../components/sections/About.vue'
-import Service from '../components/sections/Service.vue'
-import Testimonial from '../components/sections/Testimonial.vue'
-import Contact from '../components/sections/Contact.vue'
+const modules = import.meta.glob('../components/sections/*.vue')
+const components: Record<string, Component> = {}
 
-const defaultSection = {
-  hero : Hero,
-  about : About,
-  service : Service,
-  testimonial : Testimonial,
-  contact : Contact
+for (const path in modules) {
+  const loader = modules[path]
+  if (!loader) continue
+
+  const fileName = path.split('/').pop()
+  if (!fileName) continue
+
+  const name = fileName.replace('.vue', '')
+
+  components[name] = defineAsyncComponent(() =>
+    loader().then((m:any) => m.default)
+  )
 }
+
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
@@ -30,7 +33,7 @@ const layoutOverrides = useLayoutOverrides()
 const { settings } = useSiteSettings()
 
 const sectionComponentName = (block: Extract<PageBlock, { type: 'section' | 'navbar' | 'footer' }>) =>
-  defaultSection[block.sectionId.toLowerCase()]
+  components[block.sectionId]
 
 watch(
   () => page.value?.builder?.blocks ?? [],
