@@ -4,18 +4,19 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+const { t } = useI18n()
+useHead(() => ({ title: t('admin.sidebar.settings') }))
 
 const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/settings', {
   default: () => structuredClone(defaultSettings),
 })
 
 const form = reactive<SiteSettings>(structuredClone(defaultSettings))
-const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog'>('general')
+const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo'>('general')
 const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
 const draggingMenu = ref<{ section: 'navbar' | 'footer'; index: number } | null>(null)
-const { t } = useI18n()
 
 watch(
   () => data.value,
@@ -25,6 +26,7 @@ watch(
     form.navbar = structuredClone(value.navbar)
     form.footer = structuredClone(value.footer)
     form.blog = structuredClone(value.blog)
+    form.seo = structuredClone(value.seo)
   },
   { immediate: true }
 )
@@ -110,8 +112,9 @@ const saveSettings = async () => {
         {{ t('admin.settings.footerTab') }}
       </button>
       <button class="tab" :class="{ 'tab-active': activeTab === 'blog' }" @click="activeTab = 'blog'">
-        Blog
+        {{ t('admin.settings.blogTab') }}
       </button>
+      <button class="tab" :class="{ 'tab-active': activeTab === 'seo' }" @click="activeTab = 'seo'">{{ t('admin.settings.seoTab') }}</button>
     </div>
 
     <div v-if="pending" class="flex items-center gap-2">
@@ -260,27 +263,47 @@ const saveSettings = async () => {
 
     <section v-if="activeTab === 'blog'" class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
-        <h3 class="card-title">Blog & Comments</h3>
+        <h3 class="card-title">{{ t('admin.settings.blogCommentsTitle') }}</h3>
         <label class="label cursor-pointer justify-start gap-3">
           <input v-model="form.blog.commentsEnabled" type="checkbox" class="toggle" />
-          <span class="label-text">Enable comments globally</span>
+          <span class="label-text">{{ t('admin.settings.commentsEnabled') }}</span>
         </label>
         <label class="label cursor-pointer justify-start gap-3">
           <input v-model="form.blog.commentsRequireApproval" type="checkbox" class="toggle" />
-          <span class="label-text">Require admin approval before publish</span>
+          <span class="label-text">{{ t('admin.settings.commentsRequireApproval') }}</span>
         </label>
         <label class="label cursor-pointer justify-start gap-3">
           <input v-model="form.blog.allowAnonymousCommentsByDefault" type="checkbox" class="toggle" />
-          <span class="label-text">Allow guest comments by default</span>
+          <span class="label-text">{{ t('admin.settings.allowAnonymousComments') }}</span>
         </label>
         <label class="form-control">
-          <span class="label-text">reCAPTCHA site key</span>
+          <span class="label-text">{{ t('admin.settings.recaptchaSiteKey') }}</span>
           <input v-model="form.blog.recaptchaSiteKey" class="input input-bordered" type="text" />
         </label>
         <label class="form-control">
-          <span class="label-text">reCAPTCHA secret key</span>
+          <span class="label-text">{{ t('admin.settings.recaptchaSecretKey') }}</span>
           <input v-model="form.blog.recaptchaSecretKey" class="input input-bordered" type="password" />
         </label>
+      </div>
+    </section>
+
+
+    <section v-if="activeTab === 'seo'" class="card bg-base-100 shadow">
+      <div class="card-body space-y-4">
+        <h3 class="card-title">{{ t('admin.settings.seoTitle') }}</h3>
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.siteName') }}</span><input v-model="form.seo.siteName" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.siteUrl') }}</span><input v-model="form.seo.siteUrl" class="input input-bordered" type="url" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.defaultTitle') }}</span><input v-model="form.seo.defaultTitle" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.titleSuffix') }}</span><input v-model="form.seo.titleSuffix" class="input input-bordered" type="text" :placeholder="t('admin.settings.titleSuffix') as any" /></label>
+          <label class="form-control md:col-span-2"><span class="label-text">{{ t('admin.settings.defaultDescription') }}</span><textarea v-model="form.seo.defaultDescription" class="textarea textarea-bordered" rows="2" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.defaultOgImage') }}</span><input v-model="form.seo.defaultOgImage" class="input input-bordered" type="url" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.robotsPolicy') }}</span><input v-model="form.seo.robots" class="input input-bordered" type="text" :placeholder="t('admin.settings.robotsPolicy') as any" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.twitterHandle') }}</span><input v-model="form.seo.twitterHandle" class="input input-bordered" type="text" :placeholder="t('admin.settings.twitterHandle') as any" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.googleVerification') }}</span><input v-model="form.seo.googleSiteVerification" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.bingVerification') }}</span><input v-model="form.seo.bingSiteVerification" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ t('admin.settings.yandexVerification') }}</span><input v-model="form.seo.yandexVerification" class="input input-bordered" type="text" /></label>
+        </div>
       </div>
     </section>
 

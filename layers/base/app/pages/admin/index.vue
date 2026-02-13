@@ -5,9 +5,10 @@ definePageMeta({
   middleware: ['authenticated'],
   layout: 'admin',
 })
+const { t } = useI18n()
+useHead(() => ({ title: t('admin.sidebar.dashboard') }))
 
 const { user, clear: clearSession } = useUserSession() as { user: Ref<UserSession | null>, clear: () => Promise<void> }
-const { t } = useI18n()
 
 async function logout() {
   await clearSession()

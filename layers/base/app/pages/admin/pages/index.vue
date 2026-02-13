@@ -4,6 +4,8 @@ import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 import type { PageRecord } from '~~/layers/base/types/page-builder'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+const { t } = useI18n()
+useHead(() => ({ title: t('admin.sidebar.pages') }))
 
 type PageSummary = Pick<PageRecord, 'id' | 'slug' | 'title' | 'status' | 'createdAt' | 'updatedAt'>
 
@@ -13,7 +15,6 @@ const { data, refresh } = await useFetch<PageSummary[]>('/api/pages', {
 
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
-const { t } = useI18n()
 const creating = ref(false)
 const form = reactive({
   title: '',

@@ -6,6 +6,19 @@ const slug = computed(() => route.params.slug as string)
 
 const { data, refresh } = await useFetch(() => `/api/blog/posts/${slug.value}`)
 const { data: publicSettings } = await useFetch('/api/settings/public')
+const seo = computed(() => (data.value?.post?.seo ?? {}) as Record<string, string>)
+
+useHead(() => ({
+  title: seo.value.title || data.value?.post?.title || publicSettings.value?.seo?.defaultTitle || 'Blog',
+  link: [seo.value.canonical ? { rel: 'canonical', href: seo.value.canonical } : undefined].filter(Boolean),
+  meta: [
+    { name: 'description', content: seo.value.description || data.value?.post?.excerpt || publicSettings.value?.seo?.defaultDescription || '' },
+    { property: 'og:title', content: seo.value.ogTitle || seo.value.title || data.value?.post?.title || '' },
+    { property: 'og:description', content: seo.value.ogDescription || seo.value.description || data.value?.post?.excerpt || '' },
+    { property: 'og:image', content: seo.value.ogImage || data.value?.post?.featuredImage || publicSettings.value?.seo?.defaultOgImage || '' },
+    { name: 'robots', content: seo.value.robots || publicSettings.value?.seo?.robots || 'index,follow' },
+  ].filter((item) => item.content),
+}))
 
 const commentForm = reactive({
   content: '',
@@ -42,7 +55,7 @@ const likeComment = async (id: number) => {
     <header class="space-y-3">
       <h1 class="text-4xl font-bold">{{ data.post.title }}</h1>
       <p class="opacity-70">{{ data.post.excerpt }}</p>
-      <img v-if="data.post.featuredImage" :src="data.post.featuredImage" :alt="data.post.title" class="w-full rounded-xl" />
+      <img v-if="data.post.featuredImage" :src="data.post.featuredImage" :alt="data.post.title" class="w-full rounded-xl" loading="lazy" />
     </header>
 
     <div class="prose max-w-none" v-html="data.post.content" />

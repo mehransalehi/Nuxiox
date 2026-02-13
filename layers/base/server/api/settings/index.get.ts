@@ -32,6 +32,10 @@ export default defineEventHandler(async (event) => {
       ...defaultSettings.blog,
       ...((values.blog as typeof defaultSettings.blog) ?? {}),
     },
+    seo: {
+      ...defaultSettings.seo,
+      ...((values.seo as typeof defaultSettings.seo) ?? {}),
+    },
   }
 
   return response
