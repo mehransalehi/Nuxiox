@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text,index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, index, primaryKey, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { defineTable } from "../../../../server/utils/schema-types";
 import { sql } from "drizzle-orm";
 
@@ -95,4 +95,114 @@ export const pages = defineTable({
       .notNull()
       .defaultNow(),
   }),
+});
+
+export const blogCategories = defineTable({
+  name: "blog_categories",
+  priority: 10,
+  layer,
+  table: sqliteTable(
+    "blog_categories",
+    {
+      id: integer("id").primaryKey({ autoIncrement: true }),
+      name: text("name").notNull().unique(),
+      slug: text("slug").notNull().unique(),
+      description: text("description"),
+      createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+      updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    },
+    (table) => ({
+      slugIdx: index("blog_categories_slug_idx").on(table.slug),
+    })
+  ),
+});
+
+export const blogPosts = defineTable({
+  name: "blog_posts",
+  priority: 10,
+  layer,
+  table: sqliteTable(
+    "blog_posts",
+    {
+      id: integer("id").primaryKey({ autoIncrement: true }),
+      authorId: integer("author_id").references(() => users.table.id, { onDelete: "set null" }),
+      title: text("title").notNull(),
+      slug: text("slug").notNull().unique(),
+      excerpt: text("excerpt"),
+      content: text("content").notNull(),
+      featuredImage: text("featured_image"),
+      status: text("status").$type<"draft" | "published" | "archived">().default("draft").notNull(),
+      allowComments: integer("allow_comments", { mode: "boolean" }).default(true).notNull(),
+      allowAnonymousComments: integer("allow_anonymous_comments", { mode: "boolean" }).default(true).notNull(),
+      publishedAt: integer("published_at", { mode: "timestamp_ms" }),
+      createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+      updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    },
+    (table) => ({
+      slugIdx: index("blog_posts_slug_idx").on(table.slug),
+      statusPublishedIdx: index("blog_posts_status_published_idx").on(table.status, table.publishedAt),
+      authorIdx: index("blog_posts_author_idx").on(table.authorId),
+    })
+  ),
+});
+
+export const blogPostCategories = defineTable({
+  name: "blog_post_categories",
+  priority: 10,
+  layer,
+  table: sqliteTable(
+    "blog_post_categories",
+    {
+      postId: integer("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+      categoryId: integer("category_id").notNull().references(() => blogCategories.table.id, { onDelete: "cascade" }),
+    },
+    (table) => ({
+      pk: primaryKey({ columns: [table.postId, table.categoryId] }),
+      categoryIdx: index("blog_post_categories_category_idx").on(table.categoryId),
+    })
+  ),
+});
+
+export const blogComments = defineTable({
+  name: "blog_comments",
+  priority: 10,
+  layer,
+  table: sqliteTable(
+    "blog_comments",
+    {
+      id: integer("id").primaryKey({ autoIncrement: true }),
+      postId: integer("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+      userId: integer("user_id").references(() => users.table.id, { onDelete: "set null" }),
+      parentId: integer("parent_id"),
+      authorName: text("author_name"),
+      authorEmail: text("author_email"),
+      content: text("content").notNull(),
+      status: text("status").$type<"pending" | "approved" | "rejected">().default("pending").notNull(),
+      likeCount: integer("like_count").default(0).notNull(),
+      createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+      updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    },
+    (table) => ({
+      postStatusIdx: index("blog_comments_post_status_idx").on(table.postId, table.status),
+      parentIdx: index("blog_comments_parent_idx").on(table.parentId),
+    })
+  ),
+});
+
+export const blogCommentLikes = defineTable({
+  name: "blog_comment_likes",
+  priority: 10,
+  layer,
+  table: sqliteTable(
+    "blog_comment_likes",
+    {
+      id: integer("id").primaryKey({ autoIncrement: true }),
+      commentId: integer("comment_id").notNull().references(() => blogComments.table.id, { onDelete: "cascade" }),
+      userId: integer("user_id").notNull().references(() => users.table.id, { onDelete: "cascade" }),
+      createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    },
+    (table) => ({
+      uniqueLikeIdx: uniqueIndex("blog_comment_likes_unique_idx").on(table.commentId, table.userId),
+    })
+  ),
 });

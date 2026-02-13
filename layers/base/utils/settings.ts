@@ -28,10 +28,19 @@ export type FooterSettings = {
   info: InfoItem[]
 }
 
+export type BlogSettings = {
+  commentsEnabled: boolean
+  commentsRequireApproval: boolean
+  allowAnonymousCommentsByDefault: boolean
+  recaptchaSiteKey: string
+  recaptchaSecretKey: string
+}
+
 export type SiteSettings = {
   general: GeneralSettings
   navbar: NavbarSettings
   footer: FooterSettings
+  blog: BlogSettings
 }
 
 export const defaultSettings: SiteSettings = {
@@ -66,4 +75,12 @@ export const defaultSettings: SiteSettings = {
       { key: 'Twitter', value: 'https://twitter.com/example' },
     ],
   },
+  blog: {
+    commentsEnabled: true,
+    commentsRequireApproval: true,
+    allowAnonymousCommentsByDefault: true,
+    recaptchaSiteKey: '',
+    recaptchaSecretKey: '',
+  }
 }
+
