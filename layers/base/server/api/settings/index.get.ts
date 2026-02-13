@@ -28,6 +28,10 @@ export default defineEventHandler(async (event) => {
       ...defaultSettings.footer,
       ...((values.footer as typeof defaultSettings.footer) ?? {}),
     },
+    blog: {
+      ...defaultSettings.blog,
+      ...((values.blog as typeof defaultSettings.blog) ?? {}),
+    },
   }
 
   return response

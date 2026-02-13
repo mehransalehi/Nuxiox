@@ -22,15 +22,20 @@ export default defineEventHandler(async (event) => {
       ...defaultSettings.footer,
       ...(body.footer ?? {}),
     },
+    blog: {
+      ...defaultSettings.blog,
+      ...(body.blog ?? {}),
+    },
   }
 
   const db = useDb(event)
   const now = new Date()
 
   const upsertSetting = async (
-    key: 'general' | 'navbar' | 'footer',
+    key: 'general' | 'navbar' | 'footer' | 'blog',
     value: SiteSettings[keyof SiteSettings],
-    description: string
+    description: string,
+    isPublic = true
   ) => {
     await db
       .insert(settings)
@@ -38,7 +43,7 @@ export default defineEventHandler(async (event) => {
         key,
         value,
         description,
-        isPublic: true,
+        isPublic,
         updatedAt: now,
       })
       .onConflictDoUpdate({
@@ -46,7 +51,7 @@ export default defineEventHandler(async (event) => {
         set: {
           value,
           description,
-          isPublic: true,
+          isPublic,
           updatedAt: now,
         },
       })
@@ -55,6 +60,7 @@ export default defineEventHandler(async (event) => {
   await upsertSetting('general', payload.general, 'General settings')
   await upsertSetting('navbar', payload.navbar, 'Navbar settings')
   await upsertSetting('footer', payload.footer, 'Footer settings')
+  await upsertSetting('blog', payload.blog, 'Blog settings', false)
 
   return { success: true }
 })

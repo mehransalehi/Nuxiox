@@ -29,6 +29,10 @@ const sections = computed(() => [
       { to: '/admin/settings', label: t('admin.sidebar.settings'), icon: 'fa-solid fa-gear' },
       { to: '/admin/home-builder', label: t('admin.sidebar.homeBuilder'), icon: 'fa-solid fa-layer-group' },
       { to: '/admin/pages', label: t('admin.sidebar.pages'), icon: 'fa-solid fa-file-lines' },
+      { to: '/admin/blog', label: t('admin.sidebar.blog'), icon: 'fa-solid fa-blog' },
+      { to: '/admin/blog/categories', label: t('admin.sidebar.blogCategories'), icon: 'fa-solid fa-tags' },
+      { to: '/admin/blog/posts', label: t('admin.sidebar.blogPosts'), icon: 'fa-solid fa-newspaper' },
+      { to: '/admin/blog/comments', label: t('admin.sidebar.blogComments'), icon: 'fa-solid fa-comments' },
     ],
   },
 ])

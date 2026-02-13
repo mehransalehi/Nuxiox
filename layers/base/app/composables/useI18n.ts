@@ -68,6 +68,10 @@ const messages = {
         settings: 'Settings',
         homeBuilder: 'Home Builder',
         pages: 'Pages',
+        blog: 'Blog',
+        blogCategories: 'Blog Categories',
+        blogPosts: 'Blog Posts',
+        blogComments: 'Blog Comments',
         logout: 'Logout',
       },
       topbar: {
@@ -211,6 +215,10 @@ const messages = {
         settings: 'تنظیمات',
         homeBuilder: 'سازنده صفحه اصلی',
         pages: 'صفحات',
+        blog: 'وبلاگ',
+        blogCategories: 'دسته‌بندی وبلاگ',
+        blogPosts: 'نوشته‌های وبلاگ',
+        blogComments: 'دیدگاه‌های وبلاگ',
         logout: 'خروج',
       },
       topbar: {
