@@ -4,6 +4,7 @@ import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 import type { PageRecord } from '~~/layers/base/types/page-builder'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+useHead({ title: 'Admin Pages' })
 
 type PageSummary = Pick<PageRecord, 'id' | 'slug' | 'title' | 'status' | 'createdAt' | 'updatedAt'>
 

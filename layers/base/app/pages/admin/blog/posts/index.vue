@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+useHead({ title: 'Admin Blog Posts' })
 const { data, refresh } = await useFetch('/api/admin/blog/posts', { default: () => [] as any[] })
 
 const removePost = async (id: number) => {

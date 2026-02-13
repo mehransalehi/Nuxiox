@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     ...post,
+    seo: (post.seo ?? {}) as Record<string, string>,
     categoryIds: categories.map((c) => c.categoryId),
   }
 })

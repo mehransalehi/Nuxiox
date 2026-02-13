@@ -5,6 +5,7 @@ definePageMeta({
   middleware: ['authenticated'],
   layout: 'admin',
 })
+useHead({ title: 'Admin Dashboard' })
 
 const { user, clear: clearSession } = useUserSession() as { user: Ref<UserSession | null>, clear: () => Promise<void> }
 const { t } = useI18n()

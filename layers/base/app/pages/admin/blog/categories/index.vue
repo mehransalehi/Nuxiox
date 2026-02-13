@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+useHead({ title: 'Admin Blog Categories' })
 
 const { data, refresh } = await useFetch('/api/admin/blog/categories', { default: () => [] as any[] })
 const form = reactive({ name: '', slug: '', description: '' })

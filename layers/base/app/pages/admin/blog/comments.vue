@@ -1,5 +1,6 @@
 <script setup lang="ts">
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+useHead({ title: 'Admin Blog Comments' })
 
 const { data, refresh } = await useFetch('/api/admin/blog/comments', { default: () => [] as any[] })
 
