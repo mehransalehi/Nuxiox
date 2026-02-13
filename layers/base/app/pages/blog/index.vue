@@ -1,4 +1,6 @@
 <script setup lang="ts">
+useHead({ title: 'Blog' })
+
 const route = useRoute()
 const router = useRouter()
 
@@ -49,7 +51,7 @@ const setPage = async (next: number) => {
 
       <div class="grid gap-4 md:grid-cols-2" v-else>
         <article v-for="post in data?.items || []" :key="post.id" class="card bg-base-100 shadow">
-          <figure v-if="post.featuredImage"><img :src="post.featuredImage" :alt="post.title" class="h-48 w-full object-cover"></figure>
+          <figure v-if="post.featuredImage"><img :src="post.featuredImage" :alt="post.title" class="h-48 w-full object-cover" loading="lazy"></figure>
           <div class="card-body">
             <h2 class="card-title">{{ post.title }}</h2>
             <p class="opacity-70">{{ post.excerpt }}</p>

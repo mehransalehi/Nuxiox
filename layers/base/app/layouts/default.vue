@@ -14,6 +14,14 @@ watch(
 )
 
 useHead(() => ({
+  titleTemplate: settings.value.seo.titleSuffix ? `%s ${settings.value.seo.titleSuffix}` : undefined,
+  meta: [
+    settings.value.seo.defaultDescription ? { name: 'description', content: settings.value.seo.defaultDescription } : undefined,
+    settings.value.seo.robots ? { name: 'robots', content: settings.value.seo.robots } : undefined,
+    settings.value.seo.googleSiteVerification ? { name: 'google-site-verification', content: settings.value.seo.googleSiteVerification } : undefined,
+    settings.value.seo.bingSiteVerification ? { name: 'msvalidate.01', content: settings.value.seo.bingSiteVerification } : undefined,
+    settings.value.seo.yandexVerification ? { name: 'yandex-verification', content: settings.value.seo.yandexVerification } : undefined,
+  ].filter(Boolean),
   htmlAttrs: {
     dir: direction.value,
     lang: locale.value,

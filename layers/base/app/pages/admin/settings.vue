@@ -4,13 +4,14 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+useHead({ title: 'Admin Settings' })
 
 const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/settings', {
   default: () => structuredClone(defaultSettings),
 })
 
 const form = reactive<SiteSettings>(structuredClone(defaultSettings))
-const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog'>('general')
+const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo'>('general')
 const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
@@ -25,6 +26,7 @@ watch(
     form.navbar = structuredClone(value.navbar)
     form.footer = structuredClone(value.footer)
     form.blog = structuredClone(value.blog)
+    form.seo = structuredClone(value.seo)
   },
   { immediate: true }
 )
@@ -112,6 +114,7 @@ const saveSettings = async () => {
       <button class="tab" :class="{ 'tab-active': activeTab === 'blog' }" @click="activeTab = 'blog'">
         Blog
       </button>
+      <button class="tab" :class="{ 'tab-active': activeTab === 'seo' }" @click="activeTab = 'seo'">SEO</button>
     </div>
 
     <div v-if="pending" class="flex items-center gap-2">
@@ -281,6 +284,26 @@ const saveSettings = async () => {
           <span class="label-text">reCAPTCHA secret key</span>
           <input v-model="form.blog.recaptchaSecretKey" class="input input-bordered" type="password" />
         </label>
+      </div>
+    </section>
+
+
+    <section v-if="activeTab === 'seo'" class="card bg-base-100 shadow">
+      <div class="card-body space-y-4">
+        <h3 class="card-title">SEO Settings</h3>
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="form-control"><span class="label-text">Site name</span><input v-model="form.seo.siteName" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">Site URL</span><input v-model="form.seo.siteUrl" class="input input-bordered" type="url" /></label>
+          <label class="form-control"><span class="label-text">Default title</span><input v-model="form.seo.defaultTitle" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">Title suffix</span><input v-model="form.seo.titleSuffix" class="input input-bordered" type="text" placeholder="| Brand" /></label>
+          <label class="form-control md:col-span-2"><span class="label-text">Default description</span><textarea v-model="form.seo.defaultDescription" class="textarea textarea-bordered" rows="2" /></label>
+          <label class="form-control"><span class="label-text">Default OG image URL</span><input v-model="form.seo.defaultOgImage" class="input input-bordered" type="url" /></label>
+          <label class="form-control"><span class="label-text">Robots policy</span><input v-model="form.seo.robots" class="input input-bordered" type="text" placeholder="index,follow" /></label>
+          <label class="form-control"><span class="label-text">Twitter handle</span><input v-model="form.seo.twitterHandle" class="input input-bordered" type="text" placeholder="@account" /></label>
+          <label class="form-control"><span class="label-text">Google verification</span><input v-model="form.seo.googleSiteVerification" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">Bing verification</span><input v-model="form.seo.bingSiteVerification" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">Yandex verification</span><input v-model="form.seo.yandexVerification" class="input input-bordered" type="text" /></label>
+        </div>
       </div>
     </section>
 

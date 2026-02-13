@@ -36,11 +36,26 @@ export type BlogSettings = {
   recaptchaSecretKey: string
 }
 
+export type SeoSettings = {
+  siteName: string
+  siteUrl: string
+  defaultTitle: string
+  titleSuffix: string
+  defaultDescription: string
+  defaultOgImage: string
+  robots: string
+  twitterHandle: string
+  googleSiteVerification: string
+  bingSiteVerification: string
+  yandexVerification: string
+}
+
 export type SiteSettings = {
   general: GeneralSettings
   navbar: NavbarSettings
   footer: FooterSettings
   blog: BlogSettings
+  seo: SeoSettings
 }
 
 export const defaultSettings: SiteSettings = {
@@ -81,6 +96,18 @@ export const defaultSettings: SiteSettings = {
     allowAnonymousCommentsByDefault: true,
     recaptchaSiteKey: '',
     recaptchaSecretKey: '',
-  }
+  },
+  seo: {
+    siteName: 'Nuxiox',
+    siteUrl: '',
+    defaultTitle: 'Nuxiox',
+    titleSuffix: '',
+    defaultDescription: 'Modern website powered by Nuxiox.',
+    defaultOgImage: '',
+    robots: 'index,follow',
+    twitterHandle: '',
+    googleSiteVerification: '',
+    bingSiteVerification: '',
+    yandexVerification: '',
+  },
 }
-

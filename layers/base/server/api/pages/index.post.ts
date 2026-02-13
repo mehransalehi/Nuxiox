@@ -20,13 +20,19 @@ export default defineEventHandler(async (event) => {
 
   const db = useDb(event)
   const now = new Date()
+  const seo = {
+    title: body.title,
+    description: `Learn more about ${body.title}.`,
+    canonical: `/${body.slug}`,
+    robots: 'index,follow',
+  }
   const [created] = await db
     .insert(pages)
     .values({
       title: body.title,
       slug: body.slug,
       status: 'draft',
-      seo: {},
+      seo,
       builder: defaultPageBuilder,
       createdAt: now,
       updatedAt: now,

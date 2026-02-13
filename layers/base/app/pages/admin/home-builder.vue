@@ -5,6 +5,7 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+useHead({ title: 'Admin Home Builder' })
 
 type SectionOption = {
   id: string

@@ -27,6 +27,7 @@ if (error.value) {
 
 const page = computed(() => data.value as PageRecord)
 const layoutOverrides = useLayoutOverrides()
+const { settings } = useSiteSettings()
 
 const sectionComponentName = (block: Extract<PageBlock, { type: 'section' | 'navbar' | 'footer' }>) =>
   defaultSection[block.sectionId.toLowerCase()]
@@ -48,12 +49,17 @@ onBeforeUnmount(() => {
 useHead(() => {
   const seo = (page.value?.seo ?? {}) as Record<string, unknown>
   return {
-    title: typeof seo.title === 'string' ? seo.title : page.value?.title,
-    meta: [
-      typeof seo.description === 'string'
-        ? { name: 'description', content: seo.description }
-        : undefined,
+    title: typeof seo.title === 'string' ? seo.title : page.value?.title || settings.value.seo.defaultTitle,
+    link: [
+      typeof seo.canonical === 'string' && seo.canonical ? { rel: 'canonical', href: seo.canonical } : undefined,
     ].filter(Boolean),
+    meta: [
+      typeof seo.description === 'string' ? { name: 'description', content: seo.description } : { name: 'description', content: settings.value.seo.defaultDescription },
+      { property: 'og:title', content: String(seo.ogTitle ?? seo.title ?? page.value?.title ?? settings.value.seo.defaultTitle) },
+      { property: 'og:description', content: String(seo.ogDescription ?? seo.description ?? settings.value.seo.defaultDescription) },
+      { property: 'og:image', content: String(seo.ogImage ?? settings.value.seo.defaultOgImage ?? '') },
+      { name: 'robots', content: String(seo.robots ?? settings.value.seo.robots) },
+    ].filter((item) => item && item.content),
   }
 })
 </script>
