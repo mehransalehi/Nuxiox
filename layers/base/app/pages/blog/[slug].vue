@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useToastStore } from '~~/layers/base/app/stores/toast'
+
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 
@@ -13,9 +15,10 @@ const commentForm = reactive({
 })
 
 const replyTo = ref<number | null>(null)
+const toastStore = useToastStore()
 
 const postComment = async () => {
-  await $fetch(`/api/blog/posts/${slug.value}/comments`, {
+  const response = await $fetch<{ status: 'pending' | 'approved' }>(`/api/blog/posts/${slug.value}/comments`, {
     method: 'POST',
     body: {
       ...commentForm,
@@ -24,6 +27,7 @@ const postComment = async () => {
   })
   commentForm.content = ''
   replyTo.value = null
+  toastStore.push(response.status === 'pending' ? 'Comment sent successfully. It will be shown after admin approval.' : 'Comment sent successfully.', 'success')
   await refresh()
 }
 

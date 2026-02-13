@@ -4,3 +4,47 @@
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark, cupcake;
 }
+
+.form-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-control .label-text {
+  margin-bottom: 0.45rem;
+  display: inline-block;
+}
+
+@keyframes action-progress {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.animate-action-progress {
+  animation: action-progress 1.2s ease-in-out infinite;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+}

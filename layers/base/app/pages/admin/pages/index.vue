@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useToastStore } from '~~/layers/base/app/stores/toast'
+import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 import type { PageRecord } from '~~/layers/base/types/page-builder'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
@@ -11,6 +12,7 @@ const { data, refresh } = await useFetch<PageSummary[]>('/api/pages', {
 })
 
 const toastStore = useToastStore()
+const loadingStore = useLoadingStore()
 const { t } = useI18n()
 const creating = ref(false)
 const form = reactive({
@@ -21,8 +23,9 @@ const form = reactive({
 const createPage = async () => {
   if (!form.title || !form.slug) return
   creating.value = true
-  try {
-    const page = await $fetch<PageRecord>('/api/pages', {
+  await loadingStore.withActionLoading(async () => {
+    try {
+      const page = await $fetch<PageRecord>('/api/pages', {
       method: 'POST',
       body: { title: form.title, slug: form.slug },
     })
@@ -31,11 +34,12 @@ const createPage = async () => {
     form.slug = ''
     await refresh()
     await navigateTo(`/admin/pages/${page.id}`)
-  } catch (err) {
-    toastStore.push(err instanceof Error ? err.message : t('admin.pages.createFailed'), 'error')
-  } finally {
-    creating.value = false
-  }
+    } catch (err) {
+      toastStore.push(err instanceof Error ? err.message : t('admin.pages.createFailed'), 'error')
+    } finally {
+      creating.value = false
+    }
+  })
 }
 </script>
 

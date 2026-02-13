@@ -23,6 +23,8 @@ useHead(() => ({
 </script>
 
 <template>
+  <UiToastStack />
+
   <div v-if="settings.general.showSidebar" class="drawer lg:drawer-open rtl:drawer-end">
     <input id="main-drawer" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content flex min-h-screen flex-col">
