@@ -5,6 +5,12 @@
   themes: light --default, dark --prefersdark, cupcake;
 }
 
+.form-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
 .form-control .label-text {
   margin-bottom: 0.45rem;
   display: inline-block;

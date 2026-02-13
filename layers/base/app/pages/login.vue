@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { useToastStore } from '~~/layers/base/app/stores/toast'
+import type { UserSession } from '~~/layers/base/types/user-session'
+
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
 const { t } = useI18n()
 const toastStore = useToastStore()
+
+const session = useUserSession() as {
+  user: Ref<UserSession | null>
+  fetch?: () => Promise<void>
+}
 
 const login = async () => {
   errorMessage.value = null
@@ -27,20 +34,24 @@ const login = async () => {
       },
     })
 
-    // Redirect based on role
+    if (session.fetch) {
+      await session.fetch()
+    }
+
     toastStore.push('Login successful.', 'success')
 
     if (res.user.role === 'admin') {
-      await refreshNuxtData()
+      if (import.meta.client) {
+        window.location.assign('/admin')
+        return
+      }
       await navigateTo('/admin', { replace: true })
-    } else {
-      await navigateTo('/', { replace: true })
+      return
     }
+
+    await navigateTo('/', { replace: true })
   } catch (err: any) {
-    errorMessage.value =
-      err?.data?.statusMessage ||
-      err?.message ||
-      t('auth.loginFailed')
+    errorMessage.value = err?.data?.statusMessage || err?.message || t('auth.loginFailed')
   } finally {
     loading.value = false
   }
@@ -57,34 +68,42 @@ const login = async () => {
         {{ t('auth.loginToPanel') }}
       </p>
 
-      <form @submit.prevent="login" class="space-y-4">
-        <!-- Email -->
+      <form class="space-y-4" @submit.prevent="login">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ t('auth.email') }}
           </label>
-          <input v-model="email" type="email" required placeholder="admin@example.com" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+          <input
+            v-model="email"
+            type="email"
+            required
+            placeholder="admin@example.com"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
         </div>
 
-        <!-- Password -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ t('auth.password') }}
           </label>
-          <input v-model="password" type="password" required placeholder="••••••••" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
-                   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+          <input
+            v-model="password"
+            type="password"
+            required
+            placeholder="••••••••"
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
         </div>
 
-        <!-- Error -->
         <div v-if="errorMessage" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
           {{ errorMessage }}
         </div>
 
-        <!-- Submit -->
-        <button type="submit" :disabled="loading" class="w-full flex justify-center items-center rounded-lg
-                 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium
-                 px-4 py-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
+        <button
+          type="submit"
+          :disabled="loading"
+          class="w-full flex justify-center items-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <span v-if="!loading">{{ t('auth.login') }}</span>
           <span v-else class="animate-pulse">{{ t('auth.signingIn') }}</span>
         </button>
