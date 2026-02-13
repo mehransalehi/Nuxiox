@@ -2,6 +2,7 @@
 const { settings } = useSiteSettings()
 const { locale, setLocaleFromSettings, t } = useI18n()
 const layoutOverrides = useLayoutOverrides()
+const route = useRoute()
 
 const direction = computed(() => settings.value.general.direction ?? 'ltr')
 
@@ -14,7 +15,11 @@ watch(
 )
 
 useHead(() => ({
-  titleTemplate: settings.value.seo.titleSuffix ? `%s ${settings.value.seo.titleSuffix}` : undefined,
+  titleTemplate: (titleChunk?: string) => {
+    const defaultTitle = settings.value.seo.defaultTitle || settings.value.seo.siteName
+    if (route.path === '/' || !titleChunk) return defaultTitle
+    return settings.value.seo.titleSuffix ? `${titleChunk} | ${settings.value.seo.titleSuffix}` : titleChunk
+  },
   meta: [
     settings.value.seo.defaultDescription ? { name: 'description', content: settings.value.seo.defaultDescription } : undefined,
     settings.value.seo.robots ? { name: 'robots', content: settings.value.seo.robots } : undefined,

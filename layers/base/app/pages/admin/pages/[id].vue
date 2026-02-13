@@ -5,7 +5,7 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
-useHead({ title: 'Edit Page' })
+useHead(() => ({ title: t('admin.pages.editTitle') }))
 
 type SectionOption = {
   id: string
@@ -197,10 +197,10 @@ const deletePage = async () => {
       </label>
 
       <div class="space-y-2">
-        <div class="flex items-center justify-between"><span class="font-medium">SEO Meta</span><button class="btn btn-sm" type="button" @click="addSeoEntry">Add SEO field</button></div>
+        <div class="flex items-center justify-between"><span class="font-medium">{{ t('common.seoMeta') }}</span><button class="btn btn-sm" type="button" @click="addSeoEntry">{{ t('common.addSeoField') }}</button></div>
         <div v-for="(entry, index) in seoEntries" :key="`seo-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-          <input v-model="entry.key" class="input input-bordered" type="text" placeholder="meta key" />
-          <input v-model="entry.value" class="input input-bordered" type="text" placeholder="meta value" />
+          <input v-model="entry.key" class="input input-bordered" type="text" :placeholder="t('common.metaKey') as any" />
+          <input v-model="entry.value" class="input input-bordered" type="text" :placeholder="t('common.metaValue') as any" />
           <button class="btn btn-ghost btn-square" type="button" @click="removeSeoEntry(index)">✕</button>
         </div>
       </div>

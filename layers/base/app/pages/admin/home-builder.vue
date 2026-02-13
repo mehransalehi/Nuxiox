@@ -5,7 +5,8 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
-useHead({ title: 'Admin Home Builder' })
+const { t } = useI18n()
+useHead(() => ({ title: t('admin.sidebar.homeBuilder') }))
 
 type SectionOption = {
   id: string
@@ -26,7 +27,6 @@ const dragging = ref<number | null>(null)
 const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
-const { t } = useI18n()
 
 watch(
   () => data.value,

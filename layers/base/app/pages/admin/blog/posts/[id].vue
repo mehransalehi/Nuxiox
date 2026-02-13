@@ -3,7 +3,8 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
-useHead({ title: 'Admin Blog Post Editor' })
+const { t } = useI18n()
+useHead(() => ({ title: t('admin.blog.postEditor') }))
 
 const route = useRoute()
 const idParam = computed(() => String(route.params.id))
@@ -82,48 +83,48 @@ const save = async () => {
     const payload = { ...form, seo: toSeoJson() }
     if (isNew.value) {
       const created = await $fetch<{ id: number }>('/api/admin/blog/posts', { method: 'POST', body: payload })
-      toastStore.push('Post created successfully.', 'success')
+      toastStore.push(t('admin.blog.postCreated'), 'success')
       await navigateTo(`/admin/blog/posts/${created.id}`)
       return
     }
 
     await $fetch(`/api/admin/blog/posts/${idParam.value}`, { method: 'PUT', body: payload })
-    toastStore.push('Post saved successfully.', 'success')
+    toastStore.push(t('admin.blog.postSaved'), 'success')
   })
 }
 </script>
 
 <template>
   <div class="space-y-6">
-    <h2 class="text-2xl font-bold">{{ isNew ? 'Create Blog Post' : 'Edit Blog Post' }}</h2>
+    <h2 class="text-2xl font-bold">{{ isNew ? t('admin.blog.createPost') : t('admin.blog.editPost') }}</h2>
 
     <section class="card bg-base-100 shadow"><div class="card-body space-y-4">
       <div class="grid gap-4 md:grid-cols-2">
-        <input v-model="form.title" class="input input-bordered" placeholder="Title" aria-label="Post title" />
-        <input v-model="form.slug" class="input input-bordered" placeholder="slug" aria-label="Post slug" />
+        <input v-model="form.title" class="input input-bordered" :placeholder="t('common.title') as any" aria-label="Post title" />
+        <input v-model="form.slug" class="input input-bordered" :placeholder="t('common.slug') as any" aria-label="Post slug" />
       </div>
 
-      <textarea v-model="form.excerpt" class="textarea textarea-bordered" rows="3" placeholder="Excerpt" aria-label="Post excerpt" />
+      <textarea v-model="form.excerpt" class="textarea textarea-bordered" rows="3" :placeholder="t('admin.blog.excerpt') as any" aria-label="Post excerpt" />
       <AdminQuillEditor v-model="form.content" />
-      <input v-model="form.featuredImage" class="input input-bordered" placeholder="Featured image URL" aria-label="Featured image URL" />
+      <input v-model="form.featuredImage" class="input input-bordered" :placeholder="t('admin.blog.featuredImage') as any" aria-label="Featured image URL" />
 
       <div class="space-y-2">
-        <div class="flex items-center justify-between"><h3 class="font-semibold">SEO Meta</h3><button class="btn btn-xs" @click="seoEntries.push({ key: '', value: '' })">Add field</button></div>
+        <div class="flex items-center justify-between"><h3 class="font-semibold">{{ t('admin.blog.seoMeta') }}</h3><button class="btn btn-xs" @click="seoEntries.push({ key: '', value: '' })">{{ t('admin.blog.addSeoField') }}</button></div>
         <div v-for="(entry, index) in seoEntries" :key="`blog-seo-${index}`" class="grid gap-2 md:grid-cols-[1fr_1fr_auto]">
-          <input v-model="entry.key" class="input input-bordered" placeholder="meta key" />
-          <input v-model="entry.value" class="input input-bordered" placeholder="meta value" />
+          <input v-model="entry.key" class="input input-bordered" :placeholder="t('admin.blog.metaKey') as any" />
+          <input v-model="entry.value" class="input input-bordered" :placeholder="t('admin.blog.metaValue') as any" />
           <button class="btn btn-ghost" @click="seoEntries.splice(index, 1)">✕</button>
         </div>
       </div>
 
       <div class="grid gap-4 md:grid-cols-3">
-        <select v-model="form.status" class="select select-bordered" aria-label="Post status"><option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option></select>
-        <label class="label cursor-pointer justify-start gap-2"><input v-model="form.allowComments" type="checkbox" class="checkbox" /><span>Allow comments</span></label>
-        <label class="label cursor-pointer justify-start gap-2"><input v-model="form.allowAnonymousComments" type="checkbox" class="checkbox" /><span>Allow guest comments</span></label>
+        <select v-model="form.status" class="select select-bordered" :aria-label="t('common.status') as any"><option value="draft">{{ t('common.draft') }}</option><option value="published">{{ t('common.published') }}</option><option value="archived">{{ t('admin.blog.archived') }}</option></select>
+        <label class="label cursor-pointer justify-start gap-2"><input v-model="form.allowComments" type="checkbox" class="checkbox" /><span>{{ t('admin.blog.allowComments') }}</span></label>
+        <label class="label cursor-pointer justify-start gap-2"><input v-model="form.allowAnonymousComments" type="checkbox" class="checkbox" /><span>{{ t('admin.blog.allowGuestComments') }}</span></label>
       </div>
 
       <div>
-        <h3 class="font-semibold mb-2">Categories</h3>
+        <h3 class="font-semibold mb-2">{{ t('admin.blog.categories') }}</h3>
         <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           <label v-for="cat in categories" :key="cat.id" class="label cursor-pointer justify-start gap-2 rounded border px-3 py-2">
             <input v-model="form.categoryIds" type="checkbox" class="checkbox checkbox-sm" :value="cat.id" />
@@ -132,7 +133,7 @@ const save = async () => {
         </div>
       </div>
 
-      <button class="btn btn-primary w-fit" @click="save">Save Post</button>
+      <button class="btn btn-primary w-fit" @click="save">{{ t('admin.blog.savePost') }}</button>
     </div></section>
   </div>
 </template>
