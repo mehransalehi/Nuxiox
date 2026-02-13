@@ -1,5 +1,5 @@
-import { desc, eq } from 'drizzle-orm'
-import { blogComments, blogPosts } from '~~/server/database/schema.gen'
+import { desc, eq, sql } from 'drizzle-orm'
+import { blogCommentLikes, blogComments, blogPosts } from '~~/server/database/schema.gen'
 import { useDb } from '~~/server/utils/db'
 
 export default defineEventHandler(async (event) => {
@@ -16,8 +16,12 @@ export default defineEventHandler(async (event) => {
       authorName: blogComments.authorName,
       createdAt: blogComments.createdAt,
       postTitle: blogPosts.title,
+      likeCount: blogComments.likeCount,
+      likesRows: sql<number>`count(${blogCommentLikes.id})`,
     })
     .from(blogComments)
     .innerJoin(blogPosts, eq(blogPosts.id, blogComments.postId))
+    .leftJoin(blogCommentLikes, eq(blogCommentLikes.commentId, blogComments.id))
+    .groupBy(blogComments.id, blogPosts.title)
     .orderBy(desc(blogComments.createdAt))
 })
