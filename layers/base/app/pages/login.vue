@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useToastStore } from '~~/layers/base/app/stores/toast'
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const errorMessage = ref<string | null>(null)
 const { t } = useI18n()
+const toastStore = useToastStore()
 
 const login = async () => {
   errorMessage.value = null
@@ -26,12 +28,13 @@ const login = async () => {
     })
 
     // Redirect based on role
+    toastStore.push('Login successful.', 'success')
+
     if (res.user.role === 'admin') {
       await refreshNuxtData()
-await nextTick()
-      navigateTo('/admin')
+      await navigateTo('/admin', { replace: true })
     } else {
-      navigateTo('/')
+      await navigateTo('/', { replace: true })
     }
   } catch (err: any) {
     errorMessage.value =
