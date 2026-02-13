@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { useToastStore } from '~~/layers/base/app/stores/toast'
+import { useLoadingStore } from '~~/layers/base/app/stores/loading'
+
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
 const route = useRoute()
 const idParam = computed(() => String(route.params.id))
 const isNew = computed(() => idParam.value === 'new')
+const toastStore = useToastStore()
+const loadingStore = useLoadingStore()
 
 const form = reactive({
   title: '',
@@ -32,13 +37,17 @@ if (!isNew.value) {
 }
 
 const save = async () => {
-  if (isNew.value) {
-    const created = await $fetch<{ id: number }>('/api/admin/blog/posts', { method: 'POST', body: form })
-    await navigateTo(`/admin/blog/posts/${created.id}`)
-    return
-  }
+  await loadingStore.withActionLoading(async () => {
+    if (isNew.value) {
+      const created = await $fetch<{ id: number }>('/api/admin/blog/posts', { method: 'POST', body: form })
+      toastStore.push('Post created successfully.', 'success')
+      await navigateTo(`/admin/blog/posts/${created.id}`)
+      return
+    }
 
-  await $fetch(`/api/admin/blog/posts/${idParam.value}`, { method: 'PUT', body: form })
+    await $fetch(`/api/admin/blog/posts/${idParam.value}`, { method: 'PUT', body: form })
+    toastStore.push('Post saved successfully.', 'success')
+  })
 }
 </script>
 
@@ -53,7 +62,7 @@ const save = async () => {
       </div>
 
       <textarea v-model="form.excerpt" class="textarea textarea-bordered" rows="3" placeholder="Excerpt" />
-      <textarea v-model="form.content" class="textarea textarea-bordered" rows="12" placeholder="Post content (HTML/markdown)" />
+      <AdminTextEditor v-model="form.content" />
       <input v-model="form.featuredImage" class="input input-bordered" placeholder="Featured image URL" />
 
       <div class="grid gap-4 md:grid-cols-3">

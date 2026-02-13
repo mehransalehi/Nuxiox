@@ -2,6 +2,7 @@
 import type { HomeBuilder, HomeSectionItem } from '~~/layers/base/types/page-builder'
 import { defaultHomeBuilder } from '~~/layers/base/utils/page-builder'
 import { useToastStore } from '~~/layers/base/app/stores/toast'
+import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
@@ -23,6 +24,7 @@ const selectedSectionId = ref<string>('')
 const dragging = ref<number | null>(null)
 const saving = ref(false)
 const toastStore = useToastStore()
+const loadingStore = useLoadingStore()
 const { t } = useI18n()
 
 watch(
@@ -73,18 +75,20 @@ const handleDrop = (index: number) => {
 
 const saveBuilder = async () => {
   saving.value = true
-  try {
+  await loadingStore.withActionLoading(async () => {
+    try {
     await $fetch('/api/home-builder', {
       method: 'PUT',
       body: { version: 1, sections: selected.value },
     })
     toastStore.push(t('admin.homeBuilder.saved'), 'success')
     await refresh()
-  } catch (err) {
-    toastStore.push(err instanceof Error ? err.message : t('admin.homeBuilder.failed'), 'error')
-  } finally {
-    saving.value = false
-  }
+    } catch (err) {
+      toastStore.push(err instanceof Error ? err.message : t('admin.homeBuilder.failed'), 'error')
+    } finally {
+      saving.value = false
+    }
+  })
 }
 </script>
 

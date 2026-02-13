@@ -2,6 +2,7 @@
 import type { PageBuilder, PageBlock, PageRecord } from '~~/layers/base/types/page-builder'
 import { defaultPageBuilder } from '~~/layers/base/utils/page-builder'
 import { useToastStore } from '~~/layers/base/app/stores/toast'
+import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
@@ -10,6 +11,8 @@ type SectionOption = {
   label: string
   type: 'section' | 'navbar' | 'footer'
 }
+
+type SeoEntry = { key: string; value: string }
 
 const route = useRoute()
 const pageId = computed(() => route.params.id as string)
@@ -20,12 +23,13 @@ const { data: sectionsData } = await useFetch<{ sections: SectionOption[] }>('/a
 })
 
 const toastStore = useToastStore()
+const loadingStore = useLoadingStore()
 const { t } = useI18n()
 const saving = ref(false)
 const deleting = ref(false)
 const dragging = ref<number | null>(null)
 const selectedSectionId = ref<string>('')
-const seoDraft = ref<string>('{}')
+const seoEntries = ref<SeoEntry[]>([])
 
 const form = reactive<PageRecord>({
   id: 0,
@@ -44,7 +48,8 @@ watch(
     if (!value) return
     Object.assign(form, structuredClone(value))
     if (!form.builder) form.builder = structuredClone(defaultPageBuilder)
-    seoDraft.value = JSON.stringify(form.seo ?? {}, null, 2)
+    seoEntries.value = Object.entries(form.seo ?? {}).map(([key, value]) => ({ key, value: String(value ?? '') }))
+    if (seoEntries.value.length === 0) seoEntries.value = [{ key: '', value: '' }]
   },
   { immediate: true }
 )
@@ -78,6 +83,17 @@ const addTextBlock = () => {
   })
 }
 
+const addSeoEntry = () => {
+  seoEntries.value.push({ key: '', value: '' })
+}
+
+const removeSeoEntry = (index: number) => {
+  seoEntries.value.splice(index, 1)
+  if (seoEntries.value.length === 0) {
+    seoEntries.value.push({ key: '', value: '' })
+  }
+}
+
 const removeBlock = (index: number) => {
   form.builder.blocks.splice(index, 1)
 }
@@ -96,49 +112,55 @@ const handleDrop = (index: number) => {
   dragging.value = null
 }
 
+const toSeoJson = () => {
+  const json: Record<string, string> = {}
+  for (const entry of seoEntries.value) {
+    const key = entry.key.trim()
+    if (!key) continue
+    json[key] = entry.value
+  }
+  return json
+}
+
 const savePage = async () => {
   saving.value = true
-  try {
-    let parsedSeo: Record<string, unknown> = {}
-    if (seoDraft.value.trim()) {
-      try {
-        parsedSeo = JSON.parse(seoDraft.value)
-      } catch (error) {
-        throw new Error('SEO JSON is invalid')
-      }
+  await loadingStore.withActionLoading(async () => {
+    try {
+      await $fetch(`/api/pages/${pageId.value}`, {
+        method: 'PUT',
+        body: {
+          title: form.title,
+          slug: form.slug,
+          status: form.status,
+          seo: toSeoJson(),
+          builder: form.builder,
+        },
+      })
+      toastStore.push(t('admin.pages.saveSuccess'), 'success')
+      await refresh()
+    } catch (err) {
+      toastStore.push(err instanceof Error ? err.message : t('admin.pages.saveFailed'), 'error')
+    } finally {
+      saving.value = false
     }
-    await $fetch(`/api/pages/${pageId.value}`, {
-      method: 'PUT',
-      body: {
-        title: form.title,
-        slug: form.slug,
-        status: form.status,
-        seo: parsedSeo,
-        builder: form.builder,
-      },
-    })
-    toastStore.push(t('admin.pages.saveSuccess'), 'success')
-    await refresh()
-  } catch (err) {
-    toastStore.push(err instanceof Error ? err.message : t('admin.pages.saveFailed'), 'error')
-  } finally {
-    saving.value = false
-  }
+  })
 }
 
 const deletePage = async () => {
   deleting.value = true
-  try {
-    await $fetch(`/api/pages/${pageId.value}`, {
-      method: 'DELETE',
-    })
-    toastStore.push(t('admin.pages.deleteSuccess'), 'success')
-    await navigateTo('/admin/pages')
-  } catch (err) {
-    toastStore.push(err instanceof Error ? err.message : t('admin.pages.deleteFailed'), 'error')
-  } finally {
-    deleting.value = false
-  }
+  await loadingStore.withActionLoading(async () => {
+    try {
+      await $fetch(`/api/pages/${pageId.value}`, {
+        method: 'DELETE',
+      })
+      toastStore.push(t('admin.pages.deleteSuccess'), 'success')
+      await navigateTo('/admin/pages')
+    } catch (err) {
+      toastStore.push(err instanceof Error ? err.message : t('admin.pages.deleteFailed'), 'error')
+    } finally {
+      deleting.value = false
+    }
+  })
 }
 </script>
 
@@ -180,14 +202,18 @@ const deletePage = async () => {
             <option value="published">{{ t('common.published') }}</option>
           </select>
         </label>
-        <label class="form-control">
-          <span class="label-text">{{ t('common.seoJson') }}</span>
-          <textarea
-            v-model="seoDraft"
-            class="textarea textarea-bordered h-32"
-            placeholder='{"title": "About"}'
-          />
-        </label>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-medium">{{ t('common.seoJson') }}</span>
+            <button class="btn btn-sm" type="button" @click="addSeoEntry">Add SEO field</button>
+          </div>
+          <div v-for="(entry, index) in seoEntries" :key="`seo-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+            <input v-model="entry.key" class="input input-bordered" type="text" placeholder="meta key" />
+            <input v-model="entry.value" class="input input-bordered" type="text" placeholder="meta value" />
+            <button class="btn btn-ghost btn-square" type="button" @click="removeSeoEntry(index)">✕</button>
+          </div>
+        </div>
       </div>
     </section>
 

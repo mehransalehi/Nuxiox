@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defaultSettings, type SiteSettings } from '~~/layers/base/utils/settings'
 import { useToastStore } from '~~/layers/base/app/stores/toast'
+import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
@@ -12,6 +13,7 @@ const form = reactive<SiteSettings>(structuredClone(defaultSettings))
 const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog'>('general')
 const saving = ref(false)
 const toastStore = useToastStore()
+const loadingStore = useLoadingStore()
 const draggingMenu = ref<{ section: 'navbar' | 'footer'; index: number } | null>(null)
 const { t } = useI18n()
 
@@ -67,18 +69,20 @@ const handleDrop = (section: 'navbar' | 'footer', index: number) => {
 
 const saveSettings = async () => {
   saving.value = true
-  try {
+  await loadingStore.withActionLoading(async () => {
+    try {
     await $fetch('/api/settings', {
       method: 'PUT',
       body: form,
     })
     toastStore.push(t('admin.settings.settingsSaved'), 'success')
     await refresh()
-  } catch (err) {
-    toastStore.push(err instanceof Error ? err.message : t('admin.settings.settingsFailed'), 'error')
-  } finally {
-    saving.value = false
-  }
+    } catch (err) {
+      toastStore.push(err instanceof Error ? err.message : t('admin.settings.settingsFailed'), 'error')
+    } finally {
+      saving.value = false
+    }
+  })
 }
 </script>
 
