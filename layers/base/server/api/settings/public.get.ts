@@ -37,5 +37,13 @@ export default defineEventHandler(async (event) => {
       ...defaultSettings.seo,
       ...((values.seo as typeof defaultSettings.seo) ?? {}),
     },
+    theme: {
+      ...defaultSettings.theme,
+      ...((values.theme as typeof defaultSettings.theme) ?? {}),
+    },
+    about: {
+      ...defaultSettings.about,
+      ...((values.about as typeof defaultSettings.about) ?? {}),
+    },
   }
 })

@@ -12,11 +12,16 @@ const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/set
 })
 
 const form = reactive<SiteSettings>(structuredClone(defaultSettings))
-const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo'>('general')
+const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo' | 'theme' | 'about'>('general')
 const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
 const draggingMenu = ref<{ section: 'navbar' | 'footer'; index: number } | null>(null)
+
+const defaultTheme = structuredClone(defaultSettings.theme)
+const resetTheme = () => {
+  form.theme = structuredClone(defaultTheme)
+}
 
 watch(
   () => data.value,
@@ -27,6 +32,8 @@ watch(
     form.footer = structuredClone(value.footer)
     form.blog = structuredClone(value.blog)
     form.seo = structuredClone(value.seo)
+    form.theme = structuredClone(value.theme)
+    form.about = structuredClone(value.about)
   },
   { immediate: true }
 )
@@ -42,6 +49,9 @@ const removeFooterMenu = (index: number) => form.footer.menus.splice(index, 1)
 
 const addFooterInfo = () => form.footer.info.push({ key: '', value: '' })
 const removeFooterInfo = (index: number) => form.footer.info.splice(index, 1)
+
+const addAboutInfo = () => form.about.info.push({ key: '', value: '' })
+const removeAboutInfo = (index: number) => form.about.info.splice(index, 1)
 
 const reorderMenus = (section: 'navbar' | 'footer', fromIndex: number, toIndex: number) => {
   const menus = form[section].menus
@@ -115,6 +125,8 @@ const saveSettings = async () => {
         {{ t('admin.settings.blogTab') }}
       </button>
       <button class="tab" :class="{ 'tab-active': activeTab === 'seo' }" @click="activeTab = 'seo'">{{ t('admin.settings.seoTab') }}</button>
+      <button class="tab" :class="{ 'tab-active': activeTab === 'theme' }" @click="activeTab = 'theme'">{{ t('admin.settings.themeTab') }}</button>
+      <button class="tab" :class="{ 'tab-active': activeTab === 'about' }" @click="activeTab = 'about'">{{ t('admin.settings.aboutTab') }}</button>
     </div>
 
     <div v-if="pending" class="flex items-center gap-2">
@@ -303,6 +315,48 @@ const saveSettings = async () => {
           <label class="form-control"><span class="label-text">{{ t('admin.settings.googleVerification') }}</span><input v-model="form.seo.googleSiteVerification" class="input input-bordered" type="text" /></label>
           <label class="form-control"><span class="label-text">{{ t('admin.settings.bingVerification') }}</span><input v-model="form.seo.bingSiteVerification" class="input input-bordered" type="text" /></label>
           <label class="form-control"><span class="label-text">{{ t('admin.settings.yandexVerification') }}</span><input v-model="form.seo.yandexVerification" class="input input-bordered" type="text" /></label>
+        </div>
+      </div>
+    </section>
+
+    <section v-if="activeTab === 'theme'" class="card bg-base-100 shadow">
+      <div class="card-body space-y-4">
+        <h3 class="card-title">{{ t('admin.settings.themeTitle') }}</h3>
+        <label class="form-control"><span class="label-text">{{ t('admin.settings.themePreset') }}</span>
+          <select v-model="form.theme.preset" class="select select-bordered">
+            <option value="light">light</option><option value="dark">dark</option><option value="winter">winter</option><option value="cupcake">cupcake</option><option value="dracula">dracula</option>
+          </select>
+        </label>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div>
+            <h4 class="font-semibold mb-2">{{ t('admin.settings.lightPalette') }}</h4>
+            <label class="form-control"><span class="label-text">Primary</span><input v-model="form.theme.light.primary" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Secondary</span><input v-model="form.theme.light.secondary" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Accent</span><input v-model="form.theme.light.accent" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Neutral</span><input v-model="form.theme.light.neutral" type="color" class="input input-bordered h-10" /></label>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-2">{{ t('admin.settings.darkPalette') }}</h4>
+            <label class="form-control"><span class="label-text">Primary</span><input v-model="form.theme.dark.primary" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Secondary</span><input v-model="form.theme.dark.secondary" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Accent</span><input v-model="form.theme.dark.accent" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Neutral</span><input v-model="form.theme.dark.neutral" type="color" class="input input-bordered h-10" /></label>
+          </div>
+        </div>
+        <button class="btn" @click="resetTheme">{{ t('admin.settings.resetTheme') }}</button>
+      </div>
+    </section>
+
+    <section v-if="activeTab === 'about'" class="card bg-base-100 shadow">
+      <div class="card-body space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="card-title">{{ t('admin.settings.aboutTitle') }}</h3>
+          <button class="btn btn-sm" @click="addAboutInfo">{{ t('common.addInfo') }}</button>
+        </div>
+        <div v-for="(info, index) in form.about.info" :key="`about-info-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+          <input v-model="info.key" class="input input-bordered" type="text" :placeholder="t('common.label') as any" />
+          <input v-model="info.value" class="input input-bordered" type="text" :placeholder="t('common.valueOrUrl') as any" />
+          <button class="btn btn-ghost btn-square" @click="removeAboutInfo(index)">✕</button>
         </div>
       </div>
     </section>

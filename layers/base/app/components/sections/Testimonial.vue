@@ -1,3 +1,16 @@
+<script setup lang="ts">
+const { t } = useI18n()
+const { data } = await useFetch('/api/testimonials/public', { default: () => [] as any[] })
+</script>
 <template>
-    <div class="text-4xl text-center w-full py-20 border">Testimonial Section</div>
+  <section class="space-y-6">
+    <h2 class="text-3xl font-bold text-center">{{ t('sections.testimonials.title') }}</h2>
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <article v-for="item in data" :key="item.id" class="card bg-base-100 shadow"><div class="card-body">
+        <p class="text-lg">“{{ item.content }}”</p>
+        <p class="font-semibold">{{ item.name }}</p>
+        <p class="text-sm opacity-70">{{ item.role }}</p>
+      </div></article>
+    </div>
+  </section>
 </template>

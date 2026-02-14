@@ -80,6 +80,10 @@ const messages = {
         blogCategories: 'Blog Categories',
         blogPosts: 'Blog Posts',
         blogComments: 'Blog Comments',
+        services: 'Services',
+        colleagues: 'Colleagues',
+        testimonials: 'Testimonials',
+        contactMessages: 'Contact Messages',
         logout: 'Logout',
       },
       topbar: {
@@ -102,12 +106,17 @@ const messages = {
         noUser: 'No user loaded',
         logout: 'Logout',
         overview: 'Overview',
-        overviewBody:
-          'This is the main content section where each admin page details can be rendered inside the reusable admin base layout.',
-        revenue: 'Revenue',
-        orders: 'Orders',
-        users: 'Users',
-        conversion: 'Conversion',
+        overviewBody: 'Monitor your website performance and content growth from one place.',
+        usersCount: 'Users',
+        pagesCount: 'Pages',
+        postsCount: 'Blog posts',
+        newContacts: 'Contact messages',
+        colleaguesCount: 'Colleagues',
+        servicesCount: 'Services',
+        seoCompletion: 'SEO completion',
+        lastBlogPostDate: 'Last blog post date',
+        quickHealth: 'Quick health indicator for your content activity.',
+        notAvailable: 'Not available',
       },
       settings: {
         title: 'Settings',
@@ -147,6 +156,14 @@ const messages = {
         googleVerification: 'Google verification',
         bingVerification: 'Bing verification',
         yandexVerification: 'Yandex verification',
+        themeTab: 'Theme',
+        themeTitle: 'Theme settings',
+        themePreset: 'DaisyUI preset',
+        lightPalette: 'Light palette',
+        darkPalette: 'Dark palette',
+        resetTheme: 'Reset to default',
+        aboutTab: 'About',
+        aboutTitle: 'About section info',
       },
       homeBuilder: {
         title: 'Home Page Builder',
@@ -170,6 +187,16 @@ const messages = {
         builder: 'Page Builder',
         addSectionHint: 'Add sections or text blocks, then drag to reorder.',
         empty: 'No pages created yet.',
+      },
+      modules: {
+        services: 'Services',
+        colleagues: 'Colleagues',
+        testimonials: 'Testimonials',
+        contactMessages: 'Contact Messages',
+        createItem: 'Create item',
+        editItem: 'Edit item',
+        extraInfo: 'Extra key/value',
+        active: 'Active',
       },
       blog: {
         title: 'Blog Management',
@@ -208,6 +235,25 @@ const messages = {
         pending: 'Pending',
         clearLikes: 'Clear likes',
       },
+    },
+    sections: {
+      about: {
+        title: 'About us',
+        description: 'Get to know us better through these facts.'
+      },
+      services: { title: 'Services' },
+      colleagues: { title: 'Colleagues' },
+      testimonials: { title: 'Testimonials' },
+      contact: {
+        title: 'Contact us',
+        required: 'Please fill required fields',
+        success: 'Message sent successfully',
+        failed: 'Unable to send your message right now. Please try again later.',
+        send: 'Send message'
+      },
+      comments: {
+        required: 'Please fill name, email and comment before submitting.'
+      }
     },
     page: {
       homeTitle: 'THIS IS INDEX',
@@ -292,6 +338,10 @@ const messages = {
         blogCategories: 'دسته‌بندی وبلاگ',
         blogPosts: 'نوشته‌های وبلاگ',
         blogComments: 'دیدگاه‌های وبلاگ',
+        services: 'خدمات',
+        colleagues: 'همکاران',
+        testimonials: 'نظرات مشتریان',
+        contactMessages: 'پیام‌های تماس',
         logout: 'خروج',
       },
       topbar: {
@@ -314,12 +364,17 @@ const messages = {
         noUser: 'کاربری بارگذاری نشده است',
         logout: 'خروج',
         overview: 'نمای کلی',
-        overviewBody:
-          'این بخش اصلی است که در آن جزئیات صفحات مدیریت در قالب پایه نمایش داده می‌شوند.',
-        revenue: 'درآمد',
-        orders: 'سفارش‌ها',
-        users: 'کاربران',
-        conversion: 'نرخ تبدیل',
+        overviewBody: 'عملکرد وب‌سایت و رشد محتوا را از یک صفحه مدیریت کنید.',
+        usersCount: 'کاربران',
+        pagesCount: 'صفحات',
+        postsCount: 'نوشته‌های وبلاگ',
+        newContacts: 'پیام‌های تماس',
+        colleaguesCount: 'همکاران',
+        servicesCount: 'خدمات',
+        seoCompletion: 'تکمیل سئو',
+        lastBlogPostDate: 'تاریخ آخرین نوشته وبلاگ',
+        quickHealth: 'نمای سریع از وضعیت فعالیت محتوای سایت.',
+        notAvailable: 'موجود نیست',
       },
       settings: {
         title: 'تنظیمات',
@@ -359,6 +414,14 @@ const messages = {
         googleVerification: 'تأیید گوگل',
         bingVerification: 'تأیید بینگ',
         yandexVerification: 'تأیید یاندکس',
+        themeTab: 'پوسته',
+        themeTitle: 'تنظیمات پوسته',
+        themePreset: 'تم آماده DaisyUI',
+        lightPalette: 'پالت روشن',
+        darkPalette: 'پالت تیره',
+        resetTheme: 'بازنشانی به پیش‌فرض',
+        aboutTab: 'درباره ما',
+        aboutTitle: 'اطلاعات بخش درباره ما',
       },
       homeBuilder: {
         title: 'سازنده صفحه اصلی',
@@ -382,6 +445,16 @@ const messages = {
         builder: 'سازنده صفحه',
         addSectionHint: 'بخش‌ها یا متن را اضافه کرده و مرتب کنید.',
         empty: 'هنوز صفحه‌ای ایجاد نشده است.',
+      },
+      modules: {
+        services: 'خدمات',
+        colleagues: 'همکاران',
+        testimonials: 'نظرات مشتریان',
+        contactMessages: 'پیام‌های تماس',
+        createItem: 'ایجاد آیتم',
+        editItem: 'ویرایش آیتم',
+        extraInfo: 'اطلاعات کلید/مقدار',
+        active: 'فعال',
       },
       blog: {
         title: 'مدیریت وبلاگ',
@@ -420,6 +493,25 @@ const messages = {
         pending: 'در انتظار',
         clearLikes: 'پاک‌کردن لایک‌ها',
       },
+    },
+    sections: {
+      about: {
+        title: 'درباره ما',
+        description: 'از طریق این اطلاعات بیشتر با ما آشنا شوید.'
+      },
+      services: { title: 'خدمات' },
+      colleagues: { title: 'همکاران' },
+      testimonials: { title: 'نظرات مشتریان' },
+      contact: {
+        title: 'تماس با ما',
+        required: 'لطفا فیلدهای الزامی را تکمیل کنید',
+        success: 'پیام با موفقیت ارسال شد',
+        failed: 'در حال حاضر امکان ارسال پیام نیست. لطفاً بعداً دوباره تلاش کنید.',
+        send: 'ارسال پیام'
+      },
+      comments: {
+        required: 'لطفا نام، ایمیل و نظر را پیش از ارسال وارد کنید.'
+      }
     },
     page: {
       homeTitle: 'این صفحه اصلی است',
