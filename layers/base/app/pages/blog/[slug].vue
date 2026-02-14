@@ -29,8 +29,13 @@ const commentForm = reactive({
 
 const replyTo = ref<number | null>(null)
 const toastStore = useToastStore()
+const { t } = useI18n()
 
 const postComment = async () => {
+  if (!commentForm.content.trim() || !commentForm.authorName.trim() || !commentForm.authorEmail.trim()) {
+    toastStore.push(t('sections.comments.required'), 'error')
+    return
+  }
   const response = await $fetch<{ status: 'pending' | 'approved' }>(`/api/blog/posts/${slug.value}/comments`, {
     method: 'POST',
     body: {
@@ -39,6 +44,8 @@ const postComment = async () => {
     },
   })
   commentForm.content = ''
+  commentForm.authorName = ''
+  commentForm.authorEmail = ''
   replyTo.value = null
   toastStore.push(response.status === 'pending' ? 'Comment sent successfully. It will be shown after admin approval.' : 'Comment sent successfully.', 'success')
   await refresh()

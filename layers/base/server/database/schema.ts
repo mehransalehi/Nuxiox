@@ -97,6 +97,78 @@ export const pages = defineTable({
   }),
 });
 
+
+export const services = defineTable({
+  name: "services",
+  priority: 10,
+  layer,
+  table: sqliteTable("services", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    subtitle: text("subtitle"),
+    description: text("description"),
+    icon: text("icon"),
+    image: text("image"),
+    link: text("link"),
+    sortOrder: integer("sort_order").default(0).notNull(),
+    isActive: integer("is_active", { mode: "boolean" }).default(true).notNull(),
+    extra: text("extra", { mode: "json" }).notNull().default(sql`'[]'`),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+  }),
+});
+
+export const colleagues = defineTable({
+  name: "colleagues",
+  priority: 10,
+  layer,
+  table: sqliteTable("colleagues", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    subtitle: text("subtitle"),
+    description: text("description"),
+    icon: text("icon"),
+    image: text("image"),
+    link: text("link"),
+    sortOrder: integer("sort_order").default(0).notNull(),
+    isActive: integer("is_active", { mode: "boolean" }).default(true).notNull(),
+    extra: text("extra", { mode: "json" }).notNull().default(sql`'[]'`),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+  }),
+});
+
+export const testimonials = defineTable({
+  name: "testimonials",
+  priority: 10,
+  layer,
+  table: sqliteTable("testimonials", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    name: text("name").notNull(),
+    role: text("role"),
+    content: text("content").notNull(),
+    avatar: text("avatar"),
+    rating: integer("rating").default(5).notNull(),
+    isActive: integer("is_active", { mode: "boolean" }).default(true).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+  }),
+});
+
+export const contactMessages = defineTable({
+  name: "contact_messages",
+  priority: 10,
+  layer,
+  table: sqliteTable("contact_messages", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    subject: text("subject"),
+    message: text("message").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+  }),
+});
+
 export const blogCategories = defineTable({
   name: "blog_categories",
   priority: 10,

@@ -5,6 +5,7 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+const { t } = useI18n()
 useHead(() => ({ title: t('admin.pages.editTitle') }))
 
 type SectionOption = {
@@ -25,7 +26,6 @@ const { data: sectionsData } = await useFetch<{ sections: SectionOption[] }>('/a
 
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
-const { t } = useI18n()
 const saving = ref(false)
 const deleting = ref(false)
 const dragging = ref<number | null>(null)
