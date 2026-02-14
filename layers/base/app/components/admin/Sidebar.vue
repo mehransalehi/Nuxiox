@@ -33,6 +33,10 @@ const sections = computed(() => [
       { to: '/admin/blog/categories', label: t('admin.sidebar.blogCategories'), icon: 'fa-solid fa-tags' },
       { to: '/admin/blog/posts', label: t('admin.sidebar.blogPosts'), icon: 'fa-solid fa-newspaper' },
       { to: '/admin/blog/comments', label: t('admin.sidebar.blogComments'), icon: 'fa-solid fa-comments' },
+      { to: '/admin/services', label: t('admin.sidebar.services'), icon: 'fa-solid fa-briefcase' },
+      { to: '/admin/colleagues', label: t('admin.sidebar.colleagues'), icon: 'fa-solid fa-user-group' },
+      { to: '/admin/testimonials', label: t('admin.sidebar.testimonials'), icon: 'fa-solid fa-quote-left' },
+      { to: '/admin/contact-messages', label: t('admin.sidebar.contactMessages'), icon: 'fa-solid fa-envelope' },
     ],
   },
 ])

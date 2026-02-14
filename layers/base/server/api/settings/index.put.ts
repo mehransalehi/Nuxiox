@@ -30,13 +30,21 @@ export default defineEventHandler(async (event) => {
       ...defaultSettings.seo,
       ...(body.seo ?? {}),
     },
+    theme: {
+      ...defaultSettings.theme,
+      ...(body.theme ?? {}),
+    },
+    about: {
+      ...defaultSettings.about,
+      ...(body.about ?? {}),
+    },
   }
 
   const db = useDb(event)
   const now = new Date()
 
   const upsertSetting = async (
-    key: 'general' | 'navbar' | 'footer' | 'blog' | 'seo',
+    key: 'general' | 'navbar' | 'footer' | 'blog' | 'seo' | 'theme' | 'about',
     value: SiteSettings[keyof SiteSettings],
     description: string,
     isPublic = true
@@ -66,6 +74,8 @@ export default defineEventHandler(async (event) => {
   await upsertSetting('footer', payload.footer, 'Footer settings')
   await upsertSetting('blog', payload.blog, 'Blog settings', false)
   await upsertSetting('seo', payload.seo, 'SEO settings')
+  await upsertSetting('theme', payload.theme, 'Theme settings')
+  await upsertSetting('about', payload.about, 'About section settings')
 
   return { success: true }
 })

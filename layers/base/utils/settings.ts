@@ -50,12 +50,38 @@ export type SeoSettings = {
   yandexVerification: string
 }
 
+export type AboutSettings = {
+  info: InfoItem[]
+}
+
 export type SiteSettings = {
   general: GeneralSettings
   navbar: NavbarSettings
   footer: FooterSettings
   blog: BlogSettings
   seo: SeoSettings
+  theme: ThemeSettings
+  about: AboutSettings
+}
+
+export type ThemePalette = {
+  primary: string
+  secondary: string
+  accent: string
+  neutral: string
+}
+
+export type ThemeSettings = {
+  preset: string
+  light: ThemePalette
+  dark: ThemePalette
+}
+
+export const defaultThemePalette: ThemePalette = {
+  primary: '#570df8',
+  secondary: '#f000b8',
+  accent: '#37cdbe',
+  neutral: '#3d4451',
 }
 
 export const defaultSettings: SiteSettings = {
@@ -109,5 +135,16 @@ export const defaultSettings: SiteSettings = {
     googleSiteVerification: '',
     bingSiteVerification: '',
     yandexVerification: '',
+  },
+  theme: {
+    preset: 'light',
+    light: { ...defaultThemePalette },
+    dark: { ...defaultThemePalette },
+  },
+  about: {
+    info: [
+      { key: 'Experience', value: '10+ years' },
+      { key: 'Projects', value: '120+' },
+    ],
   },
 }

@@ -80,6 +80,10 @@ const messages = {
         blogCategories: 'Blog Categories',
         blogPosts: 'Blog Posts',
         blogComments: 'Blog Comments',
+        services: 'Services',
+        colleagues: 'Colleagues',
+        testimonials: 'Testimonials',
+        contactMessages: 'Contact Messages',
         logout: 'Logout',
       },
       topbar: {
@@ -147,6 +151,14 @@ const messages = {
         googleVerification: 'Google verification',
         bingVerification: 'Bing verification',
         yandexVerification: 'Yandex verification',
+        themeTab: 'Theme',
+        themeTitle: 'Theme settings',
+        themePreset: 'DaisyUI preset',
+        lightPalette: 'Light palette',
+        darkPalette: 'Dark palette',
+        resetTheme: 'Reset to default',
+        aboutTab: 'About',
+        aboutTitle: 'About section info',
       },
       homeBuilder: {
         title: 'Home Page Builder',
@@ -170,6 +182,16 @@ const messages = {
         builder: 'Page Builder',
         addSectionHint: 'Add sections or text blocks, then drag to reorder.',
         empty: 'No pages created yet.',
+      },
+      modules: {
+        services: 'Services',
+        colleagues: 'Colleagues',
+        testimonials: 'Testimonials',
+        contactMessages: 'Contact Messages',
+        createItem: 'Create item',
+        editItem: 'Edit item',
+        extraInfo: 'Extra key/value',
+        active: 'Active',
       },
       blog: {
         title: 'Blog Management',
@@ -208,6 +230,24 @@ const messages = {
         pending: 'Pending',
         clearLikes: 'Clear likes',
       },
+    },
+    sections: {
+      about: {
+        title: 'About us',
+        description: 'Get to know us better through these facts.'
+      },
+      services: { title: 'Services' },
+      colleagues: { title: 'Colleagues' },
+      testimonials: { title: 'Testimonials' },
+      contact: {
+        title: 'Contact us',
+        required: 'Please fill required fields',
+        success: 'Message sent successfully',
+        send: 'Send message'
+      },
+      comments: {
+        required: 'Please fill name, email and comment before submitting.'
+      }
     },
     page: {
       homeTitle: 'THIS IS INDEX',
@@ -292,6 +332,10 @@ const messages = {
         blogCategories: 'دسته‌بندی وبلاگ',
         blogPosts: 'نوشته‌های وبلاگ',
         blogComments: 'دیدگاه‌های وبلاگ',
+        services: 'خدمات',
+        colleagues: 'همکاران',
+        testimonials: 'نظرات مشتریان',
+        contactMessages: 'پیام‌های تماس',
         logout: 'خروج',
       },
       topbar: {
@@ -359,6 +403,14 @@ const messages = {
         googleVerification: 'تأیید گوگل',
         bingVerification: 'تأیید بینگ',
         yandexVerification: 'تأیید یاندکس',
+        themeTab: 'پوسته',
+        themeTitle: 'تنظیمات پوسته',
+        themePreset: 'تم آماده DaisyUI',
+        lightPalette: 'پالت روشن',
+        darkPalette: 'پالت تیره',
+        resetTheme: 'بازنشانی به پیش‌فرض',
+        aboutTab: 'درباره ما',
+        aboutTitle: 'اطلاعات بخش درباره ما',
       },
       homeBuilder: {
         title: 'سازنده صفحه اصلی',
@@ -382,6 +434,16 @@ const messages = {
         builder: 'سازنده صفحه',
         addSectionHint: 'بخش‌ها یا متن را اضافه کرده و مرتب کنید.',
         empty: 'هنوز صفحه‌ای ایجاد نشده است.',
+      },
+      modules: {
+        services: 'خدمات',
+        colleagues: 'همکاران',
+        testimonials: 'نظرات مشتریان',
+        contactMessages: 'پیام‌های تماس',
+        createItem: 'ایجاد آیتم',
+        editItem: 'ویرایش آیتم',
+        extraInfo: 'اطلاعات کلید/مقدار',
+        active: 'فعال',
       },
       blog: {
         title: 'مدیریت وبلاگ',
@@ -420,6 +482,24 @@ const messages = {
         pending: 'در انتظار',
         clearLikes: 'پاک‌کردن لایک‌ها',
       },
+    },
+    sections: {
+      about: {
+        title: 'درباره ما',
+        description: 'از طریق این اطلاعات بیشتر با ما آشنا شوید.'
+      },
+      services: { title: 'خدمات' },
+      colleagues: { title: 'همکاران' },
+      testimonials: { title: 'نظرات مشتریان' },
+      contact: {
+        title: 'تماس با ما',
+        required: 'لطفا فیلدهای الزامی را تکمیل کنید',
+        success: 'پیام با موفقیت ارسال شد',
+        send: 'ارسال پیام'
+      },
+      comments: {
+        required: 'لطفا نام، ایمیل و نظر را پیش از ارسال وارد کنید.'
+      }
     },
     page: {
       homeTitle: 'این صفحه اصلی است',
