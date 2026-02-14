@@ -106,12 +106,17 @@ const messages = {
         noUser: 'No user loaded',
         logout: 'Logout',
         overview: 'Overview',
-        overviewBody:
-          'This is the main content section where each admin page details can be rendered inside the reusable admin base layout.',
-        revenue: 'Revenue',
-        orders: 'Orders',
-        users: 'Users',
-        conversion: 'Conversion',
+        overviewBody: 'Monitor your website performance and content growth from one place.',
+        usersCount: 'Users',
+        pagesCount: 'Pages',
+        postsCount: 'Blog posts',
+        newContacts: 'Contact messages',
+        colleaguesCount: 'Colleagues',
+        servicesCount: 'Services',
+        seoCompletion: 'SEO completion',
+        lastBlogPostDate: 'Last blog post date',
+        quickHealth: 'Quick health indicator for your content activity.',
+        notAvailable: 'Not available',
       },
       settings: {
         title: 'Settings',
@@ -243,6 +248,7 @@ const messages = {
         title: 'Contact us',
         required: 'Please fill required fields',
         success: 'Message sent successfully',
+        failed: 'Unable to send your message right now. Please try again later.',
         send: 'Send message'
       },
       comments: {
@@ -358,12 +364,17 @@ const messages = {
         noUser: 'کاربری بارگذاری نشده است',
         logout: 'خروج',
         overview: 'نمای کلی',
-        overviewBody:
-          'این بخش اصلی است که در آن جزئیات صفحات مدیریت در قالب پایه نمایش داده می‌شوند.',
-        revenue: 'درآمد',
-        orders: 'سفارش‌ها',
-        users: 'کاربران',
-        conversion: 'نرخ تبدیل',
+        overviewBody: 'عملکرد وب‌سایت و رشد محتوا را از یک صفحه مدیریت کنید.',
+        usersCount: 'کاربران',
+        pagesCount: 'صفحات',
+        postsCount: 'نوشته‌های وبلاگ',
+        newContacts: 'پیام‌های تماس',
+        colleaguesCount: 'همکاران',
+        servicesCount: 'خدمات',
+        seoCompletion: 'تکمیل سئو',
+        lastBlogPostDate: 'تاریخ آخرین نوشته وبلاگ',
+        quickHealth: 'نمای سریع از وضعیت فعالیت محتوای سایت.',
+        notAvailable: 'موجود نیست',
       },
       settings: {
         title: 'تنظیمات',
@@ -495,6 +506,7 @@ const messages = {
         title: 'تماس با ما',
         required: 'لطفا فیلدهای الزامی را تکمیل کنید',
         success: 'پیام با موفقیت ارسال شد',
+        failed: 'در حال حاضر امکان ارسال پیام نیست. لطفاً بعداً دوباره تلاش کنید.',
         send: 'ارسال پیام'
       },
       comments: {

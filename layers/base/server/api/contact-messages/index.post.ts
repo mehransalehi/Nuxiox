@@ -11,6 +11,22 @@ const schema = z.object({
 
 export default defineEventHandler(async (event) => {
   const body = schema.parse(await readBody(event))
-  await useDb(event).insert(contactMessages).values(body)
-  return { success: true }
+
+  try {
+    await useDb(event).insert(contactMessages).values(body)
+    return { success: true }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : ''
+    if (message.includes('no such table')) {
+      throw createError({
+        statusCode: 503,
+        statusMessage: 'Contact messages service is temporarily unavailable',
+      })
+    }
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Unable to save contact message',
+    })
+  }
 })
