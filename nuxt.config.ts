@@ -28,6 +28,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  extends: ['./layers/denti'],
+  extends: ['./layers/denti-one'],
   watch: ['layers/**/*'],
 })

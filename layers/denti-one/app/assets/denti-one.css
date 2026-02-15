@@ -1,0 +1,39 @@
+@keyframes denti-one-gradient-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+@keyframes denti-one-marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.scroll-reveal {
+  animation: denti-one-reveal both;
+  animation-timeline: view();
+  animation-range: entry 10% cover 35%;
+}
+
+@keyframes denti-one-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.denti-one-gradient-title {
+  background-image: linear-gradient(90deg, #8ddcff, #2fbcff, #8ddcff, #2fa9ef);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: denti-one-gradient-shift 8s linear infinite;
+}
+
+.denti-one-marquee-track {
+  animation: denti-one-marquee 22s linear infinite;
+}
