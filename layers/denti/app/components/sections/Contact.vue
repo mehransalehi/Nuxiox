@@ -30,7 +30,7 @@ const send = async () => {
 </script>
 
 <template>
-  <section class="rounded-3xl bg-base-200/60 p-6 md:p-8">
+  <section class="scroll-reveal rounded-3xl bg-base-200/60 p-6 md:p-8">
     <div class="grid gap-6 lg:grid-cols-[1fr_280px]">
       <div class="space-y-4">
         <h2 class="text-4xl font-bold">{{ t('sections.contact.title') }}</h2>
