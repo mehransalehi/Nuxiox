@@ -43,6 +43,13 @@
       "when": 1771008378273,
       "tag": "0005_worthless_venus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1771235819282,
+      "tag": "0006_flaky_veda",
+      "breakpoints": true
     }
   ]
 }

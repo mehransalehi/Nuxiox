@@ -2,7 +2,7 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
-  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils', '@pinia/nuxt'],
+  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils', '@pinia/nuxt', '@nuxt/image'],
 
   nitro: {
     preset: 'cloudflare-module',
@@ -28,6 +28,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  extends: ['./layers/denti-one'],
+  extends: ['./layers/dentist'],
   watch: ['layers/**/*'],
 })

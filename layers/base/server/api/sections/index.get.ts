@@ -6,7 +6,7 @@ type SectionItem = {
   label: string
   type: 'section' | 'navbar' | 'footer'
 }
-
+const layerName = process.env.NUXT_LAYER || 'base'
 const toLabel = (value: string) =>
   value
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
 
-  const sectionsDir = path.resolve(process.cwd(), 'layers/base/app/components/sections')
+  const sectionsDir = path.resolve(process.cwd(), `layers/${layerName}/app/components/sections`)
   const entries = await fs.readdir(sectionsDir)
 
   const sections: SectionItem[] = entries
