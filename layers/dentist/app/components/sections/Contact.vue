@@ -51,25 +51,80 @@ const send = async () => {
   <section class="bg-white py-20">
     <div class="mx-auto max-w-6xl px-6">
       <div class="text-center" data-animate>
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-primary">get in touch</p>
-        <h2 class="mt-2 text-4xl font-extrabold text-slate-800">Book Your Appointment</h2>
+        <UiTopTitle>get in touch</UiTopTitle>
+        <UiTitle>Book Your Appointment</UiTitle>
+        <UiSubTitle>Ready for a healthier smile? Fill in the form below and we'll get back to you<br> within 24 hours.
+        </UiSubTitle>
       </div>
 
-      <div class="mt-10 grid gap-8 md:grid-cols-3">
-        <div class="space-y-4" data-animate>
-          <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm"><i class="fa-solid fa-location-dot text-primary"></i> 123 Smile Street, NY</div>
-          <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm"><i class="fa-solid fa-phone text-primary"></i> +1 (555) 101-9999</div>
-          <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm"><i class="fa-solid fa-envelope text-primary"></i> hello@denti.com</div>
-        </div>
+      <div class="mt-10 grid gap-8 md:grid-cols-3 grid-cols-1">
+        <ul class="list rounded-box mt-4">
+          <li class="list-row group items-center hover:bg-primary/3 transition-all duration-500 cursor-pointer">
+            <div class="h-15 aspect-square flex justify-center items-center rounded-2xl bg-primary/10 text-primary text-3xl">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div class="flex justify-center items-start flex-col">
+              <div class="text-lg uppercase font-semibold opacity-60">Location</div>
+              <div>123 Smile Street, NY</div>
+            </div>
+          </li>
+          <li class="list-row group items-center hover:bg-primary/3 transition-all duration-500 cursor-pointer">
+            <div class="h-15 aspect-square flex justify-center items-center rounded-2xl bg-primary/10 text-primary text-3xl">
+              <i class="fa-solid fa-phone"></i>
+            </div>
+            <div class="flex justify-center items-start flex-col">
+              <div class="text-lg uppercase font-semibold opacity-60">Phone</div>
+              <div>123 Smile Street, NY</div>
+            </div>
+          </li>
+          <li class="list-row group items-center hover:bg-primary/3 transition-all duration-500 cursor-pointer">
+            <div class="h-15 aspect-square flex justify-center items-center rounded-2xl bg-primary/10 text-primary text-3xl">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="flex justify-center items-start flex-col">
+              <div class="text-lg uppercase font-semibold opacity-60">Email</div>
+              <div>123 Smile Street, NY</div>
+            </div>
+          </li>
+          <li class="list-row group items-center hover:bg-primary/3 transition-all duration-500 cursor-pointer">
+            <div class="h-15 aspect-square flex justify-center items-center rounded-2xl bg-primary/10 text-primary text-3xl">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="flex justify-center items-start flex-col">
+              <div class="text-lg uppercase font-semibold opacity-60">Hours</div>
+              <div>123 Smile Street, NY</div>
+            </div>
+          </li>
+
+        </ul>
+        <!-- <div class="space-y-4" data-animate>
+          <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm"> 123 Smile Street, NY</div>
+          <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm"><i
+              class="fa-solid fa-phone text-primary"></i> +1 (555) 101-9999</div>
+          <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm"><i
+              class="fa-solid fa-envelope text-primary"></i> hello@denti.com</div>
+        </div> -->
         <form class="card col-span-2 bg-slate-100 p-6 shadow" data-animate>
-          <div class="grid gap-4 md:grid-cols-2">
-            <input class="input input-bordered w-full bg-white" placeholder="Full Name">
-            <input class="input input-bordered w-full bg-white" placeholder="Phone">
-            <input class="input input-bordered w-full bg-white" placeholder="Email">
-            <input class="input input-bordered w-full bg-white" placeholder="Date">
+          <div class="grid gap-x-2 md:grid-cols-2">
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Full Name</legend>
+              <input type="text" class="input w-full" placeholder="Full Name" />
+            </fieldset>
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Email</legend>
+              <input type="text" class="input w-full" placeholder="Email" />
+            </fieldset>
+            <fieldset class="fieldset col-span-2">
+              <legend class="fieldset-legend">Subject</legend>
+              <input type="text" class="input w-full" placeholder="Subject" />
+            </fieldset>
+            <fieldset class="fieldset col-span-2">
+              <legend class="fieldset-legend">Message</legend>
+              <textarea class="textarea textarea-bordered mt-4 w-full bg-white" rows="4"
+                placeholder="Message"></textarea>
+            </fieldset>
           </div>
-          <textarea class="textarea textarea-bordered mt-4 w-full bg-white" rows="4" placeholder="Message"></textarea>
-          <button class="btn btn-primary mt-4 text-white">Book an Appointment</button>
+          <button class="btn btn-primary btn-xl mt-4 text-white text-[16px] rounded-xl">Book an Appointment</button>
         </form>
       </div>
     </div>

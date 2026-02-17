@@ -52,44 +52,40 @@ const tags = ['Braces', 'Denta Care', 'Dentist', 'Dentures', 'Invisalign', 'Teet
 
 
 
-  <section class="bg-linear-to-br from-[#b9f3e8] via-[#8ae6d7] to-[#5ad9c8]">
-    <div class="mx-auto grid min-h-screen max-w-6xl gap-8 px-6 pb-10 pt-28 md:grid-cols-2 md:items-center ">
-      <div data-animate>
-        <p class="text-xs font-bold uppercase tracking-[0.28em] text-primary">we care for your smile</p>
-        <h1 class="mt-3 text-5xl font-black leading-tight text-slate-900 md:text-6xl">Making Better<br>Smile.</h1>
+  <section class="bg-linear-to-t from-primary/60 via-primary/30 to-primary/10">
+    <div class="mx-auto grid min-h-screen max-w-6xl px-6 pt-28 md:grid-cols-2 md:items-center relative overflow-hidden">
+      <div class="w-full">
+        <UiTopTitle>we care for your smile</UiTopTitle>
+        <h1 class="mt-3 text-4xl font-black leading-tight text-slate-900 md:text-6xl">Making Better<br>Smile.</h1>
         <p class="mt-5 max-w-md text-sm text-slate-700">
           Experience world-class dentistry and friendly care designed to keep your confidence bright and healthy.
         </p>
-        <div class="mt-7 flex gap-3">
-          <button
-            class="btn btn-neutral rounded-full text-white hover-float shadow hover:shadow-xl scale-100 hover:scale-105 transition-all py-6 px-8">Book
-            An Appointment</button>
-          <button
-            class="btn rounded-full shadow hover:shadow-xl scale-100 hover:scale-105 transition-all py-6 px-8">Learn
-            More</button>
+        <div class="mt-7 flex gap-3 flex-col md:flex-row">
+          <UiButton class="btn-neutral md:w-auto w-2/3">Book An Appointment</UiButton>
+          <UiButton class="md:w-auto w-2/3">Learn More</UiButton>
         </div>
         <div class="stats mt-8 bg-transparent shadow-none overflow-hidden">
           <div class="stat px-4 hover:scale-110 hover:rotate-1 transition-all">
-            <div class="stat-title text-slate-800 text-3xl font-bold">15k+</div>
+            <div class="stat-title text-slate-800 md:text-3xl text-xl font-bold">15k+</div>
             <div class="stat-desc">Happy Patients</div>
           </div>
           <div class="stat px-4 hover:scale-110 hover:rotate-1 transition-all">
-            <div class="stat-title text-slate-800 text-3xl font-bold">20+</div>
+            <div class="stat-title text-slate-800 md:text-3xl text-xl font-bold">20+</div>
             <div class="stat-desc">Years Experience</div>
           </div>
           <div class="stat px-4 hover:scale-110 hover:rotate-1 transition-all">
-            <div class="stat-title text-slate-800 text-3xl font-bold">98%</div>
+            <div class="stat-title text-slate-800 md:text-3xl text-xl font-bold">98%</div>
             <div class="stat-desc">Positive Feedback</div>
           </div>
         </div>
       </div>
 
       <div class="relative" data-animate>
-        <NuxtImg class="h-full aspect-[1.2/1.5] rounded-2xl object-cover shadow-soft hover-float shadow-xl hover:rotate-2 transition-all -rotate-2"
+        <NuxtImg class="md:h-full md:aspect-[1.2/1.5] rounded-2xl object-cover shadow-soft hover-float shadow-xl hover:rotate-2 transition-all md:-rotate-2"
           src="https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=900&q=80"
           alt="Dental consultation" />
         <div
-          class="glass absolute -bottom-5 -left-6 rounded-2xl text-xs font-semibold h-20 p-4 flex justify-center items-center hover:scale-110 transition-all">
+          class="glass absolute -bottom-5 md:-left-6 left-6 rounded-2xl text-xs font-semibold h-20 p-4 flex justify-center items-center hover:scale-110 transition-all">
           <div class=" bg-primary/10 aspect-square h-10 me-2 flex justify-center items-center rounded-full text-2xl">
             <i class="fa-solid fa-tooth text-primary"></i>
           </div>

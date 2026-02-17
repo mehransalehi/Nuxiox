@@ -34,15 +34,17 @@ onBeforeUnmount(() => {
       'fixed inset-x-0 top-0 z-50 transition-all duration-300 py-3',
       scrolled ? 'bg-white/95 shadow-md backdrop-blur-md' : 'bg-transparent'
     ]">
-      <div class="navbar mx-auto max-w-6xl px-6 py-4 grid grid-cols-5" data-animate>
-        <div class="col-span-1">
-          <NuxtLink class="text-xl font-black text-slate-900"><i class="fa-solid fa-tooth mr-2 text-primary"></i>Denti
+      <div class="navbar mx-auto max-w-6xl px-6 py-4 grid md:grid-cols-5 grid-cols-5 md:gap-0 gap-1" data-animate>
+        <div class="md:col-span-1 col-span-2">
+          <NuxtLink class="text-xl font-black text-slate-900">
+            <i class="fa-solid fa-tooth mr-2 text-primary"></i>Denti
           </NuxtLink>
         </div>
         <div class="hidden gap-8 md:flex col-span-3 justify-center">
           <UiLink v-for="menu in props.menus" :key="menu.label" :to-link="menu.href">{{ menu.label }}</UiLink>
         </div>
-        <NuxtLink to="/contact" class="btn btn-primary btn-sm rounded-full text-white col-span-1 h-10">Book an Appointment
+        <NuxtLink to="/contact" class="hidden md:flex btn btn-primary btn-sm rounded-full text-white md:col-span-1 col-span-2 h-10">
+          Book an Appointment
         </NuxtLink>
       </div>
     </div>
