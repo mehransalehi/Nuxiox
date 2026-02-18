@@ -29,6 +29,9 @@ export const useI18n = () => {
     }
   }
 
+  const appConfig = useAppConfig()
+  const messages = computed(() => defu(appConfig.i18n?.messages ?? {}, baseMessages))
+
   const t = (key: string) => {
     const current = baseMessages[locale.value] as Record<string, any>
     const value = getValueByPath(current, key)
