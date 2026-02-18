@@ -1,8 +1,5 @@
 type Locale = 'en' | 'fa'
-import { baseMessages } from '../i18n/messages'
-
-
-const messages = baseMessages
+import { baseMessages } from '~/i18n/messages'
 
 const getValueByPath = (obj: Record<string, any>, path: string) =>
   path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), obj)
@@ -33,7 +30,7 @@ export const useI18n = () => {
   }
 
   const t = (key: string) => {
-    const current = messages[locale.value] as Record<string, any>
+    const current = baseMessages[locale.value] as Record<string, any>
     const value = getValueByPath(current, key)
     return value ?? key
   }
