@@ -1,6 +1,5 @@
 type Locale = 'en' | 'fa'
-import { baseMessages } from '../i18n/messages'
-import { defu } from 'defu'
+import { baseMessages } from '~/i18n/messages'
 
 const getValueByPath = (obj: Record<string, any>, path: string) =>
   path.split('.').reduce((acc, key) => (acc ? acc[key] : undefined), obj)
@@ -34,7 +33,7 @@ export const useI18n = () => {
   const messages = computed(() => defu(appConfig.i18n?.messages ?? {}, baseMessages))
 
   const t = (key: string) => {
-    const current = messages.value[locale.value] as Record<string, any>
+    const current = baseMessages[locale.value] as Record<string, any>
     const value = getValueByPath(current, key)
     return value ?? key
   }
