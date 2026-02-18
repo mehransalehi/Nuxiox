@@ -28,6 +28,7 @@ CREATE TABLE `blog_comments` (
 	`author_name` text,
 	`author_email` text,
 	`content` text NOT NULL,
+	`seo` text DEFAULT '{}' NOT NULL,
 	`status` text DEFAULT 'pending' NOT NULL,
 	`like_count` integer DEFAULT 0 NOT NULL,
 	`created_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL,
@@ -54,6 +55,7 @@ CREATE TABLE `blog_posts` (
 	`slug` text NOT NULL,
 	`excerpt` text,
 	`content` text NOT NULL,
+	`seo` text DEFAULT '{}' NOT NULL,
 	`featured_image` text,
 	`status` text DEFAULT 'draft' NOT NULL,
 	`allow_comments` integer DEFAULT true NOT NULL,
@@ -67,4 +69,90 @@ CREATE TABLE `blog_posts` (
 CREATE UNIQUE INDEX `blog_posts_slug_unique` ON `blog_posts` (`slug`);--> statement-breakpoint
 CREATE INDEX `blog_posts_slug_idx` ON `blog_posts` (`slug`);--> statement-breakpoint
 CREATE INDEX `blog_posts_status_published_idx` ON `blog_posts` (`status`,`published_at`);--> statement-breakpoint
-CREATE INDEX `blog_posts_author_idx` ON `blog_posts` (`author_id`);
+CREATE INDEX `blog_posts_author_idx` ON `blog_posts` (`author_id`);--> statement-breakpoint
+CREATE TABLE `colleagues` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`title` text NOT NULL,
+	`subtitle` text,
+	`description` text,
+	`icon` text,
+	`image` text,
+	`link` text,
+	`sort_order` integer DEFAULT 0 NOT NULL,
+	`is_active` integer DEFAULT true NOT NULL,
+	`extra` text DEFAULT '[]' NOT NULL,
+	`created_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `contact_messages` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL,
+	`email` text NOT NULL,
+	`subject` text,
+	`message` text NOT NULL,
+	`created_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `pages` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`slug` text NOT NULL,
+	`title` text NOT NULL,
+	`status` text DEFAULT 'draft' NOT NULL,
+	`seo` text NOT NULL,
+	`builder` text NOT NULL,
+	`created_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `pages_slug_unique` ON `pages` (`slug`);--> statement-breakpoint
+CREATE TABLE `services` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`title` text NOT NULL,
+	`subtitle` text,
+	`description` text,
+	`icon` text,
+	`image` text,
+	`link` text,
+	`sort_order` integer DEFAULT 0 NOT NULL,
+	`is_active` integer DEFAULT true NOT NULL,
+	`extra` text DEFAULT '[]' NOT NULL,
+	`created_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `settings` (
+	`key` text PRIMARY KEY NOT NULL,
+	`value` text NOT NULL,
+	`description` text,
+	`is_public` integer DEFAULT true NOT NULL,
+	`created_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL
+);
+--> statement-breakpoint
+CREATE INDEX `settings_is_public_idx` ON `settings` (`is_public`);--> statement-breakpoint
+CREATE TABLE `testimonials` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL,
+	`role` text,
+	`content` text NOT NULL,
+	`avatar` text,
+	`rating` integer DEFAULT 5 NOT NULL,
+	`is_active` integer DEFAULT true NOT NULL,
+	`created_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL,
+	`updated_at` integer DEFAULT (cast((julianday('now') - 2440587.5)*86400000 as integer)) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `users` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`username` text NOT NULL,
+	`email` text NOT NULL,
+	`password_hash` text,
+	`token` text,
+	`role` text DEFAULT 'user' NOT NULL,
+	`created_at` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL,
+	`updated_at` text DEFAULT (CURRENT_TIMESTAMP) NOT NULL
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);--> statement-breakpoint
+CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);

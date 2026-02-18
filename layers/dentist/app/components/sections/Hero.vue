@@ -56,7 +56,7 @@ const tags = ['Braces', 'Denta Care', 'Dentist', 'Dentures', 'Invisalign', 'Teet
     <div class="mx-auto grid min-h-screen max-w-6xl px-6 pt-28 md:grid-cols-2 md:items-center relative overflow-hidden">
       <div class="w-full">
         <UiTopTitle>we care for your smile</UiTopTitle>
-        <h1 class="mt-3 text-4xl font-black leading-tight text-slate-900 md:text-6xl">Making Better<br>Smile.</h1>
+        <h1 class="mt-3 text-4xl font-black leading-tight text-slate-900 md:text-6xl">{{ t('site.brand') }}Making Better<br>Smile.</h1>
         <p class="mt-5 max-w-md text-sm text-slate-700">
           Experience world-class dentistry and friendly care designed to keep your confidence bright and healthy.
         </p>
