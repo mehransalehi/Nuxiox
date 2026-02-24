@@ -4,7 +4,7 @@ import { defu } from 'defu'
 export const baseMessages = defu({
   en: {
     site: {
-      brand: 'Dashboard',
+      brand: 'HHHHHH',
     },
   },
   fa: {
