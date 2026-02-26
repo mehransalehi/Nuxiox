@@ -2,7 +2,7 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
-  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils', '@pinia/nuxt', '@nuxt/image'],
+  modules: ['nitro-cloudflare-dev', 'nuxt-auth-utils', '@pinia/nuxt', '@nuxt/image', '@nuxtjs/i18n'],
 
   nitro: {
     preset: 'cloudflare-module',
@@ -23,6 +23,14 @@ export default defineNuxtConfig({
     },
   },
 
+  i18n: {
+    defaultLocale: 'en',
+    strategy: 'no_prefix',
+    locales: [
+      { code: 'en', name: 'English', file: 'en.json' },
+      { code: 'fa', name: 'Persian', file: 'fa.json' }
+    ]
+  },
 
   vite: {
     plugins: [tailwindcss()],

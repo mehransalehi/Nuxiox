@@ -1,18 +1,18 @@
 <script setup lang="ts">
 const { settings } = useSiteSettings()
-const { locale, setLocaleFromSettings, t } = useI18n()
+const { locale, setLocale} = useI18n()
 const layoutOverrides = useLayoutOverrides()
 const route = useRoute()
 
 const direction = computed(() => settings.value.general.direction ?? 'ltr')
 
-watch(
+/*watch(
   () => settings.value.general.language,
   (value) => {
-    setLocaleFromSettings(value)
+    setLocale(value)
   },
   { immediate: true }
-)
+)*/
 
 useHead(() => ({
   titleTemplate: (titleChunk?: string) => {
@@ -61,7 +61,7 @@ useHead(() => ({
       />
     </div>
     <div class="drawer-side">
-      <label for="main-drawer" :aria-label="t('common.closeSidebar') as any" class="drawer-overlay" />
+      <label for="main-drawer" :aria-label="$t('common.closeSidebar') as any" class="drawer-overlay" />
       <SiteSidebar :menus="settings.navbar.menus" />
     </div>
   </div>

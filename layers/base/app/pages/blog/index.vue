@@ -55,7 +55,7 @@ const setPage = async (next: number) => {
           <div class="card-body">
             <h2 class="card-title">{{ post.title }}</h2>
             <p class="opacity-70">{{ post.excerpt }}</p>
-            <NuxtLink :to="`/blog/${post.slug}`" class="btn btn-primary btn-sm w-fit">Read more</NuxtLink>
+            <NuxtLink :to="$localePath(`/blog/${post.slug}`)" class="btn btn-primary btn-sm w-fit">Read more</NuxtLink>
           </div>
         </article>
       </div>

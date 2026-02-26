@@ -29,11 +29,11 @@ const commentForm = reactive({
 
 const replyTo = ref<number | null>(null)
 const toastStore = useToastStore()
-const { t } = useI18n()
+
 
 const postComment = async () => {
   if (!commentForm.content.trim() || !commentForm.authorName.trim() || !commentForm.authorEmail.trim()) {
-    toastStore.push(t('sections.comments.required'), 'error')
+    toastStore.push($t('sections.comments.required'), 'error')
     return
   }
   const response = await $fetch<{ status: 'pending' | 'approved' }>(`/api/blog/posts/${slug.value}/comments`, {

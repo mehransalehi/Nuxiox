@@ -62,7 +62,7 @@ const setPage = async (next: number) => {
           <div class="space-y-3 p-5">
             <h2 class="line-clamp-2 text-xl font-bold">{{ post.title }}</h2>
             <p class="line-clamp-3 text-sm opacity-70">{{ post.excerpt }}</p>
-            <NuxtLink :to="`/blog/${post.slug}`" class="btn btn-sm rounded-full border-none bg-sky-500 text-white hover:bg-sky-600">Read more</NuxtLink>
+            <NuxtLink :to="$localePath(`/blog/${post.slug}`)" class="btn btn-sm rounded-full border-none bg-sky-500 text-white hover:bg-sky-600">Read more</NuxtLink>
           </div>
         </article>
       </div>

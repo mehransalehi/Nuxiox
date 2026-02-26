@@ -10,7 +10,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-const { t } = useI18n()
+
 
 const isLinkValue = (value: string) =>
   value.startsWith('http://') ||
@@ -29,7 +29,7 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
         for="main-drawer"
         class="btn btn-ghost btn-square lg:hidden"
       >
-        <span class="sr-only">{{ t('site.toggleSidebar') }}</span>
+        <span class="sr-only">{{ $t('site.toggleSidebar') }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -50,14 +50,14 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
           class="hidden h-8 w-auto dark:block"
         />
         <span v-if="!props.lightLogo && !props.darkLogo" class="text-lg font-semibold">
-          {{ t('site.brand') }}
+          {{ $t('site.brand') }}
         </span>
       </NuxtLink>
 
       <nav class="hidden lg:block">
         <ul class="menu menu-horizontal px-1">
           <li v-for="menu in props.menus" :key="menu.label">
-            <NuxtLink :to="menu.href">{{ menu.label }}</NuxtLink>
+            <NuxtLink :to="$localePath(menu.href)">{{ menu.label }}</NuxtLink>
           </li>
         </ul>
       </nav>
@@ -79,7 +79,7 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
 
     <div class="dropdown ltr:dropdown-end rtl:dropdown-start lg:hidden">
       <label tabindex="0" class="btn btn-ghost btn-circle">
-        <span class="sr-only">{{ t('site.openMenu') }}</span>
+        <span class="sr-only">{{ $t('site.openMenu') }}</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -87,7 +87,7 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
       </label>
       <ul tabindex="0" class="menu dropdown-content mt-3 w-52 rounded-box bg-base-100 p-2 shadow">
         <li v-for="menu in props.menus" :key="menu.label">
-          <NuxtLink :to="menu.href">{{ menu.label }}</NuxtLink>
+          <NuxtLink :to="$localePath(menu.href)">{{ menu.label }}</NuxtLink>
         </li>
       </ul>
     </div>

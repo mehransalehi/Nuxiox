@@ -5,6 +5,9 @@ import { defaultHomeBuilder } from '~~/layers/base/utils/page-builder'
 const modules = import.meta.glob('../components/sections/*.vue')
 const components: Record<string, Component> = {}
 
+const { locale, locales } = useI18n()
+console.log(locale,locales);
+
 for (const path in modules) {
   const loader = modules[path]
   if (!loader) continue

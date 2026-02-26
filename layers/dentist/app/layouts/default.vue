@@ -1,19 +1,19 @@
 <script setup lang="ts">
 const { settings } = useSiteSettings()
-const { locale, setLocaleFromSettings, t } = useI18n()
+const { locale, setLocale} = useI18n()
 const layoutOverrides = useLayoutOverrides()
 const route = useRoute()
 
 const direction = computed(() => settings.value.general.direction ?? 'ltr')
 const fontClass = computed(() => (locale.value === 'fa' ? 'font-[Vazirmatn,sans-serif]' : 'font-[Inter,sans-serif]'))
 
-watch(
+/*watch(
   () => settings.value.general.language,
   (value) => {
-    setLocaleFromSettings(value)
+    setLocale(value)
   },
   { immediate: true }
-)
+)*/
 
 useHead(() => ({
   titleTemplate: (titleChunk?: string) => {

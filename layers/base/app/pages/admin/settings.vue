@@ -4,12 +4,14 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
-const { t } = useI18n()
-useHead(() => ({ title: t('admin.sidebar.settings') }))
+
+useHead(() => ({ title: $t('admin.sidebar.settings') }))
 
 const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/settings', {
   default: () => structuredClone(defaultSettings),
 })
+const { locale, locales,setLocale } = useI18n()
+const switchLocalePath = useSwitchLocalePath()
 
 const form = reactive<SiteSettings>(structuredClone(defaultSettings))
 const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo' | 'theme' | 'about'>('general')
@@ -22,6 +24,10 @@ const defaultTheme = structuredClone(defaultSettings.theme)
 const resetTheme = () => {
   form.theme = structuredClone(defaultTheme)
 }
+
+const availableLocales = computed(() => {
+  return locales.value.filter(i => i.code !== locale.value)
+})
 
 watch(
   () => data.value,
@@ -81,16 +87,17 @@ const handleDrop = (section: 'navbar' | 'footer', index: number) => {
 
 const saveSettings = async () => {
   saving.value = true
+  setLocale(form.general.language)
   await loadingStore.withActionLoading(async () => {
     try {
-    await $fetch('/api/settings', {
-      method: 'PUT',
-      body: form,
-    })
-    toastStore.push(t('admin.settings.settingsSaved'), 'success')
-    await refresh()
+      await $fetch('/api/settings', {
+        method: 'PUT',
+        body: form,
+      })
+      toastStore.push($t('admin.settings.settingsSaved'), 'success')
+      await refresh()
     } catch (err) {
-      toastStore.push(err instanceof Error ? err.message : t('admin.settings.settingsFailed'), 'error')
+      toastStore.push(err instanceof Error ? err.message : $t('admin.settings.settingsFailed'), 'error')
     } finally {
       saving.value = false
     }
@@ -102,60 +109,65 @@ const saveSettings = async () => {
   <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">{{ t('admin.settings.title') }}</h2>
-        <p class="opacity-70">{{ t('admin.settings.description') }}</p>
+        <h2 class="text-2xl font-bold">{{ $t('admin.settings.title') }}</h2>
+        <p class="opacity-70">{{ $t('admin.settings.description') }}</p>
       </div>
       <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="saveSettings">
         <span v-if="saving" class="loading loading-spinner"></span>
-        {{ t('common.saveSettings') }}
+        {{ $t('common.saveSettings') }}
       </button>
     </div>
 
     <div class="tabs tabs-boxed border border-base-300 bg-base-100 p-1">
       <button class="tab" :class="{ 'tab-active': activeTab === 'general' }" @click="activeTab = 'general'">
-        {{ t('admin.settings.generalTab') }}
+        {{ $t('admin.settings.generalTab') }}
       </button>
       <button class="tab" :class="{ 'tab-active': activeTab === 'navbar' }" @click="activeTab = 'navbar'">
-        {{ t('admin.settings.navbarTab') }}
+        {{ $t('admin.settings.navbarTab') }}
       </button>
       <button class="tab" :class="{ 'tab-active': activeTab === 'footer' }" @click="activeTab = 'footer'">
-        {{ t('admin.settings.footerTab') }}
+        {{ $t('admin.settings.footerTab') }}
       </button>
       <button class="tab" :class="{ 'tab-active': activeTab === 'blog' }" @click="activeTab = 'blog'">
-        {{ t('admin.settings.blogTab') }}
+        {{ $t('admin.settings.blogTab') }}
       </button>
-      <button class="tab" :class="{ 'tab-active': activeTab === 'seo' }" @click="activeTab = 'seo'">{{ t('admin.settings.seoTab') }}</button>
-      <button class="tab" :class="{ 'tab-active': activeTab === 'theme' }" @click="activeTab = 'theme'">{{ t('admin.settings.themeTab') }}</button>
-      <button class="tab" :class="{ 'tab-active': activeTab === 'about' }" @click="activeTab = 'about'">{{ t('admin.settings.aboutTab') }}</button>
+      <button class="tab" :class="{ 'tab-active': activeTab === 'seo' }" @click="activeTab = 'seo'">{{
+        $t('admin.settings.seoTab') }}</button>
+      <button class="tab" :class="{ 'tab-active': activeTab === 'theme' }" @click="activeTab = 'theme'">{{
+        $t('admin.settings.themeTab') }}</button>
+      <button class="tab" :class="{ 'tab-active': activeTab === 'about' }" @click="activeTab = 'about'">{{
+        $t('admin.settings.aboutTab') }}</button>
     </div>
 
     <div v-if="pending" class="flex items-center gap-2">
       <span class="loading loading-spinner"></span>
-      <span>{{ t('common.loadingSettings') }}</span>
+      <span>{{ $t('common.loadingSettings') }}</span>
     </div>
-    <div v-if="error" class="alert alert-error">{{ t('common.unableToLoadSettings') }}</div>
+    <div v-if="error" class="alert alert-error">{{ $t('common.unableToLoadSettings') }}</div>
 
     <section v-if="activeTab === 'general'" class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
-        <h3 class="card-title">{{ t('admin.settings.generalTitle') }}</h3>
+        <h3 class="card-title">{{ $t('admin.settings.generalTitle') }}</h3>
         <label class="flex items-center gap-4">
           <input type="checkbox" class="toggle toggle-primary" v-model="form.general.showSidebar" />
-          <span class="font-medium">{{ t('admin.settings.showSidebar') }}</span>
+          <span class="font-medium">{{ $t('admin.settings.showSidebar') }}</span>
         </label>
         <div class="grid gap-4 md:grid-cols-2">
           <label class="form-control">
-            <span class="label-text">{{ t('admin.settings.direction') }}</span>
+            <span class="label-text">{{ $t('admin.settings.direction') }}</span>
             <select v-model="form.general.direction" class="select select-bordered">
-              <option value="ltr">{{ t('admin.settings.directionLtr') }}</option>
-              <option value="rtl">{{ t('admin.settings.directionRtl') }}</option>
+              <option value="ltr">{{ $t('admin.settings.directionLtr') }}</option>
+              <option value="rtl">{{ $t('admin.settings.directionRtl') }}</option>
             </select>
           </label>
           <label class="form-control">
-            <span class="label-text">{{ t('admin.settings.language') }}</span>
+            <span class="label-text">{{ $t('admin.settings.language') }}</span>
             <select v-model="form.general.language" class="select select-bordered">
-              <option value="en">{{ t('languages.english') }}</option>
-              <option value="fa">{{ t('languages.persian') }}</option>
+              <option v-for="locale in availableLocales" :key="locale.code" :value="locale.code">
+                {{ locale.name }}
+              </option>
             </select>
+            
           </label>
         </div>
       </div>
@@ -164,53 +176,53 @@ const saveSettings = async () => {
     <section v-if="activeTab === 'navbar'" class="card bg-base-100 shadow">
       <div class="card-body space-y-6">
         <div>
-          <h3 class="card-title">{{ t('admin.settings.navbarTitle') }}</h3>
-          <p class="text-sm opacity-70">{{ t('admin.settings.navbarDescription') }}</p>
+          <h3 class="card-title">{{ $t('admin.settings.navbarTitle') }}</h3>
+          <p class="text-sm opacity-70">{{ $t('admin.settings.navbarDescription') }}</p>
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
           <label class="form-control">
-            <span class="label-text">{{ t('common.lightLogoUrl') }}</span>
+            <span class="label-text">{{ $t('common.lightLogoUrl') }}</span>
             <input v-model="form.navbar.lightLogo" class="input input-bordered" type="text" />
           </label>
           <label class="form-control">
-            <span class="label-text">{{ t('common.darkLogoUrl') }}</span>
+            <span class="label-text">{{ $t('common.darkLogoUrl') }}</span>
             <input v-model="form.navbar.darkLogo" class="input input-bordered" type="text" />
           </label>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">{{ t('common.menus') }}</h4>
-            <button class="btn btn-sm" @click="addNavbarMenu">{{ t('common.addMenu') }}</button>
+            <h4 class="font-semibold">{{ $t('common.menus') }}</h4>
+            <button class="btn btn-sm" @click="addNavbarMenu">{{ $t('common.addMenu') }}</button>
           </div>
           <div v-for="(menu, index) in form.navbar.menus" :key="`navbar-menu-${index}`"
             class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]" draggable="true"
             @dragstart="handleDragStart('navbar', index)" @dragend="resetDrag" @dragover.prevent
             @drop="handleDrop('navbar', index)">
             <button class="btn btn-ghost btn-square cursor-grab" type="button"
-              :aria-label="t('common.dragToReorder') as any">
+              :aria-label="$t('common.dragToReorder') as any">
               <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
             </button>
             <input v-model="menu.label" class="input input-bordered" type="text"
-              :placeholder="t('common.label') as any" />
+              :placeholder="$t('common.label') as any" />
             <input v-model="menu.href" class="input input-bordered" type="text"
-              :placeholder="t('common.pathPlaceholder') as any" />
+              :placeholder="$t('common.pathPlaceholder') as any" />
             <button class="btn btn-ghost btn-square" @click="removeNavbarMenu(index)">✕</button>
           </div>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">{{ t('common.infoList') }}</h4>
-            <button class="btn btn-sm" @click="addNavbarInfo">{{ t('common.addInfo') }}</button>
+            <h4 class="font-semibold">{{ $t('common.infoList') }}</h4>
+            <button class="btn btn-sm" @click="addNavbarInfo">{{ $t('common.addInfo') }}</button>
           </div>
           <div v-for="(info, index) in form.navbar.info" :key="`navbar-info-${index}`"
             class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
             <input v-model="info.key" class="input input-bordered" type="text"
-              :placeholder="t('common.label') as any" />
+              :placeholder="$t('common.label') as any" />
             <input v-model="info.value" class="input input-bordered" type="text"
-              :placeholder="t('common.valueOrUrl') as any" />
+              :placeholder="$t('common.valueOrUrl') as any" />
             <button class="btn btn-ghost btn-square" @click="removeNavbarInfo(index)">✕</button>
           </div>
         </div>
@@ -220,53 +232,53 @@ const saveSettings = async () => {
     <section v-if="activeTab === 'footer'" class="card bg-base-100 shadow">
       <div class="card-body space-y-6">
         <div>
-          <h3 class="card-title">{{ t('admin.settings.footerTitle') }}</h3>
-          <p class="text-sm opacity-70">{{ t('admin.settings.footerDescription') }}</p>
+          <h3 class="card-title">{{ $t('admin.settings.footerTitle') }}</h3>
+          <p class="text-sm opacity-70">{{ $t('admin.settings.footerDescription') }}</p>
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
           <label class="form-control">
-            <span class="label-text">{{ t('common.lightLogoUrl') }}</span>
+            <span class="label-text">{{ $t('common.lightLogoUrl') }}</span>
             <input v-model="form.footer.lightLogo" class="input input-bordered" type="text" />
           </label>
           <label class="form-control">
-            <span class="label-text">{{ t('common.darkLogoUrl') }}</span>
+            <span class="label-text">{{ $t('common.darkLogoUrl') }}</span>
             <input v-model="form.footer.darkLogo" class="input input-bordered" type="text" />
           </label>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">{{ t('common.menus') }}</h4>
-            <button class="btn btn-sm" @click="addFooterMenu">{{ t('common.addMenu') }}</button>
+            <h4 class="font-semibold">{{ $t('common.menus') }}</h4>
+            <button class="btn btn-sm" @click="addFooterMenu">{{ $t('common.addMenu') }}</button>
           </div>
           <div v-for="(menu, index) in form.footer.menus" :key="`footer-menu-${index}`"
             class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]" draggable="true"
             @dragstart="handleDragStart('footer', index)" @dragend="resetDrag" @dragover.prevent
             @drop="handleDrop('footer', index)">
             <button class="btn btn-ghost btn-square cursor-grab" type="button"
-              :aria-label="t('common.dragToReorder') as any">
+              :aria-label="$t('common.dragToReorder') as any">
               <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
             </button>
             <input v-model="menu.label" class="input input-bordered" type="text"
-              :placeholder="t('common.label') as any" />
+              :placeholder="$t('common.label') as any" />
             <input v-model="menu.href" class="input input-bordered" type="text"
-              :placeholder="t('common.pathPlaceholder') as any" />
+              :placeholder="$t('common.pathPlaceholder') as any" />
             <button class="btn btn-ghost btn-square" @click="removeFooterMenu(index)">✕</button>
           </div>
         </div>
 
         <div class="space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="font-semibold">{{ t('common.infoList') }}</h4>
-            <button class="btn btn-sm" @click="addFooterInfo">{{ t('common.addInfo') }}</button>
+            <h4 class="font-semibold">{{ $t('common.infoList') }}</h4>
+            <button class="btn btn-sm" @click="addFooterInfo">{{ $t('common.addInfo') }}</button>
           </div>
           <div v-for="(info, index) in form.footer.info" :key="`footer-info-${index}`"
             class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
             <input v-model="info.key" class="input input-bordered" type="text"
-              :placeholder="t('common.label') as any" />
+              :placeholder="$t('common.label') as any" />
             <input v-model="info.value" class="input input-bordered" type="text"
-              :placeholder="t('common.valueOrUrl') as any" />
+              :placeholder="$t('common.valueOrUrl') as any" />
             <button class="btn btn-ghost btn-square" @click="removeFooterInfo(index)">✕</button>
           </div>
         </div>
@@ -275,25 +287,25 @@ const saveSettings = async () => {
 
     <section v-if="activeTab === 'blog'" class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
-        <h3 class="card-title">{{ t('admin.settings.blogCommentsTitle') }}</h3>
+        <h3 class="card-title">{{ $t('admin.settings.blogCommentsTitle') }}</h3>
         <label class="label cursor-pointer justify-start gap-3">
           <input v-model="form.blog.commentsEnabled" type="checkbox" class="toggle" />
-          <span class="label-text">{{ t('admin.settings.commentsEnabled') }}</span>
+          <span class="label-text">{{ $t('admin.settings.commentsEnabled') }}</span>
         </label>
         <label class="label cursor-pointer justify-start gap-3">
           <input v-model="form.blog.commentsRequireApproval" type="checkbox" class="toggle" />
-          <span class="label-text">{{ t('admin.settings.commentsRequireApproval') }}</span>
+          <span class="label-text">{{ $t('admin.settings.commentsRequireApproval') }}</span>
         </label>
         <label class="label cursor-pointer justify-start gap-3">
           <input v-model="form.blog.allowAnonymousCommentsByDefault" type="checkbox" class="toggle" />
-          <span class="label-text">{{ t('admin.settings.allowAnonymousComments') }}</span>
+          <span class="label-text">{{ $t('admin.settings.allowAnonymousComments') }}</span>
         </label>
         <label class="form-control">
-          <span class="label-text">{{ t('admin.settings.recaptchaSiteKey') }}</span>
+          <span class="label-text">{{ $t('admin.settings.recaptchaSiteKey') }}</span>
           <input v-model="form.blog.recaptchaSiteKey" class="input input-bordered" type="text" />
         </label>
         <label class="form-control">
-          <span class="label-text">{{ t('admin.settings.recaptchaSecretKey') }}</span>
+          <span class="label-text">{{ $t('admin.settings.recaptchaSecretKey') }}</span>
           <input v-model="form.blog.recaptchaSecretKey" class="input input-bordered" type="password" />
         </label>
       </div>
@@ -302,60 +314,90 @@ const saveSettings = async () => {
 
     <section v-if="activeTab === 'seo'" class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
-        <h3 class="card-title">{{ t('admin.settings.seoTitle') }}</h3>
+        <h3 class="card-title">{{ $t('admin.settings.seoTitle') }}</h3>
         <div class="grid gap-4 md:grid-cols-2">
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.siteName') }}</span><input v-model="form.seo.siteName" class="input input-bordered" type="text" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.siteUrl') }}</span><input v-model="form.seo.siteUrl" class="input input-bordered" type="url" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.defaultTitle') }}</span><input v-model="form.seo.defaultTitle" class="input input-bordered" type="text" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.titleSuffix') }}</span><input v-model="form.seo.titleSuffix" class="input input-bordered" type="text" :placeholder="t('admin.settings.titleSuffix') as any" /></label>
-          <label class="form-control md:col-span-2"><span class="label-text">{{ t('admin.settings.defaultDescription') }}</span><textarea v-model="form.seo.defaultDescription" class="textarea textarea-bordered" rows="2" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.defaultOgImage') }}</span><input v-model="form.seo.defaultOgImage" class="input input-bordered" type="url" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.robotsPolicy') }}</span><input v-model="form.seo.robots" class="input input-bordered" type="text" :placeholder="t('admin.settings.robotsPolicy') as any" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.twitterHandle') }}</span><input v-model="form.seo.twitterHandle" class="input input-bordered" type="text" :placeholder="t('admin.settings.twitterHandle') as any" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.googleVerification') }}</span><input v-model="form.seo.googleSiteVerification" class="input input-bordered" type="text" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.bingVerification') }}</span><input v-model="form.seo.bingSiteVerification" class="input input-bordered" type="text" /></label>
-          <label class="form-control"><span class="label-text">{{ t('admin.settings.yandexVerification') }}</span><input v-model="form.seo.yandexVerification" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.siteName') }}</span><input
+              v-model="form.seo.siteName" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.siteUrl') }}</span><input
+              v-model="form.seo.siteUrl" class="input input-bordered" type="url" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.defaultTitle') }}</span><input
+              v-model="form.seo.defaultTitle" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.titleSuffix') }}</span><input
+              v-model="form.seo.titleSuffix" class="input input-bordered" type="text"
+              :placeholder="$t('admin.settings.titleSuffix') as any" /></label>
+          <label class="form-control md:col-span-2"><span class="label-text">{{ $t('admin.settings.defaultDescription')
+          }}</span><textarea v-model="form.seo.defaultDescription" class="textarea textarea-bordered"
+              rows="2" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.defaultOgImage') }}</span><input
+              v-model="form.seo.defaultOgImage" class="input input-bordered" type="url" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.robotsPolicy') }}</span><input
+              v-model="form.seo.robots" class="input input-bordered" type="text"
+              :placeholder="$t('admin.settings.robotsPolicy') as any" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.twitterHandle') }}</span><input
+              v-model="form.seo.twitterHandle" class="input input-bordered" type="text"
+              :placeholder="$t('admin.settings.twitterHandle') as any" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.googleVerification')
+          }}</span><input v-model="form.seo.googleSiteVerification" class="input input-bordered"
+              type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.bingVerification') }}</span><input
+              v-model="form.seo.bingSiteVerification" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('admin.settings.yandexVerification')
+          }}</span><input v-model="form.seo.yandexVerification" class="input input-bordered" type="text" /></label>
         </div>
       </div>
     </section>
 
     <section v-if="activeTab === 'theme'" class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
-        <h3 class="card-title">{{ t('admin.settings.themeTitle') }}</h3>
-        <label class="form-control"><span class="label-text">{{ t('admin.settings.themePreset') }}</span>
+        <h3 class="card-title">{{ $t('admin.settings.themeTitle') }}</h3>
+        <label class="form-control"><span class="label-text">{{ $t('admin.settings.themePreset') }}</span>
           <select v-model="form.theme.preset" class="select select-bordered">
-            <option value="light">light</option><option value="dark">dark</option><option value="winter">winter</option><option value="cupcake">cupcake</option><option value="dracula">dracula</option>
+            <option value="light">light</option>
+            <option value="dark">dark</option>
+            <option value="winter">winter</option>
+            <option value="cupcake">cupcake</option>
+            <option value="dracula">dracula</option>
           </select>
         </label>
         <div class="grid gap-4 md:grid-cols-2">
           <div>
-            <h4 class="font-semibold mb-2">{{ t('admin.settings.lightPalette') }}</h4>
-            <label class="form-control"><span class="label-text">Primary</span><input v-model="form.theme.light.primary" type="color" class="input input-bordered h-10" /></label>
-            <label class="form-control"><span class="label-text">Secondary</span><input v-model="form.theme.light.secondary" type="color" class="input input-bordered h-10" /></label>
-            <label class="form-control"><span class="label-text">Accent</span><input v-model="form.theme.light.accent" type="color" class="input input-bordered h-10" /></label>
-            <label class="form-control"><span class="label-text">Neutral</span><input v-model="form.theme.light.neutral" type="color" class="input input-bordered h-10" /></label>
+            <h4 class="font-semibold mb-2">{{ $t('admin.settings.lightPalette') }}</h4>
+            <label class="form-control"><span class="label-text">Primary</span><input v-model="form.theme.light.primary"
+                type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Secondary</span><input
+                v-model="form.theme.light.secondary" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Accent</span><input v-model="form.theme.light.accent"
+                type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Neutral</span><input v-model="form.theme.light.neutral"
+                type="color" class="input input-bordered h-10" /></label>
           </div>
           <div>
-            <h4 class="font-semibold mb-2">{{ t('admin.settings.darkPalette') }}</h4>
-            <label class="form-control"><span class="label-text">Primary</span><input v-model="form.theme.dark.primary" type="color" class="input input-bordered h-10" /></label>
-            <label class="form-control"><span class="label-text">Secondary</span><input v-model="form.theme.dark.secondary" type="color" class="input input-bordered h-10" /></label>
-            <label class="form-control"><span class="label-text">Accent</span><input v-model="form.theme.dark.accent" type="color" class="input input-bordered h-10" /></label>
-            <label class="form-control"><span class="label-text">Neutral</span><input v-model="form.theme.dark.neutral" type="color" class="input input-bordered h-10" /></label>
+            <h4 class="font-semibold mb-2">{{ $t('admin.settings.darkPalette') }}</h4>
+            <label class="form-control"><span class="label-text">Primary</span><input v-model="form.theme.dark.primary"
+                type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Secondary</span><input
+                v-model="form.theme.dark.secondary" type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Accent</span><input v-model="form.theme.dark.accent"
+                type="color" class="input input-bordered h-10" /></label>
+            <label class="form-control"><span class="label-text">Neutral</span><input v-model="form.theme.dark.neutral"
+                type="color" class="input input-bordered h-10" /></label>
           </div>
         </div>
-        <button class="btn" @click="resetTheme">{{ t('admin.settings.resetTheme') }}</button>
+        <button class="btn" @click="resetTheme">{{ $t('admin.settings.resetTheme') }}</button>
       </div>
     </section>
 
     <section v-if="activeTab === 'about'" class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
         <div class="flex items-center justify-between">
-          <h3 class="card-title">{{ t('admin.settings.aboutTitle') }}</h3>
-          <button class="btn btn-sm" @click="addAboutInfo">{{ t('common.addInfo') }}</button>
+          <h3 class="card-title">{{ $t('admin.settings.aboutTitle') }}</h3>
+          <button class="btn btn-sm" @click="addAboutInfo">{{ $t('common.addInfo') }}</button>
         </div>
-        <div v-for="(info, index) in form.about.info" :key="`about-info-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-          <input v-model="info.key" class="input input-bordered" type="text" :placeholder="t('common.label') as any" />
-          <input v-model="info.value" class="input input-bordered" type="text" :placeholder="t('common.valueOrUrl') as any" />
+        <div v-for="(info, index) in form.about.info" :key="`about-info-${index}`"
+          class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+          <input v-model="info.key" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" />
+          <input v-model="info.value" class="input input-bordered" type="text"
+            :placeholder="$t('common.valueOrUrl') as any" />
           <button class="btn btn-ghost btn-square" @click="removeAboutInfo(index)">✕</button>
         </div>
       </div>

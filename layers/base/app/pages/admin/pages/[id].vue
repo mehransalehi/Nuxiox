@@ -5,8 +5,8 @@ import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
-const { t } = useI18n()
-useHead(() => ({ title: t('admin.pages.editTitle') }))
+
+useHead(() => ({ title: $t('admin.pages.editTitle') }))
 
 type SectionOption = {
   id: string
@@ -148,10 +148,10 @@ const savePage = async () => {
         method: 'PUT',
         body: { title: form.title, slug: form.slug, status: form.status, seo: toSeoJson(), builder: form.builder },
       })
-      toastStore.push(t('admin.pages.saveSuccess'), 'success')
+      toastStore.push($t('admin.pages.saveSuccess'), 'success')
       await refresh()
     } catch (err) {
-      toastStore.push(err instanceof Error ? err.message : t('admin.pages.saveFailed'), 'error')
+      toastStore.push(err instanceof Error ? err.message : $t('admin.pages.saveFailed'), 'error')
     } finally {
       saving.value = false
     }
@@ -163,10 +163,10 @@ const deletePage = async () => {
   await loadingStore.withActionLoading(async () => {
     try {
       await $fetch(`/api/pages/${pageId.value}`, { method: 'DELETE' })
-      toastStore.push(t('admin.pages.deleteSuccess'), 'success')
+      toastStore.push($t('admin.pages.deleteSuccess'), 'success')
       await navigateTo('/admin/pages')
     } catch (err) {
-      toastStore.push(err instanceof Error ? err.message : t('admin.pages.deleteFailed'), 'error')
+      toastStore.push(err instanceof Error ? err.message : $t('admin.pages.deleteFailed'), 'error')
     } finally {
       deleting.value = false
     }
@@ -178,42 +178,42 @@ const deletePage = async () => {
   <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">{{ t('admin.pages.editTitle') }}</h2>
-        <p class="opacity-70">{{ t('admin.pages.addSectionHint') }}</p>
+        <h2 class="text-2xl font-bold">{{ $t('admin.pages.editTitle') }}</h2>
+        <p class="opacity-70">{{ $t('admin.pages.addSectionHint') }}</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <button class="btn btn-outline" :class="{ 'btn-disabled': deleting }" @click="deletePage">{{ t('common.delete') }}</button>
-        <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="savePage">{{ t('common.save') }}</button>
+        <button class="btn btn-outline" :class="{ 'btn-disabled': deleting }" @click="deletePage">{{ $t('common.delete') }}</button>
+        <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="savePage">{{ $t('common.save') }}</button>
       </div>
     </div>
 
     <section class="card bg-base-100 shadow"><div class="card-body space-y-4">
       <div class="grid gap-4 md:grid-cols-2">
-        <label class="form-control"><span class="label-text">{{ t('common.title') }}</span><input v-model="form.title" class="input input-bordered" type="text" /></label>
-        <label class="form-control"><span class="label-text">{{ t('common.slug') }}</span><input v-model="form.slug" class="input input-bordered" type="text" /></label>
+        <label class="form-control"><span class="label-text">{{ $t('common.title') }}</span><input v-model="form.title" class="input input-bordered" type="text" /></label>
+        <label class="form-control"><span class="label-text">{{ $t('common.slug') }}</span><input v-model="form.slug" class="input input-bordered" type="text" /></label>
       </div>
-      <label class="form-control max-w-xs"><span class="label-text">{{ t('common.status') }}</span>
-        <select v-model="form.status" class="select select-bordered"><option value="draft">{{ t('common.draft') }}</option><option value="published">{{ t('common.published') }}</option></select>
+      <label class="form-control max-w-xs"><span class="label-text">{{ $t('common.status') }}</span>
+        <select v-model="form.status" class="select select-bordered"><option value="draft">{{ $t('common.draft') }}</option><option value="published">{{ $t('common.published') }}</option></select>
       </label>
 
       <div class="space-y-2">
-        <div class="flex items-center justify-between"><span class="font-medium">{{ t('common.seoMeta') }}</span><button class="btn btn-sm" type="button" @click="addSeoEntry">{{ t('common.addSeoField') }}</button></div>
+        <div class="flex items-center justify-between"><span class="font-medium">{{ $t('common.seoMeta') }}</span><button class="btn btn-sm" type="button" @click="addSeoEntry">{{ $t('common.addSeoField') }}</button></div>
         <div v-for="(entry, index) in seoEntries" :key="`seo-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-          <input v-model="entry.key" class="input input-bordered" type="text" :placeholder="t('common.metaKey') as any" />
-          <input v-model="entry.value" class="input input-bordered" type="text" :placeholder="t('common.metaValue') as any" />
+          <input v-model="entry.key" class="input input-bordered" type="text" :placeholder="$t('common.metaKey') as any" />
+          <input v-model="entry.value" class="input input-bordered" type="text" :placeholder="$t('common.metaValue') as any" />
           <button class="btn btn-ghost btn-square" type="button" @click="removeSeoEntry(index)">✕</button>
         </div>
       </div>
     </div></section>
 
     <section class="card bg-base-100 shadow"><div class="card-body space-y-4">
-      <h3 class="card-title">{{ t('admin.pages.builder') }}</h3>
+      <h3 class="card-title">{{ $t('admin.pages.builder') }}</h3>
       <div class="flex flex-wrap items-end gap-3">
-        <label class="form-control"><span class="label-text">{{ t('common.selectSection') }}</span>
-          <select v-model="selectedSectionId" class="select select-bordered"><option value="">{{ t('common.selectSection') }}</option><option v-for="section in availableSections" :key="section.id" :value="section.id">{{ section.label }}</option></select>
+        <label class="form-control"><span class="label-text">{{ $t('common.selectSection') }}</span>
+          <select v-model="selectedSectionId" class="select select-bordered"><option value="">{{ $t('common.selectSection') }}</option><option v-for="section in availableSections" :key="section.id" :value="section.id">{{ section.label }}</option></select>
         </label>
-        <button class="btn btn-sm" :disabled="!selectedSectionId" @click="addSectionBlock">{{ t('common.addSection') }}</button>
-        <button class="btn btn-sm" @click="addTextBlock">{{ t('common.addTextBlock') }}</button>
+        <button class="btn btn-sm" :disabled="!selectedSectionId" @click="addSectionBlock">{{ $t('common.addSection') }}</button>
+        <button class="btn btn-sm" @click="addTextBlock">{{ $t('common.addTextBlock') }}</button>
       </div>
 
       <div class="space-y-3">

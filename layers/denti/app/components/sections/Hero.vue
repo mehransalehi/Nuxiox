@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { settings } = useSiteSettings()
-const { t } = useI18n()
+
 
 const highlights = computed(() => settings.value.navbar.info?.slice(0, 3) ?? [])
 const tags = ['Braces', 'Denta Care', 'Dentist', 'Dentures', 'Invisalign', 'Teeth Cleaning']
@@ -11,7 +11,7 @@ const tags = ['Braces', 'Denta Care', 'Dentist', 'Dentures', 'Invisalign', 'Teet
     <div class="rounded-3xl bg-sky-100 p-5 md:p-8">
       <div class="grid items-center gap-6 lg:grid-cols-[1.25fr_1fr]">
         <div class="space-y-4">
-          <p class="text-xs font-bold uppercase tracking-[0.3em] text-sky-700">{{ t('site.brand') }}</p>
+          <p class="text-xs font-bold uppercase tracking-[0.3em] text-sky-700">{{ $t('site.brand') }}</p>
           <h1 class="text-5xl font-extrabold uppercase leading-[0.9] text-sky-400 md:text-7xl">Every Smile <span class="text-sky-500">Matters</span></h1>
           <div class="max-w-sm rounded-2xl bg-white p-4 text-sm shadow">
             Our skilled dentists use advanced technology to offer complete care in a comfortable and friendly clinic.

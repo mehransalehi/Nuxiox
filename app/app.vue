@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 const { settings } = useSiteSettings()
-const { locale, setLocaleFromSettings } = useI18n()
+const { locale, setLocale } = useI18n()
 const layoutOverrides = useLayoutOverrides()
 const route = useRoute()
 
@@ -17,13 +17,13 @@ const themeCss = computed(() => {
   return `:root{--color-primary:${light?.primary};--color-secondary:${light?.secondary};--color-accent:${light?.accent};--color-neutral:${light?.neutral};}[data-theme="dark"]{--color-primary:${dark?.primary};--color-secondary:${dark?.secondary};--color-accent:${dark?.accent};--color-neutral:${dark?.neutral};}`
 })
 
-watch(
+/*watch(
   () => settings.value.general.language,
   (value) => {
-    setLocaleFromSettings(value)
+    setLocale(value)
   },
   { immediate: true }
-)
+)*/
 
 useHead(() => ({
   titleTemplate: (titleChunk?: string) => {

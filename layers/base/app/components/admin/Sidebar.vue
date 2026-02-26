@@ -14,29 +14,29 @@ const emit = defineEmits<{
   logout: []
 }>()
 
-const { t } = useI18n()
+
 
 const sections = computed(() => [
   {
-    title: t('admin.sidebar.main'),
+    title: $t('admin.sidebar.main'),
     items: [
-      { to: '/admin', label: t('admin.sidebar.dashboard'), icon: 'fa-solid fa-gauge' },
+      { to: '/admin', label: $t('admin.sidebar.dashboard'), icon: 'fa-solid fa-gauge' },
     ],
   },
   {
-    title: t('admin.sidebar.management'),
+    title: $t('admin.sidebar.management'),
     items: [
-      { to: '/admin/settings', label: t('admin.sidebar.settings'), icon: 'fa-solid fa-gear' },
-      { to: '/admin/home-builder', label: t('admin.sidebar.homeBuilder'), icon: 'fa-solid fa-layer-group' },
-      { to: '/admin/pages', label: t('admin.sidebar.pages'), icon: 'fa-solid fa-file-lines' },
-      { to: '/admin/blog', label: t('admin.sidebar.blog'), icon: 'fa-solid fa-blog' },
-      { to: '/admin/blog/categories', label: t('admin.sidebar.blogCategories'), icon: 'fa-solid fa-tags' },
-      { to: '/admin/blog/posts', label: t('admin.sidebar.blogPosts'), icon: 'fa-solid fa-newspaper' },
-      { to: '/admin/blog/comments', label: t('admin.sidebar.blogComments'), icon: 'fa-solid fa-comments' },
-      { to: '/admin/services', label: t('admin.sidebar.services'), icon: 'fa-solid fa-briefcase' },
-      { to: '/admin/colleagues', label: t('admin.sidebar.colleagues'), icon: 'fa-solid fa-user-group' },
-      { to: '/admin/testimonials', label: t('admin.sidebar.testimonials'), icon: 'fa-solid fa-quote-left' },
-      { to: '/admin/contact-messages', label: t('admin.sidebar.contactMessages'), icon: 'fa-solid fa-envelope' },
+      { to: '/admin/settings', label: $t('admin.sidebar.settings'), icon: 'fa-solid fa-gear' },
+      { to: '/admin/home-builder', label: $t('admin.sidebar.homeBuilder'), icon: 'fa-solid fa-layer-group' },
+      { to: '/admin/pages', label: $t('admin.sidebar.pages'), icon: 'fa-solid fa-file-lines' },
+      { to: '/admin/blog', label: $t('admin.sidebar.blog'), icon: 'fa-solid fa-blog' },
+      { to: '/admin/blog/categories', label: $t('admin.sidebar.blogCategories'), icon: 'fa-solid fa-tags' },
+      { to: '/admin/blog/posts', label: $t('admin.sidebar.blogPosts'), icon: 'fa-solid fa-newspaper' },
+      { to: '/admin/blog/comments', label: $t('admin.sidebar.blogComments'), icon: 'fa-solid fa-comments' },
+      { to: '/admin/services', label: $t('admin.sidebar.services'), icon: 'fa-solid fa-briefcase' },
+      { to: '/admin/colleagues', label: $t('admin.sidebar.colleagues'), icon: 'fa-solid fa-user-group' },
+      { to: '/admin/testimonials', label: $t('admin.sidebar.testimonials'), icon: 'fa-solid fa-quote-left' },
+      { to: '/admin/contact-messages', label: $t('admin.sidebar.contactMessages'), icon: 'fa-solid fa-envelope' },
     ],
   },
 ])
@@ -52,8 +52,8 @@ const sections = computed(() => [
           </div>
         </div>
         <div v-if="!collapsed" class="overflow-hidden">
-          <p class="font-bold leading-5">{{ t('admin.sidebar.adminPanel') }}</p>
-          <p class="text-xs opacity-60">{{ t('admin.sidebar.baseLayer') }}</p>
+          <p class="font-bold leading-5">{{ $t('admin.sidebar.adminPanel') }}</p>
+          <p class="text-xs opacity-60">{{ $t('admin.sidebar.baseLayer') }}</p>
         </div>
       </div>
 
@@ -75,7 +75,7 @@ const sections = computed(() => [
           @click="emit('logout')"
         >
           <i class="fa-solid fa-right-from-bracket w-4 text-center" aria-hidden="true" />
-          <span v-if="!collapsed">{{ t('admin.sidebar.logout') }}</span>
+          <span v-if="!collapsed">{{ $t('admin.sidebar.logout') }}</span>
         </button>
       </div>
     </div>

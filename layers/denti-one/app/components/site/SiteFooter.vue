@@ -18,21 +18,21 @@ const { locale, setLocale, t, availableLocales } = useI18n()
 
     <div class="grid gap-5 rounded-3xl bg-white/70 p-6 md:grid-cols-3">
       <div class="space-y-2 text-sm">
-        <p class="font-bold uppercase tracking-[0.2em] text-sky-700">{{ t('site.information') }}</p>
+        <p class="font-bold uppercase tracking-[0.2em] text-sky-700">{{ $t('site.information') }}</p>
         <ul class="space-y-1 opacity-80">
           <li v-for="item in props.info" :key="item.key">{{ item.key }}: {{ item.value }}</li>
         </ul>
       </div>
 
       <div>
-        <h3 class="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-sky-700">{{ t('site.menu') }}</h3>
+        <h3 class="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-sky-700">{{ $t('site.menu') }}</h3>
         <ul class="space-y-1 text-sm">
-          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="menu.href" class="hover:text-sky-600">{{ menu.label }}</NuxtLink></li>
+          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="$localePath(menu.href)" class="hover:text-sky-600">{{ menu.label }}</NuxtLink></li>
         </ul>
       </div>
 
       <div class="space-y-3">
-        <h3 class="text-sm font-bold uppercase tracking-[0.2em] text-sky-700">{{ t('site.language') }}</h3>
+        <h3 class="text-sm font-bold uppercase tracking-[0.2em] text-sky-700">{{ $t('site.language') }}</h3>
         <select class="select select-bordered w-full" :value="locale" @change="setLocale(($event.target as HTMLSelectElement).value as 'en' | 'fa')">
           <option v-for="item in availableLocales" :key="item.value" :value="item.value">{{ item.label }}</option>
         </select>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { settings } = useSiteSettings()
-const { t } = useI18n()
+
 const aboutInfo = computed(() => settings.value.about?.info ?? [])
 
 const visionSlides = computed(() =>
@@ -46,7 +46,7 @@ const visionSlides = computed(() =>
       </div>
     </div>
 
-    <p class="hidden">{{ t('sections.about.title') }}</p>
+    <p class="hidden">{{ $t('sections.about.title') }}</p>
   </section> -->
 
   <section class="bg-white">

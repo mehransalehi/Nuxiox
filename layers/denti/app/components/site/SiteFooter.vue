@@ -23,13 +23,13 @@ const { locale, setLocale, t, availableLocales } = useI18n()
         </ul>
       </div>
       <div>
-        <h3 class="mb-2 font-semibold">{{ t('site.menu') }}</h3>
+        <h3 class="mb-2 font-semibold">{{ $t('site.menu') }}</h3>
         <ul class="space-y-1 text-sm">
-          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="menu.href" class="hover:text-sky-600">{{ menu.label }}</NuxtLink></li>
+          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="$localePath(menu.href)" class="hover:text-sky-600">{{ menu.label }}</NuxtLink></li>
         </ul>
       </div>
       <div class="space-y-3">
-        <h3 class="font-semibold">{{ t('site.language') }}</h3>
+        <h3 class="font-semibold">{{ $t('site.language') }}</h3>
         <select class="select select-bordered w-full max-w-xs" :value="locale" @change="setLocale(($event.target as HTMLSelectElement).value as 'en' | 'fa')">
           <option v-for="item in availableLocales" :key="item.value" :value="item.value">{{ item.label }}</option>
         </select>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { settings } = useSiteSettings()
-const { t } = useI18n()
+
 
 const highlights = computed(() =>
   settings.value.navbar.info?.slice(0, 3).map((item, idx) => ({
@@ -17,7 +17,7 @@ const chips = ['Braces', 'Whitening', 'Implants', 'Invisalign', 'Checkups', 'Kid
   <section class="space-y-5 scroll-reveal">
     <div class="grid gap-5 rounded-[2rem] bg-[#eaf6ff] p-5 md:p-8 lg:grid-cols-[1.2fr_1fr]">
       <div class="space-y-4">
-        <p class="text-xs font-bold uppercase tracking-[0.35em] text-sky-700">{{ t('site.brand') }}</p>
+        <p class="text-xs font-bold uppercase tracking-[0.35em] text-sky-700">{{ $t('site.brand') }}</p>
         <h1 class="text-5xl font-extrabold uppercase leading-[0.92] text-sky-400 md:text-7xl">Healthy Smile,<br><span class="text-sky-600">Happy Life</span></h1>
         <p class="max-w-xl text-sm text-base-content/75">Compassionate dental care with modern technology, gentle treatment plans, and a warm clinic team for every family member.</p>
         <div class="flex flex-wrap gap-3">

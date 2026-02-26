@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
   <li>
     <NuxtLink
-      :to="props.to"
+      :to="$localePath($localePath($localePath(props.to)))"
       :title="props.collapsed ? props.label : ''"
       class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium"
       active-class="menu-active"

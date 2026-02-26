@@ -10,7 +10,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-const { t } = useI18n()
+
 
 const brand = computed(() => props.info?.[0]?.value || 'DentiCare')
 </script>
@@ -21,7 +21,7 @@ const brand = computed(() => props.info?.[0]?.value || 'DentiCare')
       <div class="flex items-center gap-5">
         <p v-for="item in props.info.slice(0, 2)" :key="item.key">{{ item.value }}</p>
       </div>
-      <NuxtLink to="/contact" class="font-semibold text-sky-700 hover:text-sky-900">{{ t('sections.contact.send') }} ↗</NuxtLink>
+      <NuxtLink to="/contact" class="font-semibold text-sky-700 hover:text-sky-900">{{ $t('sections.contact.send') }} ↗</NuxtLink>
     </div>
 
     <div class="navbar min-h-0 p-0">
@@ -31,14 +31,14 @@ const brand = computed(() => props.info?.[0]?.value || 'DentiCare')
 
       <nav class="hidden md:block">
         <ul class="menu menu-horizontal gap-1 p-0 text-xs font-semibold uppercase tracking-wider">
-          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="menu.href">{{ menu.label }}</NuxtLink></li>
+          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="$localePath(menu.href)">{{ menu.label }}</NuxtLink></li>
         </ul>
       </nav>
 
       <div class="dropdown dropdown-end md:hidden">
         <div tabindex="0" role="button" class="btn btn-sm btn-ghost">☰</div>
         <ul tabindex="0" class="menu dropdown-content z-10 mt-2 w-56 rounded-box bg-base-100 p-2 shadow">
-          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="menu.href">{{ menu.label }}</NuxtLink></li>
+          <li v-for="menu in props.menus" :key="menu.label"><NuxtLink :to="$localePath(menu.href)">{{ menu.label }}</NuxtLink></li>
         </ul>
       </div>
     </div>

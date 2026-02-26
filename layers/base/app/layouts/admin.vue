@@ -5,7 +5,7 @@ const mobileSidebarOpen = ref(false)
 const sidebarCollapsed = ref(false)
 const isDark = ref(false)
 const { settings } = useSiteSettings()
-const { locale, setLocaleFromSettings } = useI18n()
+const { locale, setLocale } = useI18n()
 
 const direction = computed(() => settings.value.general.direction ?? 'ltr')
 
@@ -45,13 +45,13 @@ onMounted(() => {
   applyTheme(isDark.value)
 })
 
-watch(
+/*watch(
   () => settings.value.general.language,
   (value) => {
-    setLocaleFromSettings(value)
+    setLocale(value)
   },
   { immediate: true }
-)
+)*/
 
 useHead(() => ({
   htmlAttrs: {

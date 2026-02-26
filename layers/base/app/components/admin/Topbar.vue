@@ -12,7 +12,7 @@ const emit = defineEmits<{
   logout: []
 }>()
 
-const { t } = useI18n()
+
 </script>
 
 <template>
@@ -20,7 +20,7 @@ const { t } = useI18n()
     <div class="flex items-center gap-3">
       <button
         class="btn btn-ghost btn-square btn-sm border border-base-300 lg:hidden"
-        :aria-label="t('admin.topbar.openSidebar')"
+        :aria-label="$t('admin.topbar.openSidebar')"
         @click="emit('toggleMobileSidebar')"
       >
         <i class="fa-solid fa-bars" aria-hidden="true" />
@@ -31,8 +31,8 @@ const { t } = useI18n()
       </div>
 
       <div>
-        <h1 class="text-lg font-bold">{{ t('admin.topbar.title') }}</h1>
-        <p class="text-xs opacity-60">{{ t('admin.topbar.subtitle') }}</p>
+        <h1 class="text-lg font-bold">{{ $t('admin.topbar.title') }}</h1>
+        <p class="text-xs opacity-60">{{ $t('admin.topbar.subtitle') }}</p>
       </div>
     </div>
 
@@ -44,7 +44,7 @@ const { t } = useI18n()
           tabindex="0"
           class="btn btn-ghost btn-sm border px-2"
           type="button"
-          :aria-label="t('admin.topbar.openUserMenu')"
+          :aria-label="$t('admin.topbar.openUserMenu')"
         >
           <div class="avatar placeholder">
             <div class="h-8 w-8 rounded-full bg-base-300 text-base-content flex justify-center items-center">
@@ -58,7 +58,7 @@ const { t } = useI18n()
           <li>
             <button type="button" class="text-error" @click="emit('logout')">
               <i class="fa-solid fa-right-from-bracket" aria-hidden="true" />
-              {{ t('admin.topbar.logout') }}
+              {{ $t('admin.topbar.logout') }}
             </button>
           </li>
         </ul>

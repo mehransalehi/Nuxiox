@@ -39,11 +39,11 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
           />
         </NuxtLink>
         <p class="text-sm text-base-content/70">
-          {{ props.info.length ? t('site.stayConnected') : t('site.thanks') }}
+          {{ props.info.length ? $t('site.stayConnected') : $t('site.thanks') }}
         </p>
         <div class="form-control w-full max-w-xs">
           <label class="label">
-            <span class="label-text">{{ t('site.language') }}</span>
+            <span class="label-text">{{ $t('site.language') }}</span>
           </label>
           <select
             class="select select-bordered"
@@ -58,16 +58,16 @@ const formatInfoLabel = (item: InfoItem) => `${item.key}:`
       </div>
 
       <div>
-        <h3 class="footer-title text-base-content">{{ t('site.menu') }}</h3>
+        <h3 class="footer-title text-base-content">{{ $t('site.menu') }}</h3>
         <ul class="menu menu-vertical">
           <li v-for="menu in props.menus" :key="menu.label">
-            <NuxtLink :to="menu.href">{{ menu.label }}</NuxtLink>
+            <NuxtLink :to="$localePath(menu.href)">{{ menu.label }}</NuxtLink>
           </li>
         </ul>
       </div>
 
       <div>
-        <h3 class="footer-title text-base-content">{{ t('site.information') }}</h3>
+        <h3 class="footer-title text-base-content">{{ $t('site.information') }}</h3>
         <ul class="space-y-2 text-sm text-base-content/70">
           <li v-for="item in props.info" :key="item.key">
             <span class="font-semibold text-base-content">{{ formatInfoLabel(item) }}</span>

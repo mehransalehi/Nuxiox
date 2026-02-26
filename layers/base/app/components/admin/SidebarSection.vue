@@ -17,7 +17,7 @@ defineProps<{ title: any; items: NavItem[]; collapsed: boolean }>()
       <AdminSidebarNavItem
         v-for="item in items"
         :key="item.to"
-        :to="item.to"
+        :to="$localePath(item.to)"
         :label="item.label"
         :icon="item.icon"
         :collapsed="collapsed"
