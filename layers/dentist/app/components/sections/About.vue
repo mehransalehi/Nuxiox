@@ -54,13 +54,12 @@ const visionSlides = computed(() =>
       <div class="relative" data-animate>
         <NuxtImg src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80"
           class="w-full rounded-2xl object-cover shadow-soft aspect-[1/0.8]" alt="Dental office" />
-        <div class="bg-primary rounded-xl absolute bottom-4 left-4 text-white flex flex-col px-4 py-6"><span class="text-4xl font-bold">20+ </span><span>Years of Experience</span></div>
+        <div class="bg-primary rounded-xl absolute bottom-4 left-4 text-white flex flex-col px-4 py-6"><span class="text-4xl font-bold">{{ $t('hero.info2.value') }}</span><span>{{ $t('hero.info2.key') }}</span></div>
       </div>
       <div data-animate>
-        <UiTopTitle>our promise</UiTopTitle>
-        <UiTitle>A Perfect Smile <br/> Guaranteed</UiTitle>
-        <p class="mt-4 text-sm leading-7">We combine preventive care, diagnostics and modern technology to bring safe
-          and effective treatment plans for every patient.</p>
+        <UiTopTitle>{{ $t('about.toptitle') }}</UiTopTitle>
+        <UiTitle>{{ $t('about.title') }}</UiTitle>
+        <p class="mt-4 text-sm leading-7">{{ $t('about.subtitle') }}</p>
         <ul class="my-5 space-y-4 text-sm">
           <li class="flex items-center gap-3"><span
               class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-primary"><i
@@ -75,7 +74,7 @@ const visionSlides = computed(() =>
               class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/15 text-primary"><i
                 class="fa-solid fa-check"></i></span> Transparent treatment plans</li>
         </ul>
-          <UiButton class="btn-neutral">Discover More</UiButton>
+          <UiButton class="btn-neutral">{{ $t('buttons.learnmore') }}</UiButton>
       </div>
     </div>
   </section>

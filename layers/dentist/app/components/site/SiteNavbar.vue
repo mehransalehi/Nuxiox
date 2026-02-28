@@ -56,7 +56,7 @@ onBeforeUnmount(() => {
         <!-- Desktop Button -->
         <NuxtLink to="/contact"
           class="hidden md:flex btn btn-primary btn-sm rounded-full text-white md:col-span-1 items-center justify-center h-10">
-          Book an Appointment
+          {{ $t('buttons.appointment') }}
         </NuxtLink>
 
         <!-- Hamburger (Mobile Only) -->

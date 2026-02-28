@@ -1,5 +1,30 @@
 {
   "site": {
-    "brand": "HHHH"
+    "topslang": "we care for your smile",
+    "slang": "Making Better Smile.",
+    "subslang": "Experience world-class dentistry and friendly care designed to keep your confidence bright and healthy."
+  },
+  "buttons": {
+    "appointment": "Book An Appointment",
+    "learnmore": "Learn More"
+  },
+  "hero": {
+    "info1": {
+      "key": "Happy Patients",
+      "value": "15k+"
+    },
+    "info2": {
+      "key": "Years Experience",
+      "value": "20+"
+    },
+    "info3": {
+      "key": "Positive Feedback",
+      "value": "98%"
+    }
+  },
+  "about": {
+    "toptitle": "our promise",
+    "title": "A Perfect Smile Guaranteed",
+    "subtitle": "We combine preventive care, diagnostics and modern technology to bring safe and effective treatment plans for every patient."
   }
 }
