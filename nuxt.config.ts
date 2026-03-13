@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  app: {
+/*   app: {
     head: {
       link: [
         {
@@ -21,11 +21,11 @@ export default defineNuxtConfig({
         },
       ],
     },
-  },
+  }, */
 
   i18n: {
     defaultLocale: 'en',
-    strategy: 'no_prefix',
+    strategy: 'prefix_except_default',
     locales: [
       { code: 'en', name: 'English', file: 'en.json' },
       { code: 'fa', name: 'Persian', file: 'fa.json' }

@@ -63,6 +63,15 @@ export type SiteSettings = {
   theme: ThemeSettings
   about: AboutSettings
 }
+export type SiteSettingsLocale = {
+  general: Record<string,GeneralSettings>
+  navbar: Record<string,NavbarSettings>
+  footer: Record<string,FooterSettings>
+  blog: Record<string,BlogSettings>
+  seo: Record<string,SeoSettings>
+  theme: Record<string,ThemeSettings>
+  about: Record<string,AboutSettings>
+}
 
 export type ThemePalette = {
   primary: string

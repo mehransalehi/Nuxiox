@@ -7,7 +7,8 @@ const isDark = ref(false)
 const { settings } = useSiteSettings()
 const { locale, setLocale } = useI18n()
 
-const direction = computed(() => settings.value.general.direction ?? 'ltr')
+
+const direction = computed(() => locale.value == 'fa' ? "rtl": 'ltr')
 
 const { user, clear: clearSession } = useUserSession() as {
   user: Ref<UserSession | null>

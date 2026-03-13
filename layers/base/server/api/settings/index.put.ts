@@ -1,59 +1,55 @@
-import { settings } from '~~/server/database/schema.gen'
-import { defaultSettings, type SiteSettings } from '~~/layers/base/utils/settings'
-import { useDb } from '~~/server/utils/db'
+import { settings } from "~~/server/database/schema.gen";
+import {
+  defaultSettings,
+  type SiteSettings,
+  type SiteSettingsLocale,
+} from "~~/layers/base/utils/settings";
+import { useDb } from "~~/server/utils/db";
+import { getLocale } from "~~/server/utils/getLocale";
+import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
-  }
+  const admin = await requireAdmin(event)
 
-  const body = (await readBody(event)) as Partial<SiteSettings>
-  const payload: SiteSettings = {
-    general: {
-      ...defaultSettings.general,
-      ...(body.general ?? {}),
-    },
-    navbar: {
-      ...defaultSettings.navbar,
-      ...(body.navbar ?? {}),
-    },
-    footer: {
-      ...defaultSettings.footer,
-      ...(body.footer ?? {}),
-    },
-    blog: {
-      ...defaultSettings.blog,
-      ...(body.blog ?? {}),
-    },
-    seo: {
-      ...defaultSettings.seo,
-      ...(body.seo ?? {}),
-    },
-    theme: {
-      ...defaultSettings.theme,
-      ...(body.theme ?? {}),
-    },
-    about: {
-      ...defaultSettings.about,
-      ...(body.about ?? {}),
-    },
-  }
+  const db = useDb(event);
+  const locale = getLocale(event);
+  const now = new Date();
 
-  const db = useDb(event)
-  const now = new Date()
+  const body = (await readBody(event)) as Partial<SiteSettings>;
 
-  const upsertSetting = async (
-    key: 'general' | 'navbar' | 'footer' | 'blog' | 'seo' | 'theme' | 'about',
-    value: SiteSettings[keyof SiteSettings],
+  // Generate a localized payload for each section dynamically
+  const payload = Object.fromEntries(
+    Object.entries(defaultSettings).map(([key, defaults]) => [
+      key,
+      { [locale]: { ...defaults, ...(body[key as keyof SiteSettings] ?? {}) } },
+    ])
+  ) as SiteSettingsLocale;
+
+  // console.log(payload)
+
+  // Helper to upsert + merge existing locales
+  const upsertSetting = async <K extends keyof SiteSettingsLocale>(
+    key: K,
     description: string,
-    isPublic = true
+    isPublic = true,
   ) => {
+    // Read existing setting for this key
+    const existing = await db.query.settings.findFirst({
+      where: (s, { eq }) => eq(s.key, key),
+    });
+
+    // Merge old locales + new locale
+    const mergedValue = {
+      ...(existing?.value ?? {}),
+      ...payload[key],
+    };
+
+    // Upsert new data
     await db
       .insert(settings)
       .values({
         key,
-        value,
+        value: mergedValue,
         description,
         isPublic,
         updatedAt: now,
@@ -61,21 +57,32 @@ export default defineEventHandler(async (event) => {
       .onConflictDoUpdate({
         target: settings.key,
         set: {
-          value,
+          value: mergedValue,
           description,
           isPublic,
           updatedAt: now,
         },
-      })
+      });
+  };
+
+  // Define simple metadata for each setting
+  const settingMeta: { [K in keyof SiteSettingsLocale]: { desc: string; isPublic?: boolean } } = {
+    general: { desc: "General settings" },
+    navbar: { desc: "Navbar settings" },
+    footer: { desc: "Footer settings" },
+    blog: { desc: "Blog settings", isPublic: false },
+    seo: { desc: "SEO settings" },
+    theme: { desc: "Theme settings" },
+    about: { desc: "About section settings" },
+  };
+
+  // Loop all keys and perform upsert
+  for (const [key, { desc, isPublic }] of Object.entries(settingMeta) as [
+    keyof SiteSettingsLocale,
+    { desc: string; isPublic?: boolean }
+  ][]) {
+    await upsertSetting(key, desc, isPublic ?? true);
   }
 
-  await upsertSetting('general', payload.general, 'General settings')
-  await upsertSetting('navbar', payload.navbar, 'Navbar settings')
-  await upsertSetting('footer', payload.footer, 'Footer settings')
-  await upsertSetting('blog', payload.blog, 'Blog settings', false)
-  await upsertSetting('seo', payload.seo, 'SEO settings')
-  await upsertSetting('theme', payload.theme, 'Theme settings')
-  await upsertSetting('about', payload.about, 'About section settings')
-
-  return { success: true }
-})
+  return { success: true };
+});

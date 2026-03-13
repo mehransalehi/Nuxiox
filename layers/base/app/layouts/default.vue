@@ -4,7 +4,7 @@ const { locale, setLocale} = useI18n()
 const layoutOverrides = useLayoutOverrides()
 const route = useRoute()
 
-const direction = computed(() => settings.value.general.direction ?? 'ltr')
+const direction = computed(() => locale.value == 'fa' ? "rtl": 'ltr')
 
 /*watch(
   () => settings.value.general.language,
