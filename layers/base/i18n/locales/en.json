@@ -4,6 +4,7 @@
     "persian": "Persian"
   },
   "common": {
+    "locale" : "Which Lang",
     "saveSettings": "Save Settings",
     "loadingSettings": "Loading settings...",
     "unableToLoadSettings": "Unable to load settings.",

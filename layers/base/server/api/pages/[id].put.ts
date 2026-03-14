@@ -1,50 +1,77 @@
-import { eq } from 'drizzle-orm'
-import { pages } from '~~/server/database/schema.gen'
-import { defaultPageBuilder } from '~~/layers/base/utils/page-builder'
-import type { PageBuilder } from '~~/layers/base/types/page-builder'
-import { useDb } from '~~/server/utils/db'
+import { eq, and } from "drizzle-orm"
+import { pages, pagesLocales } from "~~/server/database/schema.gen"
+import { defaultPageBuilder } from "~~/layers/base/utils/page-builder"
+import type { PageBuilder } from "~~/layers/base/types/page-builder"
+import { useDb } from "~~/server/utils/db"
+import { requireAdmin } from "~~/server/utils/checkAdmin"
 
 type UpdatePagePayload = {
   title?: string
   slug?: string
-  status?: 'draft' | 'published'
+  locale: string
+  status?: "draft" | "published"
   seo?: Record<string, unknown>
   builder?: PageBuilder
 }
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
-  }
+  await requireAdmin(event)
 
-  const id = Number(getRouterParam(event, 'id'))
+  const id = Number(getRouterParam(event, "id"))
   if (!Number.isFinite(id)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid page id' })
+    throw createError({ statusCode: 400, statusMessage: "Invalid page id" })
   }
 
   const body = (await readBody(event)) as UpdatePagePayload
 
-  const payload: Partial<UpdatePagePayload> & { updatedAt: Date } = {
+  const db = useDb(event)
+
+  // ---- update pages table ----
+  const pagePayload: any = {
     updatedAt: new Date(),
   }
 
-  if (body.title !== undefined) payload.title = body.title
-  if (body.slug !== undefined) payload.slug = body.slug
-  if (body.status !== undefined) payload.status = body.status
-  if (body.seo !== undefined) payload.seo = body.seo
-  if (body.builder !== undefined) payload.builder = body.builder ?? defaultPageBuilder
+  if (body.status !== undefined) {
+    pagePayload.status = body.status
+  }
 
-  const db = useDb(event)
-  const [updated] = await db
+  const [page] = await db
     .update(pages)
-    .set(payload)
+    .set(pagePayload)
     .where(eq(pages.id, id))
     .returning()
 
-  if (!updated) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+  if (!page) {
+    throw createError({ statusCode: 404, statusMessage: "Page not found" })
   }
 
-  return updated
+  // ---- update locale table ----
+  const localePayload: any = {}
+
+  if (body.title !== undefined) localePayload.title = body.title
+  if (body.slug !== undefined) localePayload.slug = body.slug
+  if (body.seo !== undefined) localePayload.seo = body.seo
+  if (body.builder !== undefined) localePayload.builder = body.builder ?? defaultPageBuilder
+
+  let localeRow = null
+
+  if (Object.keys(localePayload).length > 0) {
+    const [updatedLocale] = await db
+      .update(pagesLocales)
+      .set(localePayload)
+      .where(
+        and(
+          eq(pagesLocales.pageId, id),
+          eq(pagesLocales.locale, body.locale)
+        )
+      )
+      .returning()
+
+    localeRow = updatedLocale
+  }
+
+  return {
+    ...page,
+    locale: localeRow,
+  }
 })

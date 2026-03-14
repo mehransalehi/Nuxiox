@@ -4,6 +4,7 @@
     "persian": "فارسی"
   },
   "common": {
+    "locale" : "کدام زبان",
     "saveSettings": "ذخیره تنظیمات",
     "loadingSettings": "در حال بارگذاری تنظیمات...",
     "unableToLoadSettings": "امکان بارگذاری تنظیمات وجود ندارد.",

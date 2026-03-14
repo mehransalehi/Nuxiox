@@ -1,49 +1,54 @@
 import { eq } from 'drizzle-orm'
 import { settings } from '~~/server/database/schema.gen'
-import { defaultSettings } from '~~/layers/base/utils/settings'
+import { defaultSettings,SiteSettings } from '~~/layers/base/utils/settings'
 import { useDb } from '~~/server/utils/db'
+import { getLocale } from "~~/server/utils/getLocale";
 
 export default defineEventHandler(async (event) => {
   const db = useDb(event)
+  const locale = getLocale(event)
   const rows = await db
     .select()
     .from(settings)
     .where(eq(settings.isPublic, true))
 
-  const values = rows.reduce<Record<string, unknown>>((acc, row) => {
-    acc[row.key] = row.value
-    return acc
-  }, {})
-
-  return {
-    general: {
-      ...defaultSettings.general,
-      ...((values.general as typeof defaultSettings.general) ?? {}),
-    },
-    navbar: {
-      ...defaultSettings.navbar,
-      ...((values.navbar as typeof defaultSettings.navbar) ?? {}),
-    },
-    footer: {
-      ...defaultSettings.footer,
-      ...((values.footer as typeof defaultSettings.footer) ?? {}),
-    },
-    blog: {
-      ...defaultSettings.blog,
-      ...((values.blog as typeof defaultSettings.blog) ?? {}),
-      recaptchaSecretKey: '',
-    },
-    seo: {
-      ...defaultSettings.seo,
-      ...((values.seo as typeof defaultSettings.seo) ?? {}),
-    },
-    theme: {
-      ...defaultSettings.theme,
-      ...((values.theme as typeof defaultSettings.theme) ?? {}),
-    },
-    about: {
-      ...defaultSettings.about,
-      ...((values.about as typeof defaultSettings.about) ?? {}),
-    },
-  }
+  const values = rows.reduce<Record<string, any>>((acc, row) => {
+      acc[row.key] = row.value
+  
+      return acc
+    }, {})
+  
+    // console.log(values.about);
+    const response: SiteSettings = {
+      general: {
+        ...defaultSettings.general,
+        ...((values.general ? values.general[locale] : false ) ?? {}),
+      },
+      navbar: {
+        ...defaultSettings.navbar,
+        ...((values.navbar ? values.navbar[locale] : false ) ?? {}),
+      },
+      footer: {
+        ...defaultSettings.footer,
+        ...((values.footer ? values.footer[locale] : false ) ?? {}),
+      },
+      blog: {
+        ...defaultSettings.blog,
+        ...((values.blog ? values.blog[locale] : false ) ?? {}),
+      },
+      seo: {
+        ...defaultSettings.seo,
+        ...((values.seo ? values.seo[locale] : false ) ?? {}),
+      },
+      theme: {
+        ...defaultSettings.theme,
+        ...((values.theme ? values.theme[locale] : false ) ?? {}),
+      },
+      about: {
+        ...defaultSettings.about,
+        ...((values.about ? values.about[locale] : false ) ?? {}),
+      },
+    }
+  
+    return response
 })

@@ -33,25 +33,32 @@ const selectedSectionId = ref<string>('')
 const seoEntries = ref<SeoEntry[]>([])
 
 const form = reactive<PageRecord>({
-  id: 0,
-  slug: '',
-  title: '',
-  status: 'draft',
-  seo: {},
-  builder: structuredClone(defaultPageBuilder),
-  createdAt: 0,
-  updatedAt: 0,
+  pages:
+  {
+    id: 0,
+    status: 'draft',
+    createdAt: 0,
+    updatedAt: 0,
+  }, pages_locales: {
+    id: 0,
+    pageId: 0,
+    locale: 'en',
+    slug: '',
+    title: '',
+    seo: {},
+    builder: structuredClone(defaultPageBuilder)
+  }
 })
 
 const defaultSeoEntries = computed<SeoEntry[]>(() => {
-  const baseTitle = form.title.trim() || 'Untitled page'
+  const baseTitle = form.pages_locales.title.trim() || 'Untitled page'
   return [
     { key: 'title', value: baseTitle },
     { key: 'description', value: `Learn more about ${baseTitle}.` },
     { key: 'keywords', value: baseTitle.toLowerCase() },
     { key: 'ogTitle', value: baseTitle },
     { key: 'ogDescription', value: `Learn more about ${baseTitle}.` },
-    { key: 'canonical', value: form.slug ? `/${form.slug}` : '' },
+    { key: 'canonical', value: form.pages_locales.slug ? `/${form.pages_locales.slug}` : '' },
     { key: 'robots', value: 'index,follow' },
   ]
 })
@@ -73,14 +80,14 @@ watch(
   (value) => {
     if (!value) return
     Object.assign(form, structuredClone(value))
-    if (!form.builder) form.builder = structuredClone(defaultPageBuilder)
-    seoEntries.value = Object.entries(form.seo ?? {}).map(([key, value]) => ({ key, value: String(value ?? '') }))
+    if (!form.pages_locales.builder) form.pages_locales.builder = structuredClone(defaultPageBuilder)
+    seoEntries.value = Object.entries(form.pages_locales.seo ?? {}).map(([key, value]) => ({ key, value: String(value ?? '') }))
     ensureSeoDefaults()
   },
   { immediate: true }
 )
 
-watch(() => [form.title, form.slug], ensureSeoDefaults)
+watch(() => [form.pages_locales.title, form.pages_locales.slug], ensureSeoDefaults)
 
 const availableSections = computed(() => sectionsData.value?.sections ?? [])
 const sectionLabels = computed(() => new Map(availableSections.value.map((section) => [section.id, section.label])))
@@ -96,12 +103,12 @@ const addSectionBlock = () => {
     sectionId: section.id,
     source: 'sections',
   }
-  form.builder.blocks.push(block)
+  form.pages_locales.builder.blocks.push(block)
   selectedSectionId.value = ''
 }
 
 const addTextBlock = () => {
-  form.builder.blocks.push({ uid: createUid(), type: 'text', content: '<p>New content</p>' })
+  form.pages_locales.builder.blocks.push({ uid: createUid(), type: 'text', content: '<p>New content</p>' })
 }
 
 const addSeoEntry = () => {
@@ -113,7 +120,7 @@ const removeSeoEntry = (index: number) => {
 }
 
 const removeBlock = (index: number) => {
-  form.builder.blocks.splice(index, 1)
+  form.pages_locales.builder.blocks.splice(index, 1)
 }
 
 const handleDragStart = (index: number) => {
@@ -124,8 +131,8 @@ const handleDrop = (index: number) => {
   if (dragging.value === null) return
   const fromIndex = dragging.value
   if (fromIndex !== index) {
-    const [moved] = form.builder.blocks.splice(fromIndex, 1)
-    if (moved) form.builder.blocks.splice(index, 0, moved)
+    const [moved] = form.pages_locales.builder.blocks.splice(fromIndex, 1)
+    if (moved) form.pages_locales.builder.blocks.splice(index, 0, moved)
   }
   dragging.value = null
 }
@@ -146,7 +153,14 @@ const savePage = async () => {
     try {
       await $fetch(`/api/pages/${pageId.value}`, {
         method: 'PUT',
-        body: { title: form.title, slug: form.slug, status: form.status, seo: toSeoJson(), builder: form.builder },
+        body: { 
+          title: form.pages_locales.title, 
+          slug: form.pages_locales.slug, 
+          status: form.pages.status, 
+          seo: toSeoJson(), 
+          builder: form.pages_locales.builder,
+          locale : form.pages_locales.locale 
+        },
       })
       toastStore.push($t('admin.pages.saveSuccess'), 'success')
       await refresh()
@@ -162,7 +176,7 @@ const deletePage = async () => {
   deleting.value = true
   await loadingStore.withActionLoading(async () => {
     try {
-      await $fetch(`/api/pages/${pageId.value}`, { method: 'DELETE' })
+      await $fetch(`/api/pages/${pageId.value}?locale=${form.pages_locales.locale}`, { method: 'DELETE' })
       toastStore.push($t('admin.pages.deleteSuccess'), 'success')
       await navigateTo('/admin/pages')
     } catch (err) {
@@ -178,51 +192,80 @@ const deletePage = async () => {
   <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h2 class="text-2xl font-bold">{{ $t('admin.pages.editTitle') }}</h2>
+        <h2 class="text-2xl font-bold">{{ $t('admin.pages.editTitle') }} <span class="text-sm">({{ form.pages_locales.locale }})</span></h2>
         <p class="opacity-70">{{ $t('admin.pages.addSectionHint') }}</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <button class="btn btn-outline" :class="{ 'btn-disabled': deleting }" @click="deletePage">{{ $t('common.delete') }}</button>
-        <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="savePage">{{ $t('common.save') }}</button>
+        <button class="btn btn-outline" :class="{ 'btn-disabled': deleting }" @click="deletePage">{{ $t('common.delete')
+          }}</button>
+        <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="savePage">{{ $t('common.save')
+          }}</button>
       </div>
     </div>
 
-    <section class="card bg-base-100 shadow"><div class="card-body space-y-4">
-      <div class="grid gap-4 md:grid-cols-2">
-        <label class="form-control"><span class="label-text">{{ $t('common.title') }}</span><input v-model="form.title" class="input input-bordered" type="text" /></label>
-        <label class="form-control"><span class="label-text">{{ $t('common.slug') }}</span><input v-model="form.slug" class="input input-bordered" type="text" /></label>
-      </div>
-      <label class="form-control max-w-xs"><span class="label-text">{{ $t('common.status') }}</span>
-        <select v-model="form.status" class="select select-bordered"><option value="draft">{{ $t('common.draft') }}</option><option value="published">{{ $t('common.published') }}</option></select>
-      </label>
-
-      <div class="space-y-2">
-        <div class="flex items-center justify-between"><span class="font-medium">{{ $t('common.seoMeta') }}</span><button class="btn btn-sm" type="button" @click="addSeoEntry">{{ $t('common.addSeoField') }}</button></div>
-        <div v-for="(entry, index) in seoEntries" :key="`seo-${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-          <input v-model="entry.key" class="input input-bordered" type="text" :placeholder="$t('common.metaKey') as any" />
-          <input v-model="entry.value" class="input input-bordered" type="text" :placeholder="$t('common.metaValue') as any" />
-          <button class="btn btn-ghost btn-square" type="button" @click="removeSeoEntry(index)">✕</button>
+    <section class="card bg-base-100 shadow">
+      <div class="card-body space-y-4">
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="form-control"><span class="label-text">{{ $t('common.title') }}</span><input
+              v-model="form.pages_locales.title" class="input input-bordered" type="text" /></label>
+          <label class="form-control"><span class="label-text">{{ $t('common.slug') }}</span><input
+              v-model="form.pages_locales.slug" class="input input-bordered" type="text" /></label>
         </div>
-      </div>
-    </div></section>
-
-    <section class="card bg-base-100 shadow"><div class="card-body space-y-4">
-      <h3 class="card-title">{{ $t('admin.pages.builder') }}</h3>
-      <div class="flex flex-wrap items-end gap-3">
-        <label class="form-control"><span class="label-text">{{ $t('common.selectSection') }}</span>
-          <select v-model="selectedSectionId" class="select select-bordered"><option value="">{{ $t('common.selectSection') }}</option><option v-for="section in availableSections" :key="section.id" :value="section.id">{{ section.label }}</option></select>
+        <label class="form-control max-w-xs"><span class="label-text">{{ $t('common.status') }}</span>
+          <select v-model="form.pages.status" class="select select-bordered">
+            <option value="draft">{{ $t('common.draft') }}</option>
+            <option value="published">{{ $t('common.published') }}</option>
+          </select>
         </label>
-        <button class="btn btn-sm" :disabled="!selectedSectionId" @click="addSectionBlock">{{ $t('common.addSection') }}</button>
-        <button class="btn btn-sm" @click="addTextBlock">{{ $t('common.addTextBlock') }}</button>
-      </div>
 
-      <div class="space-y-3">
-        <div v-for="(block, index) in form.builder.blocks" :key="block.uid" class="rounded-lg border border-base-300 bg-base-100 p-4" draggable="true" @dragstart="handleDragStart(index)" @dragover.prevent @drop="handleDrop(index)">
-          <div class="flex items-center justify-between gap-2"><div class="flex items-center gap-2 text-sm uppercase opacity-60"><i class="fa-solid fa-grip-vertical" aria-hidden="true" /><span>{{ block.type }}</span></div><button class="btn btn-ghost btn-square" @click="removeBlock(index)">✕</button></div>
-          <div v-if="block.type === 'text'" class="mt-3"><AdminQuillEditor v-model="block.content" /></div>
-          <div v-else class="mt-3 text-sm">{{ sectionLabels.get(block.sectionId) ?? block.sectionId }}</div>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between"><span class="font-medium">{{ $t('common.seoMeta')
+              }}</span><button class="btn btn-sm" type="button" @click="addSeoEntry">{{ $t('common.addSeoField')
+              }}</button></div>
+          <div v-for="(entry, index) in seoEntries" :key="`seo-${index}`"
+            class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+            <input v-model="entry.key" class="input input-bordered" type="text"
+              :placeholder="$t('common.metaKey') as any" />
+            <input v-model="entry.value" class="input input-bordered" type="text"
+              :placeholder="$t('common.metaValue') as any" />
+            <button class="btn btn-ghost btn-square" type="button" @click="removeSeoEntry(index)">✕</button>
+          </div>
         </div>
       </div>
-    </div></section>
+    </section>
+
+    <section class="card bg-base-100 shadow">
+      <div class="card-body space-y-4">
+        <h3 class="card-title">{{ $t('admin.pages.builder') }}</h3>
+        <div class="flex flex-wrap items-end gap-3">
+          <label class="form-control"><span class="label-text">{{ $t('common.selectSection') }}</span>
+            <select v-model="selectedSectionId" class="select select-bordered">
+              <option value="">{{ $t('common.selectSection') }}</option>
+              <option v-for="section in availableSections" :key="section.id" :value="section.id">{{ section.label }}
+              </option>
+            </select>
+          </label>
+          <button class="btn btn-sm" :disabled="!selectedSectionId" @click="addSectionBlock">{{ $t('common.addSection')
+            }}</button>
+          <button class="btn btn-sm" @click="addTextBlock">{{ $t('common.addTextBlock') }}</button>
+        </div>
+
+        <div class="space-y-3">
+          <div v-for="(block, index) in form.pages_locales.builder.blocks" :key="block.uid"
+            class="rounded-lg border border-base-300 bg-base-100 p-4" draggable="true"
+            @dragstart="handleDragStart(index)" @dragover.prevent @drop="handleDrop(index)">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 text-sm uppercase opacity-60"><i class="fa-solid fa-grip-vertical"
+                  aria-hidden="true" /><span>{{ block.type }}</span></div><button class="btn btn-ghost btn-square"
+                @click="removeBlock(index)">✕</button>
+            </div>
+            <div v-if="block.type === 'text'" class="mt-3">
+              <AdminQuillEditor v-model="block.content" />
+            </div>
+            <div v-else class="mt-3 text-sm">{{ sectionLabels.get(block.sectionId) ?? block.sectionId }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>

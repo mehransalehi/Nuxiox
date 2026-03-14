@@ -1,43 +1,78 @@
-import { pages } from '~~/server/database/schema.gen'
-import { defaultPageBuilder } from '~~/layers/base/utils/page-builder'
-import { useDb } from '~~/server/utils/db'
+import { pages, pagesLocales } from "~~/server/database/schema.gen";
+import { defaultPageBuilder } from "~~/layers/base/utils/page-builder";
+import { useDb } from "~~/server/utils/db";
+import { requireAdmin } from "~~/server/utils/checkAdmin";
+import { eq } from "drizzle-orm";
 
 type CreatePagePayload = {
-  title: string
-  slug: string
-}
+  title: string;
+  slug: string;
+  locale: string;
+};
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  await requireAdmin(event);
+
+  const body = (await readBody(event)) as Partial<CreatePagePayload>;
+
+  if (!body?.title || !body?.slug || !body?.locale) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Title, slug and locale are required",
+    });
   }
 
-  const body = (await readBody(event)) as Partial<CreatePagePayload>
-  if (!body?.title || !body?.slug) {
-    throw createError({ statusCode: 400, statusMessage: 'Title and slug are required' })
-  }
+  const db = useDb(event);
 
-  const db = useDb(event)
-  const now = new Date()
   const seo = {
     title: body.title,
     description: `Learn more about ${body.title}.`,
     canonical: `/${body.slug}`,
-    robots: 'index,follow',
-  }
-  const [created] = await db
-    .insert(pages)
-    .values({
-      title: body.title,
-      slug: body.slug,
-      status: 'draft',
-      seo,
-      builder: defaultPageBuilder,
-      createdAt: now,
-      updatedAt: now,
-    })
-    .returning()
+    robots: "index,follow",
+  };
 
-  return created
-})
+  try {
+    const [page] = await db
+      .insert(pages)
+      .values({
+        status: "draft",
+      })
+      .returning();
+    let localeRow = null;
+    if (page) {
+      try {
+        [localeRow] = await db
+          .insert(pagesLocales)
+          .values({
+            pageId: page.id,
+            locale: body.locale!,
+            slug: body.slug!,
+            title: body.title!,
+            seo,
+            builder: defaultPageBuilder,
+          })
+          .returning();
+      } catch (error) {
+        await db.delete(pages).where(eq(pages.id, page.id));
+        throw error;
+      }
+    }
+
+    return {
+      pages: { ...page },
+      pages_locales: { ...localeRow },
+    };
+  } catch (error: any) {
+    if (error?.message?.includes("UNIQUE")) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "Slug already exists for this locale",
+      });
+    }
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to create page or slug must not saved before",
+    });
+  }
+});
