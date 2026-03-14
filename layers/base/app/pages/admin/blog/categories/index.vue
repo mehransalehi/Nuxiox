@@ -1,20 +1,28 @@
 <script setup lang="ts">
+import { useToastStore } from '~~/layers/base/app/stores/toast'
+
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
 useHead(() => ({ title: $t('admin.blog.categories') }))
 
 const { data, refresh } = await useFetch('/api/admin/blog/categories', { default: () => [] as any[] })
-const form = reactive({ name: '', slug: '', description: '' })
+const form = reactive({ name: '', slug: '', description: '', locale: '' })
 const editingId = ref<number | null>(null)
-
+const { locale, locales, setLocale } = useI18n()
+const toastStore = useToastStore()
 const resetForm = () => {
   editingId.value = null
   form.name = ''
   form.slug = ''
   form.description = ''
+  form.locale = '';
 }
 
 const submit = async () => {
+  if (!form.locale || !form.slug || !form.name) {
+    toastStore.push($t("Star Feild required"), 'error')
+    return;
+  }
   if (editingId.value) {
     await $fetch(`/api/admin/blog/categories/${editingId.value}`, { method: 'PUT', body: form })
   } else {
@@ -28,6 +36,7 @@ const edit = (row: any) => {
   editingId.value = row.id
   form.name = row.name
   form.slug = row.slug
+  form.locale = row.locale
   form.description = row.description || ''
 }
 
@@ -40,27 +49,65 @@ const remove = async (id: number) => {
 <template>
   <div class="space-y-6">
     <h2 class="text-2xl font-bold">{{ $t('admin.blog.categories') }}</h2>
-    <section class="card bg-base-100 shadow"><div class="card-body space-y-3">
-      <h3 class="card-title">{{ editingId ? $t('admin.blog.editCategory') : $t('admin.blog.createCategory') }}</h3>
-      <div class="grid gap-3 md:grid-cols-2">
-        <input v-model="form.name" class="input input-bordered" :placeholder="$t('admin.blog.categoryName') as any" />
-        <input v-model="form.slug" class="input input-bordered" :placeholder="$t('common.slug') as any" />
+    <section class="card bg-base-100 shadow">
+      <div class="card-body space-y-4">
+        <h3 class="card-title">{{ editingId ? $t('admin.blog.editCategory') : $t('admin.blog.createCategory') }}</h3>
+        <div class="grid gap-3 md:grid-cols-2">
+          <label class="flex flex-col items-start gap-4">
+            <span class="font-medium">{{ $t('admin.blog.categoryName')}} *</span>
+            <input v-model="form.name" class="input input-bordered" :placeholder="$t('admin.blog.categoryName') as any" />
+          </label>
+          <label class="flex flex-col  items-start gap-4">
+            <span class="font-medium">{{ $t('common.slug') }} *</span>
+            <input v-model="form.slug" class="input input-bordered" :placeholder="$t('common.slug') as any" />
+          </label>
+        </div>
+        <div class="grid gap-3 md:grid-cols-2">
+          <label class="flex flex-col  items-start gap-4">
+            <span class="font-medium">{{ $t('admin.blog.categoryDescription') }}</span>
+            <textarea v-model="form.description" class="textarea textarea-bordered"
+              :placeholder="$t('admin.blog.categoryDescription') as any" />
+          </label>
+          <label class="flex flex-col items-start gap-4">
+            <span class="font-medium">{{ $t('common.locale') }} *</span>
+            <select v-model="form.locale" class="select select-bordered">
+              <option disabled value="">Select locale</option>
+              <option v-for="(loc, i) in locales" :value="loc.code" :key="i">{{ loc.name }}</option>
+            </select>
+          </label>
+        </div>
+        <div class="flex gap-2">
+          <button class="btn btn-primary" @click="submit">{{ editingId ? $t('common.update') :
+            $t('common.create') }}</button>
+          <button v-if="editingId" class="btn" @click="resetForm">{{ $t('common.cancel') }}</button>
+        </div>
       </div>
-      <textarea v-model="form.description" class="textarea textarea-bordered" :placeholder="$t('admin.blog.categoryDescription') as any" />
-      <div class="flex gap-2">
-        <button class="btn btn-primary" @click="submit">{{ editingId ? $t('common.update') : $t('common.create') }}</button>
-        <button v-if="editingId" class="btn" @click="resetForm">{{ $t('common.cancel') }}</button>
-      </div>
-    </div></section>
+    </section>
 
-    <section class="card bg-base-100 shadow"><div class="card-body overflow-x-auto">
-      <table class="table"><thead><tr><th>{{ $t('admin.blog.categoryName') }}</th><th>{{ $t('common.slug') }}</th><th>{{ $t('admin.blog.posts') }}</th><th>{{ $t('common.actions') }}</th></tr></thead>
-      <tbody>
-        <tr v-for="row in data" :key="row.id">
-          <td>{{ row.name }}</td><td>{{ row.slug }}</td><td>{{ row.postsCount }}</td>
-          <td class="space-x-2"><button class="btn btn-xs" @click="edit(row)">{{ $t('common.edit') }}</button><button class="btn btn-xs btn-error" @click="remove(row.id)">{{ $t('common.delete') }}</button></td>
-        </tr>
-      </tbody></table>
-    </div></section>
+    <section class="card bg-base-100 shadow">
+      <div class="card-body overflow-x-auto">
+        <table class="table" v-if="data.length > 0">
+          <thead>
+            <tr>
+              <th>{{ $t('admin.blog.categoryName') }}</th>
+              <th>{{ $t('common.slug') }}</th>
+              <th>{{ $t('admin.blog.posts') }}</th>
+              <th>{{ $t('common.actions') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in data" :key="row.id">
+              <td>{{ row.name }}</td>
+              <td>{{ row.slug }}</td>
+              <td>{{ row.postsCount }}</td>
+              <td class="space-x-2"><button class="btn btn-xs" @click="edit(row)">{{ $t('common.edit')
+              }}</button><button class="btn btn-xs btn-error" @click="remove(row.id)">{{ $t('common.delete')
+                  }}</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div v-else class="text-center">{{ $t("common.ThereIsNo") + $t('admin.blog.categories') }}</div>
+      </div>
+    </section>
   </div>
 </template>

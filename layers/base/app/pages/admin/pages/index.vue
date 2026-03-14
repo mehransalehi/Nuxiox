@@ -69,6 +69,7 @@ const createPage = async () => {
           <label class="form-control">
             <span class="label-text">{{ $t('common.locale') }}</span>
             <select v-model="form.locale" class="input input-bordered">
+              <option disabled value="">Select locale</option>
               <option v-for="(loc, i) in locales" :value="loc.code" :key="i">{{ loc.name }}</option>
             </select>
           </label>
@@ -101,7 +102,8 @@ const createPage = async () => {
                 <td>{{ pageItem.pages.status }}</td>
                 <td>{{ pageItem.pages_locales.locale }}</td>
                 <td>
-                  <NuxtLink class="link" :to="$localePath(`/admin/pages/${pageItem.pages.id}?locale=${pageItem.pages_locales.locale}`)">
+                  <NuxtLink class="link"
+                    :to="$localePath(`/admin/pages/${pageItem.pages.id}?locale=${pageItem.pages_locales.locale}`)">
                     {{ $t('common.edit') }}
                   </NuxtLink>
                 </td>

@@ -53,7 +53,17 @@ export default defineEventHandler(async (event) => {
           })
           .returning();
       } catch (error) {
-        await db.delete(pages).where(eq(pages.id, page.id));
+        // 2️⃣ Check if any locales remain
+        const remaining = await db
+          .select({ id: pagesLocales.id })
+          .from(pagesLocales)
+          .where(eq(pagesLocales.pageId, page.id))
+          .limit(1);
+
+        // 3️⃣ If no locales remain → delete page
+        if (remaining.length === 0) {
+          await db.delete(pages).where(eq(pages.id, page.id));
+        }
         throw error;
       }
     }

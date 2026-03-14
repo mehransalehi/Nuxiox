@@ -1,25 +1,57 @@
-import { z } from 'zod'
-import { blogCategories } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
+import { z } from "zod";
+import {
+  blogCategories,
+  blogCategoriesLocales,
+} from "~~/server/database/schema.gen";
+import { useDb } from "~~/server/utils/db";
+import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 const schema = z.object({
+  locale: z.string().min(2).max(10),
   name: z.string().min(2).max(120),
   slug: z.string().min(2).max(160),
   description: z.string().max(1000).optional(),
-})
+});
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  await requireAdmin(event);
 
-  const body = schema.parse(await readBody(event))
-  const db = useDb(event)
+  const body = schema.parse(await readBody(event));
+  const db = useDb(event);
 
-  const [created] = await db.insert(blogCategories).values({
-    name: body.name,
-    slug: body.slug,
-    description: body.description ?? null,
-  }).returning()
-
-  return created
-})
+  // create base category
+  const [category] = await db.insert(blogCategories).values({}).returning();
+  // create locale
+  if (category) {
+    try {
+      const [localeRow] = await db
+        .insert(blogCategoriesLocales)
+        .values({
+          categoryId: category.id,
+          locale: body.locale,
+          name: body.name,
+          slug: body.slug,
+          description: body.description ?? null,
+        })
+        .returning();
+      return {
+        category: {
+          ...category,
+        },
+        categories_locale: {
+          ...localeRow,
+        },
+      };
+    } catch (error) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "Error in makeing category",
+      });
+    }
+  } else {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "Error in makeing category",
+    });
+  }
+});

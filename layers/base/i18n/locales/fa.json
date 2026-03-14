@@ -4,6 +4,7 @@
     "persian": "فارسی"
   },
   "common": {
+    "ThereIsNo" : "وجود ندارد ",
     "locale" : "کدام زبان",
     "saveSettings": "ذخیره تنظیمات",
     "loadingSettings": "در حال بارگذاری تنظیمات...",
