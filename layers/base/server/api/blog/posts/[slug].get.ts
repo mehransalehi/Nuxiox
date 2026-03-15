@@ -1,6 +1,11 @@
 import { and, asc, eq } from 'drizzle-orm'
-import { blogComments, blogPosts } from '~~/server/database/schema.gen'
+import {
+  blogComments,
+  blogPosts,
+  blogPostsLocales,
+} from '~~/server/database/schema.gen'
 import { useDb } from '~~/server/utils/db'
+import { getLocale } from "~~/server/utils/getLocale";
 
 type CommentNode = {
   id: number
@@ -16,16 +21,40 @@ type CommentNode = {
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
-  if (!slug) throw createError({ statusCode: 400, statusMessage: 'Slug is required' })
+  const locale = getLocale(event)
+
+  if (!slug)
+    throw createError({ statusCode: 400, statusMessage: 'Slug is required' })
 
   const db = useDb(event)
+
   const [post] = await db
-    .select()
+    .select({
+      id: blogPosts.id,
+      title: blogPostsLocales.title,
+      slug: blogPostsLocales.slug,
+      excerpt: blogPostsLocales.excerpt,
+      content: blogPostsLocales.content,
+      featuredImage: blogPosts.featuredImage,
+      publishedAt: blogPosts.publishedAt,
+      createdAt: blogPosts.createdAt,
+    })
     .from(blogPosts)
-    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, 'published')))
+    .innerJoin(
+      blogPostsLocales,
+      and(
+        eq(blogPostsLocales.postId, blogPosts.id),
+        eq(blogPostsLocales.locale, locale),
+      ),
+    )
+    .where(and(
+      eq(blogPostsLocales.slug, slug),
+      eq(blogPosts.status, 'published'),
+    ))
     .limit(1)
 
-  if (!post) throw createError({ statusCode: 404, statusMessage: 'Post not found' })
+  if (!post)
+    throw createError({ statusCode: 404, statusMessage: 'Post not found' })
 
   const comments = await db
     .select({
@@ -39,7 +68,10 @@ export default defineEventHandler(async (event) => {
       createdAt: blogComments.createdAt,
     })
     .from(blogComments)
-    .where(and(eq(blogComments.postId, post.id), eq(blogComments.status, 'approved')))
+    .where(and(
+      eq(blogComments.postId, post.id),
+      eq(blogComments.status, 'approved'),
+    ))
     .orderBy(asc(blogComments.createdAt))
 
   const byId = new Map<number, CommentNode>()

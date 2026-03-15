@@ -23,7 +23,6 @@ const removePost = async (id: number) => {
         <thead>
           <tr>
             <th>{{ $t('common.title') }}</th>
-            <th>{{ $t('common.locale') }}</th>
             <th>{{ $t('common.status') }}</th>
             <th>{{ $t('admin.blog.comments') }}</th>
             <th>{{ $t('admin.blog.allowComments') }}</th>
@@ -33,12 +32,11 @@ const removePost = async (id: number) => {
         <tbody>
           <tr v-for="row in data" :key="row.id">
             <td>{{ row.title }}</td>
-            <td>{{ row.locale }}</td>
             <td>{{ row.status }}</td>
             <td>{{ row.commentsCount }}</td>
             <td>{{ row.allowComments ? $t('common.yes') : $t('common.no') }}</td>
             <td class="space-x-2">
-              <NuxtLink class="btn btn-xs" :to="$localePath(`/admin/blog/posts/${row.id}`)">{{ $t('common.edit') }}
+              <NuxtLink class="btn btn-xs" :to="$localePath(`/admin/blog/posts/${row.id}?locale=${row.locale}`)">{{ $t('common.edit') }}
               </NuxtLink>
               <button class="btn btn-xs btn-error" @click="removePost(row.id)">{{ $t('common.delete') }}</button>
             </td>

@@ -1,21 +1,33 @@
-import { desc, eq } from 'drizzle-orm'
-import { blogPosts } from '~~/server/database/schema.gen'
+import { desc, eq, and } from 'drizzle-orm'
+import { blogPosts, blogPostsLocales } from '~~/server/database/schema.gen'
 import { useDb } from '~~/server/utils/db'
+import { getLocale } from "~~/server/utils/getLocale";
 
 export default defineEventHandler(async (event) => {
-  const limit = Math.min(10, Math.max(1, Number(getQuery(event).limit ?? 5)))
+  const query = getQuery(event)
+
+  const locale = getLocale(event)
+  const limit = Math.min(10, Math.max(1, Number(query.limit ?? 5)))
+
   const db = useDb(event)
 
   return db
     .select({
       id: blogPosts.id,
-      title: blogPosts.title,
-      slug: blogPosts.slug,
-      excerpt: blogPosts.excerpt,
+      title: blogPostsLocales.title,
+      slug: blogPostsLocales.slug,
+      excerpt: blogPostsLocales.excerpt,
       featuredImage: blogPosts.featuredImage,
       publishedAt: blogPosts.publishedAt,
     })
     .from(blogPosts)
+    .innerJoin(
+      blogPostsLocales,
+      and(
+        eq(blogPostsLocales.postId, blogPosts.id),
+        eq(blogPostsLocales.locale, locale),
+      ),
+    )
     .where(eq(blogPosts.status, 'published'))
     .orderBy(desc(blogPosts.publishedAt))
     .limit(limit)

@@ -8,6 +8,7 @@ useHead(() => ({ title: $t('admin.blog.postEditor') }))
 
 const route = useRoute()
 const idParam = computed(() => String(route.params.id))
+const localeParam = computed(() => route.query.locale)
 const isNew = computed(() => idParam.value === 'new')
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
@@ -30,7 +31,6 @@ const form = reactive({
 
 const seoEntries = ref<SeoEntry[]>([])
 const { data: categories } = await useFetch('/api/admin/blog/categories', { default: () => [] as any[] })
-console.log(categories);
 
 
 const ensureSeoDefaults = () => {
@@ -55,10 +55,10 @@ const ensureSeoDefaults = () => {
 }
 
 if (!isNew.value) {
-  const { data } = await useFetch(`/api/admin/blog/posts/${idParam.value}?locale=${locale}`)
+  const { data } = await useFetch(`/api/admin/blog/posts/${idParam.value}?locale=${localeParam.value}`)
   watchEffect(() => {
     if (!data.value) return
-    console.log(data.value);
+    // console.log(data.value);
     Object.assign(form, {
       ...data.value,
       excerpt: data.value.excerpt ?? '',

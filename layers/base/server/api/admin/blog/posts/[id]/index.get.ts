@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
   if (!id) throw createError({ statusCode: 400, statusMessage: 'Post id is required' })
   if (!locale) throw createError({ statusCode: 400, statusMessage: 'Locale is required' })
-
+    
   const db = useDb(event)
 
   const [post] = await db
@@ -49,7 +49,6 @@ export default defineEventHandler(async (event) => {
     .select({ categoryId: blogPostCategories.categoryId })
     .from(blogPostCategories)
     .where(eq(blogPostCategories.postId, id))
-
   return {
     ...post,
     seo: (post.seo ?? {}) as Record<string, string>,
