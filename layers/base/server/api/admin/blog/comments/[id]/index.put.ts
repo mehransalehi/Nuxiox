@@ -1,22 +1,30 @@
-import { eq } from 'drizzle-orm'
-import { z } from 'zod'
-import { blogComments } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { blogComments } from "~~/server/database/schema.gen";
+import { useDb } from "~~/server/utils/db";
+import { requireAdmin } from "~~/server/utils/checkAdmin";
+import { checkZod } from "~~/server/utils/checkZod";
 
 const schema = z.object({
-  status: z.enum(['pending', 'approved', 'rejected']),
-})
+  status: z.enum(["pending", "approved", "rejected"]),
+});
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  const admin = await requireAdmin(event);
 
-  const id = Number(getRouterParam(event, 'id'))
-  if (!id) throw createError({ statusCode: 400, statusMessage: 'Comment id is required' })
+  const id = Number(getRouterParam(event, "id"));
+  if (!id)
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Comment id is required",
+    });
 
-  const body = schema.parse(await readBody(event))
-  const db = useDb(event)
+  const body = await readValidatedBody(event, checkZod(schema));
+  const db = useDb(event);
 
-  await db.update(blogComments).set({ status: body.status }).where(eq(blogComments.id, id))
-  return { success: true }
-})
+  await db
+    .update(blogComments)
+    .set({ status: body.status })
+    .where(eq(blogComments.id, id));
+  return { success: true };
+});

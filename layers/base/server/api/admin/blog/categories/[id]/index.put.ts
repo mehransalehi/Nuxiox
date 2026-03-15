@@ -3,6 +3,7 @@ import { z } from "zod"
 import { blogCategoriesLocales } from "~~/server/database/schema.gen"
 import { useDb } from "~~/server/utils/db"
 import { requireAdmin } from "~~/server/utils/checkAdmin";
+import { checkZod } from "~~/server/utils/checkZod";
 
 const schema = z.object({
   locale: z.string(),
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
   if (!id)
     throw createError({ statusCode: 400, statusMessage: "Category id is required" })
 
-  const body = schema.parse(await readBody(event))
+  const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event)
 
   await db

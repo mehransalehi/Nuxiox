@@ -23,13 +23,18 @@ const submit = async () => {
     toastStore.push($t("Star Feild required"), 'error')
     return;
   }
-  if (editingId.value) {
-    await $fetch(`/api/admin/blog/categories/${editingId.value}`, { method: 'PUT', body: form })
-  } else {
-    await $fetch('/api/admin/blog/categories', { method: 'POST', body: form })
+  try {
+    if (editingId.value) {
+      await $fetch(`/api/admin/blog/categories/${editingId.value}`, { method: 'PUT', body: form })
+    } else {
+      await $fetch('/api/admin/blog/categories', { method: 'POST', body: form })
+    }
+    resetForm()
+    await refresh()
+  } catch (error: any) {
+    toastStore.showZodError(error);
   }
-  resetForm()
-  await refresh()
+
 }
 
 const edit = (row: any) => {
@@ -54,8 +59,9 @@ const remove = async (id: number) => {
         <h3 class="card-title">{{ editingId ? $t('admin.blog.editCategory') : $t('admin.blog.createCategory') }}</h3>
         <div class="grid gap-3 md:grid-cols-2">
           <label class="flex flex-col items-start gap-4">
-            <span class="font-medium">{{ $t('admin.blog.categoryName')}} *</span>
-            <input v-model="form.name" class="input input-bordered" :placeholder="$t('admin.blog.categoryName') as any" />
+            <span class="font-medium">{{ $t('admin.blog.categoryName') }} *</span>
+            <input v-model="form.name" class="input input-bordered"
+              :placeholder="$t('admin.blog.categoryName') as any" />
           </label>
           <label class="flex flex-col  items-start gap-4">
             <span class="font-medium">{{ $t('common.slug') }} *</span>
@@ -106,7 +112,7 @@ const remove = async (id: number) => {
             </tr>
           </tbody>
         </table>
-        <div v-else class="text-center">{{ $t("common.ThereIsNo") + $t('admin.blog.categories') }}</div>
+        <AdminThereIsNo v-else>{{ $t("admin.blog.categories") }}</AdminThereIsNo>
       </div>
     </section>
   </div>

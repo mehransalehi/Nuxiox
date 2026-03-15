@@ -1,18 +1,18 @@
-import { desc, eq, sql } from 'drizzle-orm'
-import { blogComments, blogPosts, users } from '~~/server/database/schema.gen'
+import { desc, eq, and, sql } from 'drizzle-orm'
+import { blogComments, blogPosts, blogPostsLocales, users } from '~~/server/database/schema.gen'
 import { useDb } from '~~/server/utils/db'
+import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
-
+  const admin = await requireAdmin(event)
   const db = useDb(event)
 
   return db
     .select({
       id: blogPosts.id,
-      title: blogPosts.title,
-      slug: blogPosts.slug,
+      title: blogPostsLocales.title,
+      locale: blogPostsLocales.locale,
+      slug: blogPostsLocales.slug,
       status: blogPosts.status,
       allowComments: blogPosts.allowComments,
       allowAnonymousComments: blogPosts.allowAnonymousComments,
@@ -22,8 +22,19 @@ export default defineEventHandler(async (event) => {
       commentsCount: sql<number>`count(${blogComments.id})`,
     })
     .from(blogPosts)
+    .leftJoin(
+      blogPostsLocales,
+      and(
+        eq(blogPostsLocales.postId, blogPosts.id),
+      )
+    )
     .leftJoin(users, eq(users.id, blogPosts.authorId))
     .leftJoin(blogComments, eq(blogComments.postId, blogPosts.id))
-    .groupBy(blogPosts.id, users.email)
+    .groupBy(
+      blogPosts.id,
+      blogPostsLocales.title,
+      blogPostsLocales.slug,
+      users.email
+    )
     .orderBy(desc(blogPosts.updatedAt))
 })

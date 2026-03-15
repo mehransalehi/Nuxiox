@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { contactMessages } from '~~/server/database/schema.gen'
 import { useDb } from '~~/server/utils/db'
+import { checkZod } from "~~/server/utils/checkZod";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -10,7 +11,7 @@ const schema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const body = schema.parse(await readBody(event))
+  const body = await readValidatedBody(event, checkZod(schema));
 
   try {
     await useDb(event).insert(contactMessages).values(body)

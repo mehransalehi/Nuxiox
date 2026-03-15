@@ -1,20 +1,54 @@
-import { eq } from 'drizzle-orm'
-import { blogPostCategories, blogPosts } from '~~/server/database/schema.gen'
+import { eq, and } from 'drizzle-orm'
+import { blogPostCategories, blogPosts, blogPostsLocales } from '~~/server/database/schema.gen'
 import { useDb } from '~~/server/utils/db'
+import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  const admin = await requireAdmin(event)
 
   const id = Number(getRouterParam(event, 'id'))
+  const locale = getQuery(event).locale as string
+
   if (!id) throw createError({ statusCode: 400, statusMessage: 'Post id is required' })
+  if (!locale) throw createError({ statusCode: 400, statusMessage: 'Locale is required' })
 
   const db = useDb(event)
 
-  const [post] = await db.select().from(blogPosts).where(eq(blogPosts.id, id)).limit(1)
-  if (!post) throw createError({ statusCode: 404, statusMessage: 'Post not found' })
+  const [post] = await db
+    .select({
+      id: blogPosts.id,
+      featuredImage: blogPosts.featuredImage,
+      status: blogPosts.status,
+      allowComments: blogPosts.allowComments,
+      allowAnonymousComments: blogPosts.allowAnonymousComments,
+      publishedAt: blogPosts.publishedAt,
+      createdAt: blogPosts.createdAt,
+      updatedAt: blogPosts.updatedAt,
 
-  const categories = await db.select({ categoryId: blogPostCategories.categoryId }).from(blogPostCategories).where(eq(blogPostCategories.postId, id))
+      title: blogPostsLocales.title,
+      slug: blogPostsLocales.slug,
+      excerpt: blogPostsLocales.excerpt,
+      content: blogPostsLocales.content,
+      seo: blogPostsLocales.seo,
+    })
+    .from(blogPosts)
+    .leftJoin(
+      blogPostsLocales,
+      and(
+        eq(blogPostsLocales.postId, blogPosts.id),
+        eq(blogPostsLocales.locale, locale)
+      )
+    )
+    .where(eq(blogPosts.id, id))
+    .limit(1)
+
+  if (!post)
+    throw createError({ statusCode: 404, statusMessage: 'Post not found' })
+
+  const categories = await db
+    .select({ categoryId: blogPostCategories.categoryId })
+    .from(blogPostCategories)
+    .where(eq(blogPostCategories.postId, id))
 
   return {
     ...post,

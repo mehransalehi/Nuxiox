@@ -18,20 +18,34 @@ const removePost = async (id: number) => {
       <NuxtLink class="btn btn-primary" to="/admin/blog/posts/new">{{ $t('admin.blog.createPost') }}</NuxtLink>
     </div>
 
-    <div class="card bg-base-100 shadow overflow-x-auto"><table class="table">
-      <thead><tr><th>{{ $t('common.title') }}</th><th>{{ $t('common.status') }}</th><th>{{ $t('admin.blog.comments') }}</th><th>{{ $t('admin.blog.allowComments') }}</th><th>{{ $t('common.actions') }}</th></tr></thead>
-      <tbody>
-        <tr v-for="row in data" :key="row.id">
-          <td>{{ row.title }}</td>
-          <td>{{ row.status }}</td>
-          <td>{{ row.commentsCount }}</td>
-          <td>{{ row.allowComments ? $t('common.yes') : $t('common.no') }}</td>
-          <td class="space-x-2">
-            <NuxtLink class="btn btn-xs" :to="$localePath(`/admin/blog/posts/${row.id}`)">{{ $t('common.edit') }}</NuxtLink>
-            <button class="btn btn-xs btn-error" @click="removePost(row.id)">{{ $t('common.delete') }}</button>
-          </td>
-        </tr>
-      </tbody>
-    </table></div>
+    <div class="card bg-base-100 shadow overflow-x-auto">
+      <table class="table" v-if="data.length > 0">
+        <thead>
+          <tr>
+            <th>{{ $t('common.title') }}</th>
+            <th>{{ $t('common.locale') }}</th>
+            <th>{{ $t('common.status') }}</th>
+            <th>{{ $t('admin.blog.comments') }}</th>
+            <th>{{ $t('admin.blog.allowComments') }}</th>
+            <th>{{ $t('common.actions') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in data" :key="row.id">
+            <td>{{ row.title }}</td>
+            <td>{{ row.locale }}</td>
+            <td>{{ row.status }}</td>
+            <td>{{ row.commentsCount }}</td>
+            <td>{{ row.allowComments ? $t('common.yes') : $t('common.no') }}</td>
+            <td class="space-x-2">
+              <NuxtLink class="btn btn-xs" :to="$localePath(`/admin/blog/posts/${row.id}`)">{{ $t('common.edit') }}
+              </NuxtLink>
+              <button class="btn btn-xs btn-error" @click="removePost(row.id)">{{ $t('common.delete') }}</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <AdminThereIsNo v-else>{{ $t("admin.blog.posts") }}</AdminThereIsNo>
+    </div>
   </div>
 </template>

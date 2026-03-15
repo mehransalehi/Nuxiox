@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { blogComments, blogPosts, settings } from '~~/server/database/schema.gen'
 import { defaultSettings } from '~~/layers/base/utils/settings'
 import { useDb } from '~~/server/utils/db'
+import { checkZod } from "~~/server/utils/checkZod";
 
 const schema = z.object({
   content: z.string().min(2).max(3000),
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
   if (!slug) throw createError({ statusCode: 400, statusMessage: 'Slug is required' })
 
-  const body = schema.parse(await readBody(event))
+  const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event)
 
   const rows = await db.select().from(settings).where(eq(settings.key, 'blog')).limit(1)

@@ -5,6 +5,7 @@ import {
 } from "~~/server/database/schema.gen";
 import { useDb } from "~~/server/utils/db";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
+import { checkZod } from "~~/server/utils/checkZod";
 
 const schema = z.object({
   locale: z.string().min(2).max(10),
@@ -16,7 +17,7 @@ const schema = z.object({
 export default defineEventHandler(async (event) => {
   await requireAdmin(event);
 
-  const body = schema.parse(await readBody(event));
+  const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event);
 
   // create base category
