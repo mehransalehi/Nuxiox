@@ -43,6 +43,7 @@ const edit = (row: any) => {
   form.slug = row.slug
   form.locale = row.locale
   form.description = row.description || ''
+  form.locale = row.locale
 }
 
 const remove = async (id: number) => {
