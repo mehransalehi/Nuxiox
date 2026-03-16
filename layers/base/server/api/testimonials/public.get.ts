@@ -1,10 +1,34 @@
-import { desc, eq } from 'drizzle-orm'
-import { testimonials } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
+import { desc, eq, and } from "drizzle-orm";
+import {
+  testimonials,
+  testimonialsLocales,
+} from "~~/server/database/schema.gen";
+import { useDb } from "~~/server/utils/db";
+import { getLocale } from "~~/server/utils/getLocale";
 
-export default defineEventHandler((event) => useDb(event)
-  .select()
-  .from(testimonials)
-  .where(eq(testimonials.isActive, true))
-  .orderBy(desc(testimonials.id))
-  .limit(6))
+export default defineEventHandler(async (event) => {
+  const locale = getLocale(event);
+
+  return useDb(event)
+    .select({
+      id: testimonials.id,
+      avatar: testimonials.avatar,
+      rating: testimonials.rating,
+      isActive: testimonials.isActive,
+      createdAt: testimonials.createdAt,
+      updatedAt: testimonials.updatedAt,
+
+      name: testimonialsLocales.name,
+      role: testimonialsLocales.role,
+      content: testimonialsLocales.content,
+    })
+    .from(testimonials)
+    .leftJoin(
+      testimonialsLocales,
+      and(
+        eq(testimonialsLocales.testimonialId, testimonials.id),
+        eq(testimonialsLocales.locale, locale),
+      ),
+    )
+    .orderBy(desc(testimonials.id));
+});

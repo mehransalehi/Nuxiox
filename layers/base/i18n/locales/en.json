@@ -43,7 +43,9 @@
     "seoMeta": "SEO Meta",
     "addSeoField": "Add SEO field",
     "metaKey": "Meta key",
-    "metaValue": "Meta value"
+    "metaValue": "Meta value",
+    "name" : "Name",
+    "message" : "Message"
   },
   "auth": {
     "signIn": "Sign in",

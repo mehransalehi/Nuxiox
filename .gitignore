@@ -25,3 +25,4 @@ logs
 !.env.example
 
 node-compile-cache/
+public/libs

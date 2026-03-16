@@ -29,7 +29,8 @@ export default defineNuxtConfig({
     strategy: 'prefix_except_default',
     locales: [
       { code: 'en', name: 'English', file: 'en.json' },
-      { code: 'fa', name: 'Persian', file: 'fa.json' }
+      { code: 'fa', name: 'Persian', file: 'fa.json' },
+      { code: 'ar', name: 'Arabic', file: 'ar.json' }
     ]
   },
 

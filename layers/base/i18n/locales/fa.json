@@ -43,7 +43,9 @@
     "seoMeta": "متای سئو",
     "addSeoField": "افزودن فیلد سئو",
     "metaKey": "کلید متا",
-    "metaValue": "مقدار متا"
+    "metaValue": "مقدار متا",
+    "name" : "نام",
+    "message" : "پیام"
   },
   "auth": {
     "signIn": "ورود",

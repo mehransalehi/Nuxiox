@@ -11,7 +11,7 @@ export type InfoItem = {
 export type GeneralSettings = {
   showSidebar: boolean
   direction: 'ltr' | 'rtl'
-  language: 'en' | 'fa'
+  language: 'en' | 'fa' | 'ar'
 }
 
 export type NavbarSettings = {
