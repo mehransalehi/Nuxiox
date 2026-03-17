@@ -48,39 +48,19 @@ const createPage = async () => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div>
-      <h2 class="text-2xl font-bold">{{ $t('admin.pages.title') }}</h2>
-      <p class="opacity-70">{{ $t('admin.pages.description') }}</p>
-    </div>
-
-    <section class="card bg-base-100 shadow">
-      <div class="card-body space-y-4">
-        <h3 class="card-title">{{ $t('admin.pages.create') }}</h3>
-        <div class="grid gap-4 md:grid-cols-3">
-          <label class="form-control">
-            <span class="label-text">{{ $t('common.title') }}</span>
-            <input v-model="form.title" class="input input-bordered" type="text" />
-          </label>
-          <label class="form-control">
-            <span class="label-text">{{ $t('common.slug') }}</span>
-            <input v-model="form.slug" class="input input-bordered" type="text" placeholder="about" />
-          </label>
-          <label class="form-control">
-            <span class="label-text">{{ $t('common.locale') }}</span>
-            <select v-model="form.locale" class="input input-bordered">
-              <option disabled value="">Select locale</option>
-              <option v-for="(loc, i) in locales" :value="loc.code" :key="i">{{ loc.name }}</option>
-            </select>
-          </label>
-        </div>
-        <button class="btn btn-primary w-fit" :class="{ 'btn-disabled': creating }" @click="createPage">
-          <span v-if="creating" class="loading loading-spinner"></span>
-          {{ $t('admin.pages.create') }}
-        </button>
+  <AdminPage :title="$t('admin.pages.title')" :subtitle="$t('admin.pages.description')">
+    <AdminCard :title="$t('admin.pages.create')">
+      <div class="grid gap-4 md:grid-cols-3">
+        <AdminUiText :label="$t('common.title')" v-model="form.title" />
+        <AdminUiText :label="$t('common.slug')" v-model="form.slug" />
+        <AdminLocaleSelector :label="$t('admin.locale')" v-model="form.locale" />
       </div>
-    </section>
 
+      <button class="btn btn-primary w-fit" :class="{ 'btn-disabled': creating }" @click="createPage">
+        <span v-if="creating" class="loading loading-spinner"></span>
+        {{ $t('admin.pages.create') }}
+      </button>
+    </AdminCard>
     <section class="card bg-base-100 shadow">
       <div class="card-body space-y-4">
         <h3 class="card-title" v-if="data.length > 0">{{ $t('common.sections') }}</h3>
@@ -114,5 +94,5 @@ const createPage = async () => {
         </div>
       </div>
     </section>
-  </div>
+  </AdminPage>
 </template>

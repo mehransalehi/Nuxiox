@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { ne,eq, and } from "drizzle-orm";
 import { z } from "zod";
 import {
   blogPostCategories,
@@ -35,6 +35,26 @@ export default defineEventHandler(async (event) => {
 
   const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event);
+
+  // check if another post already uses this slug+locale
+  const existing = await db
+  .select({ id: blogPostsLocales.id })
+  .from(blogPostsLocales)
+  .where(
+    and(
+      eq(blogPostsLocales.slug, body.slug),
+      eq(blogPostsLocales.locale, body.locale),
+      ne(blogPostsLocales.postId, id) // exclude current post
+    )
+  )
+  .limit(1);
+  console.log(existing);
+  if (existing.length>0) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "Slug already exists for this locale",
+    });
+  }
 
   await db
     .update(blogPosts)

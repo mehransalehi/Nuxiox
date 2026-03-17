@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const props = defineProps<{
-  list: { key: String, value: String }[]
+  list: { key: String, value: String }[],
+  title?:String,
+  buttonText?:String,
 }>()
 const emit = defineEmits(['update'])
 
@@ -22,8 +24,8 @@ const removeFromList = (index: number) => {
 <template>
   <div class="space-y-3">
     <div class="flex items-center justify-between">
-      <h4 class="font-semibold">{{ $t('common.infoList') }}</h4>
-      <button class="btn btn-sm" @click="addToList">{{ $t('common.addInfo') }}</button>
+      <h4 class="font-semibold">{{ props.title ? props.title : $t('common.infoList') }}</h4>
+      <button class="btn btn-sm" @click="addToList">{{ props.buttonText ? props.buttonText : $t('common.addInfo') }}</button>
     </div>
     <div v-for="(item, index) in myList" :key="`${index}`"
       class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">

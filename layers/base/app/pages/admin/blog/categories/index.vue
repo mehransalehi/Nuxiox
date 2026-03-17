@@ -6,6 +6,7 @@ definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 useHead(() => ({ title: $t('admin.blog.categories') }))
 
 const { data, refresh } = await useFetch('/api/admin/blog/categories', { default: () => [] as any[] })
+console.log(data.value)
 const form = reactive({ name: '', slug: '', description: '', locale: '' })
 const editingId = ref<number | null>(null)
 const { locale, locales, setLocale } = useI18n()
@@ -53,43 +54,26 @@ const remove = async (id: number) => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <h2 class="text-2xl font-bold">{{ $t('admin.blog.categories') }}</h2>
-    <section class="card bg-base-100 shadow">
-      <div class="card-body space-y-4">
-        <h3 class="card-title">{{ editingId ? $t('admin.blog.editCategory') : $t('admin.blog.createCategory') }}</h3>
-        <div class="grid gap-3 md:grid-cols-2">
-          <label class="flex flex-col items-start gap-4">
-            <span class="font-medium">{{ $t('admin.blog.categoryName') }} *</span>
-            <input v-model="form.name" class="input input-bordered"
-              :placeholder="$t('admin.blog.categoryName') as any" />
-          </label>
-          <label class="flex flex-col  items-start gap-4">
-            <span class="font-medium">{{ $t('common.slug') }} *</span>
-            <input v-model="form.slug" class="input input-bordered" :placeholder="$t('common.slug') as any" />
-          </label>
-        </div>
-        <div class="grid gap-3 md:grid-cols-2">
-          <label class="flex flex-col  items-start gap-4">
-            <span class="font-medium">{{ $t('admin.blog.categoryDescription') }}</span>
-            <textarea v-model="form.description" class="textarea textarea-bordered"
-              :placeholder="$t('admin.blog.categoryDescription') as any" />
-          </label>
-          <label class="flex flex-col items-start gap-4">
-            <span class="font-medium">{{ $t('common.locale') }} *</span>
-            <select v-model="form.locale" class="select select-bordered">
-              <option disabled value="">Select locale</option>
-              <option v-for="(loc, i) in locales" :value="loc.code" :key="i">{{ loc.name }}</option>
-            </select>
-          </label>
-        </div>
+  <AdminPage :title="$t('admin.blog.categories')">
+    <template #header>
         <div class="flex gap-2">
           <button class="btn btn-primary" @click="submit">{{ editingId ? $t('common.update') :
             $t('common.create') }}</button>
           <button v-if="editingId" class="btn" @click="resetForm">{{ $t('common.cancel') }}</button>
         </div>
+    </template>
+
+
+    <AdminCard :title="editingId ? $t('admin.blog.editCategory') : $t('admin.blog.createCategory')">
+      <div class="grid gap-4 md:grid-cols-2">
+        <AdminUiText :label="$t('admin.blog.categoryName')+'*'" v-model="form.name" />
+        <AdminUiText :label="$t('common.slug')+'*'" v-model="form.slug" />
+        <AdminUiTextarea :label="$t('admin.blog.categoryDescription')" v-model="form.description" />
+        <AdminLocaleSelector :label="$t('common.locale')+'*'" v-model="form.locale" />
       </div>
-    </section>
+    </AdminCard>
+  </AdminPage>
+  <div class="space-y-6">
 
     <section class="card bg-base-100 shadow">
       <div class="card-body overflow-x-auto">
@@ -98,6 +82,7 @@ const remove = async (id: number) => {
             <tr>
               <th>{{ $t('admin.blog.categoryName') }}</th>
               <th>{{ $t('common.slug') }}</th>
+              <th>{{ $t('common.locale') }}</th>
               <th>{{ $t('admin.blog.posts') }}</th>
               <th>{{ $t('common.actions') }}</th>
             </tr>
@@ -106,9 +91,10 @@ const remove = async (id: number) => {
             <tr v-for="row in data" :key="row.id">
               <td>{{ row.name }}</td>
               <td>{{ row.slug }}</td>
+              <td>{{ row.locale }}</td>
               <td>{{ row.postsCount }}</td>
               <td class="space-x-2"><button class="btn btn-xs" @click="edit(row)">{{ $t('common.edit')
-              }}</button><button class="btn btn-xs btn-error" @click="remove(row.id)">{{ $t('common.delete')
+                  }}</button><button class="btn btn-xs btn-error" @click="remove(row.id)">{{ $t('common.delete')
                   }}</button></td>
             </tr>
           </tbody>

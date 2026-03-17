@@ -30,6 +30,7 @@ export default defineEventHandler(async (event) => {
       excerpt: blogPostsLocales.excerpt,
       content: blogPostsLocales.content,
       seo: blogPostsLocales.seo,
+      locale:blogPostsLocales.locale,
     })
     .from(blogPosts)
     .leftJoin(

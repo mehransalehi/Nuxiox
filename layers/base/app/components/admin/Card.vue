@@ -8,7 +8,7 @@ const { title, subtitle } = defineProps({
 <template>
   <section class="card bg-base-100 shadow">
     <div class="card-body space-y-4">
-      <div>
+      <div v-if="title || subtitle">
         <h3 class="card-title">{{ title }}</h3>
         <p class="text-sm opacity-70" v-if="subtitle">{{ subtitle }}</p>
       </div>

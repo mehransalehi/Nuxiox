@@ -33,6 +33,5 @@ export default defineEventHandler(async (event) => {
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: "Page not found" })
   }
-
   return page
 })

@@ -20,6 +20,18 @@ export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event);
 
+  // check if slug already exists for locale
+  const existing = await db.query.blogCategoriesLocales.findFirst({
+    where: (t, { eq, and }) =>
+      and(eq(t.slug, body.slug), eq(t.locale, body.locale)),
+  });
+
+  if (existing) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "Category slug already exists for this locale",
+    });
+  }
   // create base category
   const [category] = await db.insert(blogCategories).values({}).returning();
   // create locale

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PageBuilder, PageBlock, PageRecord } from '~~/layers/base/types/page-builder'
+import type { PageBlock, PageRecord } from '~~/layers/base/types/page-builder'
 import { defaultPageBuilder } from '~~/layers/base/utils/page-builder'
 import { useToastStore } from '~~/layers/base/app/stores/toast'
 import { useLoadingStore } from '~~/layers/base/app/stores/loading'
@@ -19,7 +19,8 @@ type SeoEntry = { key: string; value: string }
 const route = useRoute()
 const pageId = computed(() => route.params.id as string)
 
-const { data, refresh } = await useFetch<PageRecord>(`/api/pages/${pageId.value}`)
+const { data, refresh } = await useFetch<PageRecord>(`/api/pages/${pageId.value}?locale=${route.query.locale}`)
+console.log(data.value);
 const { data: sectionsData } = await useFetch<{ sections: SectionOption[] }>('/api/sections', {
   default: () => ({ sections: [] }),
 })
@@ -28,8 +29,6 @@ const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
 const saving = ref(false)
 const deleting = ref(false)
-const dragging = ref<number | null>(null)
-const selectedSectionId = ref<string>('')
 const seoEntries = ref<SeoEntry[]>([])
 
 const form = reactive<PageRecord>({
@@ -90,12 +89,11 @@ watch(
 watch(() => [form.pages_locales.title, form.pages_locales.slug], ensureSeoDefaults)
 
 const availableSections = computed(() => sectionsData.value?.sections ?? [])
-const sectionLabels = computed(() => new Map(availableSections.value.map((section) => [section.id, section.label])))
 
 const createUid = () => (globalThis.crypto?.randomUUID?.() ?? `block-${Date.now()}-${Math.random().toString(16).slice(2)}`)
 
-const addSectionBlock = () => {
-  const section = availableSections.value.find((item) => item.id === selectedSectionId.value)
+const addSectionBlock = (id: string) => {
+  const section = availableSections.value.find((item) => item.id === id)
   if (!section) return
   const block: PageBlock = {
     uid: createUid(),
@@ -104,37 +102,17 @@ const addSectionBlock = () => {
     source: 'sections',
   }
   form.pages_locales.builder.blocks.push(block)
-  selectedSectionId.value = ''
+}
+const updatePageSections = (list: any) => {
+  form.pages_locales.builder.blocks = list;
 }
 
 const addTextBlock = () => {
   form.pages_locales.builder.blocks.push({ uid: createUid(), type: 'text', content: '<p>New content</p>' })
 }
 
-const addSeoEntry = () => {
-  seoEntries.value.push({ key: '', value: '' })
-}
-
-const removeSeoEntry = (index: number) => {
-  seoEntries.value.splice(index, 1)
-}
-
-const removeBlock = (index: number) => {
-  form.pages_locales.builder.blocks.splice(index, 1)
-}
-
-const handleDragStart = (index: number) => {
-  dragging.value = index
-}
-
-const handleDrop = (index: number) => {
-  if (dragging.value === null) return
-  const fromIndex = dragging.value
-  if (fromIndex !== index) {
-    const [moved] = form.pages_locales.builder.blocks.splice(fromIndex, 1)
-    if (moved) form.pages_locales.builder.blocks.splice(index, 0, moved)
-  }
-  dragging.value = null
+const updateSeoEntry = (list: any) => {
+  seoEntries.value = list
 }
 
 const toSeoJson = () => {
@@ -153,13 +131,13 @@ const savePage = async () => {
     try {
       await $fetch(`/api/pages/${pageId.value}`, {
         method: 'PUT',
-        body: { 
-          title: form.pages_locales.title, 
-          slug: form.pages_locales.slug, 
-          status: form.pages.status, 
-          seo: toSeoJson(), 
+        body: {
+          title: form.pages_locales.title,
+          slug: form.pages_locales.slug,
+          status: form.pages.status,
+          seo: toSeoJson(),
           builder: form.pages_locales.builder,
-          locale : form.pages_locales.locale 
+          locale: form.pages_locales.locale
         },
       })
       toastStore.push($t('admin.pages.saveSuccess'), 'success')
@@ -189,83 +167,34 @@ const deletePage = async () => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold">{{ $t('admin.pages.editTitle') }} <span class="text-sm">({{ form.pages_locales.locale }})</span></h2>
-        <p class="opacity-70">{{ $t('admin.pages.addSectionHint') }}</p>
-      </div>
-      <div class="flex flex-wrap items-center gap-3">
+  <AdminPage :title="`${$t('admin.pages.editTitle')} (${form.pages_locales.locale})`"
+    :subtitle="$t('admin.pages.addSectionHint')">
+    <template #header>
+      <div class="space-x-2">
         <button class="btn btn-outline" :class="{ 'btn-disabled': deleting }" @click="deletePage">{{ $t('common.delete')
           }}</button>
         <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="savePage">{{ $t('common.save')
           }}</button>
       </div>
-    </div>
-
-    <section class="card bg-base-100 shadow">
-      <div class="card-body space-y-4">
-        <div class="grid gap-4 md:grid-cols-2">
-          <label class="form-control"><span class="label-text">{{ $t('common.title') }}</span><input
-              v-model="form.pages_locales.title" class="input input-bordered" type="text" /></label>
-          <label class="form-control"><span class="label-text">{{ $t('common.slug') }}</span><input
-              v-model="form.pages_locales.slug" class="input input-bordered" type="text" /></label>
-        </div>
-        <label class="form-control max-w-xs"><span class="label-text">{{ $t('common.status') }}</span>
-          <select v-model="form.pages.status" class="select select-bordered">
-            <option value="draft">{{ $t('common.draft') }}</option>
-            <option value="published">{{ $t('common.published') }}</option>
-          </select>
-        </label>
-
-        <div class="space-y-2">
-          <div class="flex items-center justify-between"><span class="font-medium">{{ $t('common.seoMeta')
-              }}</span><button class="btn btn-sm" type="button" @click="addSeoEntry">{{ $t('common.addSeoField')
-              }}</button></div>
-          <div v-for="(entry, index) in seoEntries" :key="`seo-${index}`"
-            class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-            <input v-model="entry.key" class="input input-bordered" type="text"
-              :placeholder="$t('common.metaKey') as any" />
-            <input v-model="entry.value" class="input input-bordered" type="text"
-              :placeholder="$t('common.metaValue') as any" />
-            <button class="btn btn-ghost btn-square" type="button" @click="removeSeoEntry(index)">✕</button>
-          </div>
-        </div>
+    </template>
+    <AdminCard>
+      <div class="grid gap-4 md:grid-cols-2">
+        <AdminUiText :label="$t('common.title')" v-model="form.pages_locales.title" />
+        <AdminUiText :label="$t('common.slug')" v-model="form.pages_locales.slug" />
+        <AdminUiSelect :label="$t('common.status')" v-model="form.pages.status" :options="[
+          { key: $t('common.draft'), value: 'draft' },
+          { key: $t('common.published'), value: 'published' }
+        ]" />
       </div>
-    </section>
 
-    <section class="card bg-base-100 shadow">
-      <div class="card-body space-y-4">
-        <h3 class="card-title">{{ $t('admin.pages.builder') }}</h3>
-        <div class="flex flex-wrap items-end gap-3">
-          <label class="form-control"><span class="label-text">{{ $t('common.selectSection') }}</span>
-            <select v-model="selectedSectionId" class="select select-bordered">
-              <option value="">{{ $t('common.selectSection') }}</option>
-              <option v-for="section in availableSections" :key="section.id" :value="section.id">{{ section.label }}
-              </option>
-            </select>
-          </label>
-          <button class="btn btn-sm" :disabled="!selectedSectionId" @click="addSectionBlock">{{ $t('common.addSection')
-            }}</button>
-          <button class="btn btn-sm" @click="addTextBlock">{{ $t('common.addTextBlock') }}</button>
-        </div>
-
-        <div class="space-y-3">
-          <div v-for="(block, index) in form.pages_locales.builder.blocks" :key="block.uid"
-            class="rounded-lg border border-base-300 bg-base-100 p-4" draggable="true"
-            @dragstart="handleDragStart(index)" @dragover.prevent @drop="handleDrop(index)">
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2 text-sm uppercase opacity-60"><i class="fa-solid fa-grip-vertical"
-                  aria-hidden="true" /><span>{{ block.type }}</span></div><button class="btn btn-ghost btn-square"
-                @click="removeBlock(index)">✕</button>
-            </div>
-            <div v-if="block.type === 'text'" class="mt-3">
-              <AdminQuillEditor v-model="block.content" />
-            </div>
-            <div v-else class="mt-3 text-sm">{{ sectionLabels.get(block.sectionId) ?? block.sectionId }}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
+      <AdminListCreator @update="updateSeoEntry" :list="seoEntries" :title="$t('common.seoMeta')"
+        :button-text="$t('common.addSeoField')" />
+    </AdminCard>
+    <AdminCard :title="$t('admin.pages.builder')">
+      <AdminSectionSelector :list="availableSections" @update="addSectionBlock" />
+      <button class="btn btn-sm" @click="addTextBlock">{{ $t('common.addTextBlock') }}</button>
+      <AdminPageSectionList :list="availableSections" @update="updatePageSections"
+        :selected="form.pages_locales.builder.blocks" />
+    </AdminCard>
+  </AdminPage>
 </template>

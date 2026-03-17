@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
       description: blogCategoriesLocales.description,
       createdAt: blogCategories.createdAt,
       postsCount: sql<number>`count(${blogPostCategories.postId})`,
+      locale : blogCategoriesLocales.locale
     })
     .from(blogCategories)
     .leftJoin(

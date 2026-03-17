@@ -83,14 +83,14 @@ const saveSettings = async () => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <AdminMainTitle :title="$t('admin.settings.title')" :subtitle="$t('admin.settings.description')">
+
+  <AdminPage :title="$t('admin.settings.title')" :subtitle="$t('admin.settings.description')">
+    <template #header>
       <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="saveSettings">
         <span v-if="saving" class="loading loading-spinner"></span>
         {{ $t('common.saveSettings') }}
       </button>
-    </AdminMainTitle>
-
+    </template>
     <div class="tabs tabs-boxed border border-base-300 bg-base-100 p-1">
       <button class="tab" :class="{ 'tab-active': activeTab === 'general' }" @click="activeTab = 'general'">
         {{ $t('admin.settings.generalTab') }}
@@ -206,10 +206,8 @@ const saveSettings = async () => {
       <button class="btn" @click="resetTheme">{{ $t('admin.settings.resetTheme') }}</button>
     </AdminCard>
 
-
     <AdminCard v-if="activeTab === 'about'" :title="$t('admin.settings.aboutTitle')">
       <AdminListCreator @update="updateAboutInfo" :list="form.about.info" />
     </AdminCard>
-
-  </div>
+  </AdminPage>
 </template>

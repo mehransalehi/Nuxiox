@@ -22,7 +22,6 @@ const { data, refresh } = await useFetch<HomeBuilder>('/api/home-builder', {
 })
 
 const selected = ref<HomeSectionItem[]>(structuredClone(defaultHomeBuilder.sections))
-const selectedSectionId = ref<string>('')
 const dragging = ref<number | null>(null)
 const saving = ref(false)
 const toastStore = useToastStore()
@@ -44,8 +43,8 @@ const sectionLabels = computed(
 const createUid = () =>
   (globalThis.crypto?.randomUUID?.() ?? `section-${Date.now()}-${Math.random().toString(16).slice(2)}`)
 
-const addSection = () => {
-  const section = availableSections.value.find((item) => item.id === selectedSectionId.value)
+const addSection = (id: string) => {
+  const section = availableSections.value.find((item) => item.id === id)
   if (!section) return
   selected.value.push({
     uid: createUid(),
@@ -53,7 +52,9 @@ const addSection = () => {
     type: section.type,
     source: 'sections',
   })
-  selectedSectionId.value = ''
+}
+const updateHomeSections = (list: HomeSectionItem[]) => {
+  selected.value = list;
 }
 
 const removeSection = (index: number) => {
@@ -78,12 +79,12 @@ const saveBuilder = async () => {
   saving.value = true
   await loadingStore.withActionLoading(async () => {
     try {
-    await $fetch('/api/home-builder', {
-      method: 'PUT',
-      body: { version: 1, sections: selected.value },
-    })
-    toastStore.push($t('admin.homeBuilder.saved'), 'success')
-    await refresh()
+      await $fetch('/api/home-builder', {
+        method: 'PUT',
+        body: { version: 1, sections: selected.value },
+      })
+      toastStore.push($t('admin.homeBuilder.saved'), 'success')
+      await refresh()
     } catch (err) {
       toastStore.push(err instanceof Error ? err.message : $t('admin.homeBuilder.failed'), 'error')
     } finally {
@@ -94,66 +95,20 @@ const saveBuilder = async () => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h2 class="text-2xl font-bold">{{ $t('admin.homeBuilder.title') }}</h2>
-        <p class="opacity-70">{{ $t('admin.homeBuilder.description') }}</p>
-      </div>
+  <AdminPage :title="$t('admin.settings.title')" :subtitle="$t('admin.homeBuilder.description')">
+    <template #header>
       <button class="btn btn-primary" :class="{ 'btn-disabled': saving }" @click="saveBuilder">
         <span v-if="saving" class="loading loading-spinner"></span>
         {{ $t('common.save') }}
       </button>
-    </div>
-
+    </template>
     <div class="grid gap-6 lg:grid-cols-[1fr_2fr]">
-      <section class="card bg-base-100 shadow">
-        <div class="card-body space-y-4">
-          <h3 class="card-title">{{ $t('admin.homeBuilder.available') }}</h3>
-          <label class="form-control">
-            <span class="label-text">{{ $t('common.selectSection') }}</span>
-            <select v-model="selectedSectionId" class="select select-bordered">
-              <option value="">{{ $t('common.selectSection') }}</option>
-              <option v-for="section in availableSections" :key="section.id" :value="section.id">
-                {{ section.label }}
-                <span v-if="section.type !== 'section'">({{ section.type }})</span>
-              </option>
-            </select>
-          </label>
-          <button class="btn btn-sm" :disabled="!selectedSectionId" @click="addSection">
-            {{ $t('common.addSection') }}
-          </button>
-        </div>
-      </section>
-
-      <section class="card bg-base-100 shadow">
-        <div class="card-body space-y-4">
-          <h3 class="card-title">{{ $t('admin.homeBuilder.selected') }}</h3>
-          <div v-if="selected.length === 0" class="text-sm opacity-70">
-            {{ $t('admin.homeBuilder.description') }}
-          </div>
-          <div class="space-y-2">
-            <div
-              v-for="(section, index) in selected"
-              :key="section.uid"
-              class="flex items-center gap-3 rounded-lg border border-base-300 bg-base-100 p-3"
-              draggable="true"
-              @dragstart="handleDragStart(index)"
-              @dragover.prevent
-              @drop="handleDrop(index)"
-            >
-              <button class="btn btn-ghost btn-square cursor-grab" type="button">
-                <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
-              </button>
-              <div class="flex-1">
-                <p class="font-medium">{{ sectionLabels.get(section.sectionId) ?? section.sectionId }}</p>
-                <p class="text-xs uppercase opacity-60">{{ section.type }}</p>
-              </div>
-              <button class="btn btn-ghost btn-square" @click="removeSection(index)">✕</button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <AdminCard :title="$t('admin.homeBuilder.available')">
+        <AdminSectionSelector :list="availableSections" @update="addSection" />
+      </AdminCard>
+      <AdminCard :title="$t('admin.homeBuilder.selected')" :subtitle="$t('admin.homeBuilder.description')">
+        <AdminSectionList :list="availableSections" @update="updateHomeSections" :selected="selected" />
+      </AdminCard>
     </div>
-  </div>
+  </AdminPage>
 </template>

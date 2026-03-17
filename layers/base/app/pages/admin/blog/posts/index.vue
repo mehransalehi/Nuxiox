@@ -12,18 +12,18 @@ const removePost = async (id: number) => {
 </script>
 
 <template>
-  <div class="space-y-4">
-    <div class="flex items-center justify-between">
-      <h2 class="text-2xl font-bold">{{ $t('admin.blog.posts') }}</h2>
+  <AdminPage :title="$t('admin.blog.posts')">
+    <template #header>
       <NuxtLink class="btn btn-primary" to="/admin/blog/posts/new">{{ $t('admin.blog.createPost') }}</NuxtLink>
-    </div>
-
-    <div class="card bg-base-100 shadow overflow-x-auto">
+    </template>
+    <AdminCard>
       <table class="table" v-if="data.length > 0">
         <thead>
           <tr>
             <th>{{ $t('common.title') }}</th>
             <th>{{ $t('common.status') }}</th>
+            <th>{{ $t('common.slug') }}</th>
+            <th>{{ $t('common.locale') }}</th>
             <th>{{ $t('admin.blog.comments') }}</th>
             <th>{{ $t('admin.blog.allowComments') }}</th>
             <th>{{ $t('common.actions') }}</th>
@@ -33,10 +33,13 @@ const removePost = async (id: number) => {
           <tr v-for="row in data" :key="row.id">
             <td>{{ row.title }}</td>
             <td>{{ row.status }}</td>
+            <td>{{ row.slug }}</td>
+            <td>{{ row.locale }}</td>
             <td>{{ row.commentsCount }}</td>
             <td>{{ row.allowComments ? $t('common.yes') : $t('common.no') }}</td>
             <td class="space-x-2">
-              <NuxtLink class="btn btn-xs" :to="$localePath(`/admin/blog/posts/${row.id}?locale=${row.locale}`)">{{ $t('common.edit') }}
+              <NuxtLink class="btn btn-xs" :to="$localePath(`/admin/blog/posts/${row.id}?locale=${row.locale}`)">{{
+                $t('common.edit') }}
               </NuxtLink>
               <button class="btn btn-xs btn-error" @click="removePost(row.id)">{{ $t('common.delete') }}</button>
             </td>
@@ -44,6 +47,6 @@ const removePost = async (id: number) => {
         </tbody>
       </table>
       <AdminThereIsNo v-else>{{ $t("admin.blog.posts") }}</AdminThereIsNo>
-    </div>
-  </div>
+    </AdminCard>
+  </AdminPage>
 </template>

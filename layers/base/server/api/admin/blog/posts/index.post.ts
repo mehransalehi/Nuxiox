@@ -28,6 +28,19 @@ export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event);
 
+  // check if slug already exists for locale
+  const existing = await db.query.blogPostsLocales.findFirst({
+    where: (t, { eq, and }) =>
+      and(eq(t.slug, body.slug), eq(t.locale, body.locale)),
+  });
+
+  if (existing) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "Post slug already exists for this locale",
+    });
+  }
+
   const [post] = await db
     .insert(blogPosts)
     .values({

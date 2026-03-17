@@ -25,7 +25,10 @@ export const useToastStore = defineStore("toast", () => {
   };
 
   const showZodError = (data: any) => {
-    if (!data.data) {
+    if (!data.data?.data) {
+      if(data.data?.statusMessage){
+        push(data.data?.statusMessage, "error");
+      }
       console.log(data);
     } else {
       const err = data.data?.data?.data;

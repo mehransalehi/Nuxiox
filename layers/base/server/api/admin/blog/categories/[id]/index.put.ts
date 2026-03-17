@@ -22,17 +22,34 @@ export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event)
 
+  // check if another category already uses this slug+locale
+  const existing = await db.query.blogCategoriesLocales.findFirst({
+    where: (t, { and, eq, ne }) =>
+      and(
+        eq(t.slug, body.slug),
+        eq(t.locale, body.locale),
+        ne(t.categoryId, id) // exclude current category
+      ),
+  });
+
+  if (existing) {
+    throw createError({
+      statusCode: 409,
+      statusMessage: "Slug already exists for this locale",
+    });
+  }
+  console.log(body)
   await db
     .update(blogCategoriesLocales)
     .set({
       name: body.name,
       slug: body.slug,
+      locale: body.locale,
       description: body.description ?? null,
     })
     .where(
       and(
-        eq(blogCategoriesLocales.categoryId, id),
-        eq(blogCategoriesLocales.locale, body.locale)
+        eq(blogCategoriesLocales.categoryId, id)
       )
     )
 
