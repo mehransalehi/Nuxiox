@@ -4,8 +4,8 @@
     "persian": "Persian"
   },
   "common": {
-    "ThereIsNo" : "There is no ",
-    "locale" : "Which Lang",
+    "ThereIsNo": "There is no ",
+    "locale": "Which Lang",
     "saveSettings": "Save Settings",
     "loadingSettings": "Loading settings...",
     "unableToLoadSettings": "Unable to load settings.",
@@ -44,8 +44,15 @@
     "addSeoField": "Add SEO field",
     "metaKey": "Meta key",
     "metaValue": "Meta value",
-    "name" : "Name",
-    "message" : "Message"
+    "name": "Name",
+    "message": "Message",
+    "image": "Image",
+    "link": "Link",
+    "order": "Order",
+    "subtitle": "Second title",
+    "avatar": "Avatar",
+    "role": "Role",
+    "rate": "Rate"
   },
   "auth": {
     "signIn": "Sign in",
@@ -243,13 +250,17 @@
       "description": "Get to know us better through these facts."
     },
     "services": {
-      "title": "Services"
+      "title": "Services",
+      "description": "Describe about service",
+      "saved": "Service save."
     },
     "colleagues": {
-      "title": "Colleagues"
+      "title": "Colleagues",
+      "saved": "Colleagues save."
     },
     "testimonials": {
-      "title": "Testimonials"
+      "title": "Testimonials",
+      "saved": "Testimonials save."
     },
     "contact": {
       "title": "Contact us",

@@ -10,76 +10,58 @@ const form = reactive<any>({ id: null, locale: '', title: '', subtitle: '', desc
 const reset = () => Object.assign(form, { id: null, locale: '', title: '', subtitle: '', description: '', icon: '', image: '', link: '', sortOrder: 0, isActive: true, extra: [] })
 const edit = (item: any) => Object.assign(form, structuredClone(item), { extra: Array.isArray(item.extra) ? item.extra : [] })
 const save = async () => {
-    
     try {
-    await $fetch(
-        form.id ? `/api/admin/colleagues/${form.id}` : '/api/admin/colleagues',
-        {
-            method: form.id ? 'PUT' : 'POST', body: form
+        await $fetch(
+            form.id ? `/api/admin/colleagues/${form.id}` : '/api/admin/colleagues',
+            {
+                method: form.id ? 'PUT' : 'POST', body: form
 
-        });
-    reset();
-    await refresh()
-  } catch (error: any) {
-    toastStore.showZodError(error)
-  }
+            });
+        reset();
+        toastStore.push($t('sections.colleagues.saved'), 'success')
+        await refresh()
+    } catch (error: any) {
+        toastStore.showZodError(error)
+    }
 }
-const remove = async (id: number) => { await $fetch(`/api/admin/colleagues/${id}`, { method: 'DELETE' }); await refresh() }
+const updateExtra = (list: any) => {
+    form.extra = list;
+}
+const remove = async (id: number, locale: string) => { await $fetch(`/api/admin/colleagues/${id}?locale=${locale}`, { method: 'DELETE' }); await refresh() }
 </script>
 <template>
-    <div class="grid gap-6 lg:grid-cols-2">
-        <section class="card bg-base-100 shadow">
-            <div class="card-body space-y-3">
-                <h2 class="card-title">{{ form.id ? $t('admin.modules.editItem') : $t('admin.modules.createItem') }}
-                </h2>
-                <input v-model="form.title" class="input input-bordered"
-                    :placeholder="$t('common.title') as any" /><input v-model="form.subtitle"
-                    class="input input-bordered" placeholder="Subtitle" />
-                <textarea v-model="form.description" class="textarea textarea-bordered" placeholder="Description" />
-                <label class="flex flex-col items-start gap-4">
-                    <span class="font-medium">{{ $t('common.locale') }} *</span>
-                    <select v-model="form.locale" class="select select-bordered">
-                        <option disabled value="">Select locale</option>
-                        <option v-for="(loc, i) in locales" :value="loc.code" :key="i">{{ loc.name }}</option>
-                    </select>
-                </label>
-                <div class="grid gap-2 md:grid-cols-2"><input v-model="form.icon" class="input input-bordered"
-                        placeholder="Icon class" /><input v-model="form.image" class="input input-bordered"
-                        placeholder="Image URL" /><input v-model="form.link" class="input input-bordered"
-                        placeholder="Link" /><input v-model.number="form.sortOrder" class="input input-bordered"
-                        type="number" placeholder="Order" /></div>
-                <label class="label cursor-pointer justify-start gap-2"><input v-model="form.isActive" type="checkbox"
-                        class="checkbox" /><span>{{ $t('admin.modules.active') }}</span></label>
-                <div class="space-y-2">
-                    <div class="flex justify-between">
-                        <p class="font-medium">{{ $t('admin.modules.extraInfo') }}</p><button class="btn btn-xs"
-                            @click="form.extra.push({ key: '', value: '' })">{{ $t('common.addInfo') }}</button>
-                    </div>
-                    <div v-for="(entry, i) in form.extra" :key="i" class="grid grid-cols-[1fr_1fr_auto] gap-2"><input
-                            v-model="entry.key" class="input input-bordered"
-                            :placeholder="$t('common.label') as any" /><input v-model="entry.value"
-                            class="input input-bordered" :placeholder="$t('common.valueOrUrl') as any" /><button
-                            class="btn btn-ghost" @click="form.extra.splice(i, 1)">✕</button></div>
+
+    <AdminPage>
+        <div class="grid gap-4 md:grid-cols-2">
+            <AdminCard :title="form.id ? $t('admin.modules.editItem') : $t('admin.modules.createItem')">
+                <AdminUiText :label="$t('common.title')" v-model="form.title" />
+                <AdminUiText :label="$t('common.subtitle')" v-model="form.subtitle" />
+                <AdminUiTextarea :label="$t('sections.services.description')" v-model="form.description" />
+                <AdminLocaleSelector :label="$t('common.locale')" v-model="form.locale" />
+                <div class="grid gap-2 md:grid-cols-2">
+                    <AdminUiText :label="$t('common.title')" v-model="form.icon" />
+                    <AdminUiUrl :label="$t('common.image')" v-model="form.image" />
+                    <AdminUiUrl :label="$t('common.link')" v-model="form.link" />
+                    <AdminUiNumber :label="$t('common.order')" v-model="form.sortOrder" />
                 </div>
-                <div class="flex gap-2"><button class="btn btn-primary" @click="save">{{ $t('common.save')
-                        }}</button><button class="btn" @click="reset">{{ $t('common.cancel') }}</button></div>
-            </div>
-        </section>
-        <section class="card bg-base-100 shadow">
-            <div class="card-body">
-                <h2 class="card-title">{{ $t('admin.modules.colleagues') }}</h2>
-                <div class="space-y-2">
-                    <div v-for="item in data" :key="item.id"
-                        class="flex items-center justify-between rounded border p-2">
-                        <div>
-                            <p class="font-medium">{{ item.title }}</p>
-                        </div>
-                        <div class="flex gap-2"><button class="btn btn-xs" @click="edit(item)">{{ $t('common.edit')
-                                }}</button><button class="btn btn-xs btn-error" @click="remove(item.id)">{{
-                                    $t('common.delete') }}</button></div>
+
+                <AdminUiCheckBox :label="$t('admin.modules.active')" v-model="form.isActive" />
+                <AdminListCreator @update="updateExtra" :list="form.extra" />
+                <button class="btn btn-primary" @click="save">{{ $t('common.save') }}</button>
+                <button class="btn" v-if="form.id" @click="reset">{{ $t('common.cancel') }}</button>
+            </AdminCard>
+            <AdminCard :title="$t('admin.modules.colleagues')">
+                <div v-for="item in data" :key="item.id" class="flex items-center justify-between rounded border p-2">
+                    <div>
+                        <p class="font-medium">{{ `${item.title} (${item.locale})` }}</p>
+                        <p class="text-xs opacity-70">{{ item.subtitle }}</p>
                     </div>
+                    <div class="flex gap-2"><button class="btn btn-xs" @click="edit(item)">{{ $t('common.edit')
+                            }}</button><button class="btn btn-xs btn-error" @click="remove(item.id, item.locale)">{{
+                                $t('common.delete')
+                            }}</button></div>
                 </div>
-            </div>
-        </section>
-    </div>
+            </AdminCard>
+        </div>
+    </AdminPage>
 </template>

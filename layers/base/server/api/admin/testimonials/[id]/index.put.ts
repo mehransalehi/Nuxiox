@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
       avatar: body.avatar ?? null,
       rating: body.rating ?? 5,
       isActive: body.isActive ?? true,
-      updatedAt: Date.now(),
+      updatedAt: new Date(),
     })
     .where(eq(testimonials.id, id))
 

@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
 
   const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event);
-
   const [service] = await db
     .insert(services)
     .values({

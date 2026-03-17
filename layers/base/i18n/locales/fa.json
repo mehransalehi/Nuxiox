@@ -45,7 +45,11 @@
     "metaKey": "کلید متا",
     "metaValue": "مقدار متا",
     "name" : "نام",
-    "message" : "پیام"
+    "message" : "پیام",
+    "image" : "عکس",
+    "link" : "لینک",
+    "order" : "ترتیب",
+    "subtitle" : "زیر عتوان"
   },
   "auth": {
     "signIn": "ورود",
@@ -243,7 +247,8 @@
       "description": "از طریق این اطلاعات بیشتر با ما آشنا شوید."
     },
     "services": {
-      "title": "خدمات"
+      "title": "خدمات",
+      "description" : "توضیحات سرویس"
     },
     "colleagues": {
       "title": "همکاران"

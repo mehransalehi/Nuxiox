@@ -45,7 +45,11 @@
     "metaKey": "مفتاح الميتا",
     "metaValue": "قيمة الميتا",
     "name": "الاسم",
-    "message": "الرسالة"
+    "message": "الرسالة",
+    "image" : "عکس",
+    "link" : "لینک",
+    "order" : "ترتیب",
+    "subtitle" : "زیر عتوان"
   },
   "auth": {
     "signIn": "تسجيل الدخول",
@@ -243,7 +247,8 @@
       "description": "تعرّف علينا أكثر من خلال هذه المعلومات."
     },
     "services": {
-      "title": "الخدمات"
+      "title": "الخدمات",
+      "description" : "توضیحات سرویس"
     },
     "colleagues": {
       "title": "الزملاء"

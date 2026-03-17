@@ -20,6 +20,7 @@ export default defineEventHandler(async (event) => {
       name: testimonialsLocales.name,
       role: testimonialsLocales.role,
       content: testimonialsLocales.content,
+      locale : testimonialsLocales.locale
     })
     .from(testimonials)
     .leftJoin(

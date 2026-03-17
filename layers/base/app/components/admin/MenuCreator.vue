@@ -1,12 +1,16 @@
 <script setup lang="ts">
 const props = defineProps<{
   list: { label: String, href: String }[]
-  handler : string
+  handler: string
 }>()
 const emit = defineEmits(['update'])
 
 const draggingMenu = ref<{ section: string; index: number } | null>(null)
-const myList = ref(props.list)
+const myList = ref([...props.list]) // copy to avoid mutating props directly
+
+watch(myList, (newVal) => {
+  emit('update', newVal)
+}, { deep: true })
 
 
 const reorderMenus = (section: string, fromIndex: number, toIndex: number) => {
@@ -20,11 +24,10 @@ const reorderMenus = (section: string, fromIndex: number, toIndex: number) => {
 
 const addToList = () => {
   myList.value.push({ label: '', href: '' });
-  emit('update', myList.value)
 }
 const removeFromList = (index: number) => {
   myList.value.splice(index, 1);
-  emit('update', myList.value)
+  emit('update', myList)
 }
 
 const handleDragStart = (section: string, index: number) => {
@@ -58,15 +61,17 @@ const handleDrop = (section: string, index: number) => {
       <button class="btn btn-sm" @click="addToList">{{ $t('common.addMenu') }}</button>
     </div>
     <div v-for="(menu, index) in myList" :key="`navbar-menu-${index}`"
-      class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]" draggable="true" @dragstart="handleDragStart(props.handler, index)"
-      @dragend="resetDrag" @dragover.prevent @drop="handleDrop('navbar', index)">
+      class="grid gap-3 md:grid-cols-[auto_1fr_1fr_auto]" draggable="true"
+      @dragstart="handleDragStart(props.handler, index)" @dragend="resetDrag" @dragover.prevent
+      @drop="handleDrop('navbar', index)">
       <button class="btn btn-ghost btn-square cursor-grab" type="button"
         :aria-label="$t('common.dragToReorder') as any">
         <i class="fa-solid fa-grip-vertical" aria-hidden="true" />
       </button>
-      <input v-model="menu.label" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" />
+      <input v-model="menu.label" class="input input-bordered" type="text" :placeholder="$t('common.label') as any"
+        @input="emit('update', myList)" />
       <input v-model="menu.href" class="input input-bordered" type="text"
-        :placeholder="$t('common.pathPlaceholder') as any" />
+        :placeholder="$t('common.pathPlaceholder') as any" @input="emit('update', myList)" />
       <button class="btn btn-ghost btn-square" @click="removeFromList(index)">✕</button>
     </div>
   </div>

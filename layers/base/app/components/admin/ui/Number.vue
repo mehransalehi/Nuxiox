@@ -8,6 +8,6 @@ const model = defineModel()
 <template>
     <label class="form-control">
         <span class="label-text">{{ label }}</span>
-        <input type="url" class="input input-bordered w-full" v-model="model" :placeholder="placeholder"/>
+        <input type="number" class="input input-bordered w-full" v-model="model" :placeholder="placeholder"/>
     </label>
 </template>

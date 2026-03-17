@@ -6,6 +6,7 @@ import { useLoadingStore } from '~~/layers/base/app/stores/loading'
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
 useHead(() => ({ title: $t('admin.sidebar.settings') }))
+const { locale } = useI18n()
 
 const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/settings', {
   default: () => structuredClone(defaultSettings),
@@ -13,10 +14,12 @@ const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/set
 const { setLocale } = useI18n()
 
 const form = reactive<SiteSettings>(structuredClone(defaultSettings))
+form.general.language = locale.value;
 const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo' | 'theme' | 'about'>('general')
 const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
+const currentLocal = ref(locale.value)
 
 const defaultTheme = structuredClone(defaultSettings.theme)
 const resetTheme = () => {
@@ -58,13 +61,9 @@ const updateFooterInfo = (list: typeof form.navbar.info) => {
 const updateAboutInfo = (list: typeof form.navbar.info) => {
   form.about.info = list
 }
-
-const addAboutInfo = () => form.about.info.push({ key: '', value: '' })
-const removeAboutInfo = (index: number) => form.about.info.splice(index, 1)
-
 const saveSettings = async () => {
   saving.value = true
-  setLocale(form.general.language)
+  setLocale(currentLocal.value)
   await loadingStore.withActionLoading(async () => {
     try {
       await $fetch('/api/settings', {
@@ -119,7 +118,7 @@ const saveSettings = async () => {
       <div class="grid gap-4 md:grid-cols-2">
         <AdminUiSelect :label="$t('admin.settings.direction')" v-model="form.general.direction"
           :options="[{ key: $t('admin.settings.directionLtr'), value: 'ltr' }, { key: $t('admin.settings.directionRtl'), value: 'rtl' }]" />
-        <AdminLocaleSelector :label="$t('admin.settings.language')" v-model="form.general.language" />
+        <AdminLocaleSelector :label="$t('admin.settings.language')" v-model="currentLocal" />
       </div>
     </AdminCard>
 
