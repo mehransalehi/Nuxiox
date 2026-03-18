@@ -511,3 +511,40 @@ export const blogCommentLikes = defineTable({
     })
   ),
 });
+
+export const media = defineTable({
+  name: "media",
+  priority: 10,
+  layer,
+  table: sqliteTable("media", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    
+    filename: text("filename").notNull(),
+    originalName: text("original_name").notNull(),
+    mimeType: text("mime_type").notNull(),
+    size: integer("size").notNull(), // bytes
+    
+    // R2 paths
+    path: text("path").notNull(), // original
+    thumbnailPath: text("thumbnail_path"), // 300x300
+    
+    // SEO
+    alt: text("alt"),
+    title: text("title"),
+    
+    // Dimensions for images
+    width: integer("width"),
+    height: integer("height"),
+    
+    uploadedBy: integer("uploaded_by").references(() => users.table.id, {
+      onDelete: "set null",
+    }),
+    
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .notNull()
+      .defaultNow(),}, (table) => ({
+    filenameIdx: index("media_filename_idx").on(table.filename),
+    uploadedByIdx: index("media_uploaded_by_idx").on(table.uploadedBy),
+  })),
+});
+

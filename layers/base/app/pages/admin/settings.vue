@@ -20,6 +20,7 @@ const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
 const currentLocal = ref(locale.value)
+const imageNumber = ref(0)
 
 const defaultTheme = structuredClone(defaultSettings.theme)
 const resetTheme = () => {
@@ -79,6 +80,12 @@ const saveSettings = async () => {
     }
   })
 }
+
+function handleMediaUpdate(media:any) {
+  if (media) {
+    form.navbar.lightLogo = `/api/admin/media/${media.id}/file`
+  }
+}
 </script>
 
 <template>
@@ -126,6 +133,7 @@ const saveSettings = async () => {
       :subtitle="$t('admin.settings.navbarDescription')">
       <div class="grid gap-4 md:grid-cols-2">
         <AdminUiText :label="$t('common.lightLogoUrl')" v-model="form.navbar.lightLogo" />
+        <!-- <AdminFileManager v-model="imageNumber" @update:media="handleMediaUpdate" /> -->
         <AdminUiText :label="$t('common.darkLogoUrl')" v-model="form.navbar.darkLogo" />
       </div>
       <AdminMenuCreator @update="updateNavbarMenu" :list="form.navbar.menus" handler="navbar" />

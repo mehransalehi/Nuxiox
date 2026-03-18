@@ -11,3 +11,8 @@ binding = "DB"
 database_name = "nuxiox_db"
 database_id = "04846cd3-3b98-4e55-97c8-74327a72160e"
 migrations_dir = "./server/database/migrations"
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "nuxiox-bucket"
+preview_bucket_name = "nuxiox-bucket-preview"

@@ -12,7 +12,6 @@ export default defineEventHandler(async (event) => {
   const admin = await requireAdmin(event)
   const db = useDb(event)
   const locale = getLocale(event)
-  console.log(locale);
 
   const rows = await db.select().from(settings)
 
@@ -54,7 +53,6 @@ export default defineEventHandler(async (event) => {
     },
   }
 
-  console.log(response);
 
   return response
 })

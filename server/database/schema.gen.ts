@@ -10,6 +10,7 @@ export const blogPostsLocales = base.blogPostsLocales.table;
 export const colleagues = base.colleagues.table;
 export const colleaguesLocales = base.colleaguesLocales.table;
 export const contactMessages = base.contactMessages.table;
+export const media = base.media.table;
 export const pages = base.pages.table;
 export const pagesLocales = base.pagesLocales.table;
 export const services = base.services.table;
