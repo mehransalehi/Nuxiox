@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { contactMessages } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
 import { checkZod } from "~~/server/utils/checkZod";
 
 const schema = z.object({

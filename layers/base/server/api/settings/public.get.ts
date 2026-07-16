@@ -1,7 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { settings } from '~~/server/database/schema.gen'
 import { defaultSettings,SiteSettings } from '~~/layers/base/utils/settings'
-import { useDb } from '~~/server/utils/db'
 import { getLocale } from "~~/server/utils/getLocale";
 
 export default defineEventHandler(async (event) => {

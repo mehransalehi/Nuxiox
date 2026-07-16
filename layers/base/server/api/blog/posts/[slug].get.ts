@@ -4,7 +4,6 @@ import {
   blogPosts,
   blogPostsLocales,
 } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
 import { getLocale } from "~~/server/utils/getLocale";
 
 type CommentNode = {

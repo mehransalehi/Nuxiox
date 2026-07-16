@@ -1,6 +1,5 @@
 import { and, eq, sql } from 'drizzle-orm'
 import { blogCommentLikes, blogComments } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
 
 export default defineEventHandler(async (event) => {
   const id = Number(getRouterParam(event, 'id'))

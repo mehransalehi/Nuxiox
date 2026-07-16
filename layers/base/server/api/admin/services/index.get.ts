@@ -1,6 +1,5 @@
 import { asc, eq, and } from 'drizzle-orm'
 import { services, servicesLocales } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 export default defineEventHandler(async (event) => {

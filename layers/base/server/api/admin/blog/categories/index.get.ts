@@ -5,7 +5,7 @@ import {
   blogCategoriesLocales,
   blogPostCategories,
 } from "~~/server/database/schema.gen"
-import { useDb } from "~~/server/utils/db"
+ 
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event);

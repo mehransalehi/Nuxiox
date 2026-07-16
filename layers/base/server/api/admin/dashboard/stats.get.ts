@@ -1,7 +1,6 @@
 import { desc, eq, sql } from 'drizzle-orm'
 import { blogPosts, colleagues, contactMessages, pages, services, settings, users } from '~~/server/database/schema.gen'
 import { defaultSettings } from '~~/layers/base/utils/settings'
-import { useDb } from '~~/server/utils/db'
 
 const safeCount = async (runner: () => Promise<number>) => {
   try {

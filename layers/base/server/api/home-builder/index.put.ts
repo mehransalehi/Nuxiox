@@ -1,41 +1,43 @@
-import { settings } from '~~/server/database/schema.gen'
-import { defaultHomeBuilder } from '~~/layers/base/utils/page-builder'
-import type { HomeBuilder } from '~~/layers/base/types/page-builder'
-import { useDb } from '~~/server/utils/db'
+import { settings } from "~~/server/database/schema.gen";
+import { defaultHomeBuilder } from "~~/layers/base/utils/page-builder";
+import type { HomeBuilder } from "~~/layers/base/types/page-builder";
+import { upsert } from "~~/server/utils/db/upsert";
+import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
-  }
+  const admin = await requireAdmin(event);
 
-  const body = (await readBody(event)) as Partial<HomeBuilder>
+  const body = (await readBody(event)) as Partial<HomeBuilder>;
+
+  console.log(typeof body)
+  console.log(body)
   const payload: HomeBuilder = {
     version: body.version ?? defaultHomeBuilder.version,
-    sections: Array.isArray(body.sections) ? body.sections : defaultHomeBuilder.sections,
-  }
+    sections: Array.isArray(body.sections)
+      ? body.sections
+      : defaultHomeBuilder.sections,
+  };
 
-  const db = useDb(event)
-  const now = new Date()
-
-  await db
-    .insert(settings)
-    .values({
-      key: 'home_sections',
+  const db = useDb(event);
+  const now = new Date();
+  await upsert(
+    db,
+    settings,
+    {
+      key: "home_sections",
       value: payload,
-      description: 'Home page sections builder',
+      description: "Home page sections builder",
       isPublic: true,
       updatedAt: now,
-    })
-    .onConflictDoUpdate({
-      target: settings.key,
-      set: {
-        value: payload,
-        description: 'Home page sections builder',
-        isPublic: true,
-        updatedAt: now,
-      },
-    })
+    },
+    settings.key,
+    {
+      value: payload,
+      description: "Home page sections builder",
+      isPublic: true,
+      updatedAt: now,
+    },
+  );
 
-  return { success: true }
-})
+  return { success: true };
+});

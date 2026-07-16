@@ -1,6 +1,5 @@
 import { pages, pagesLocales } from "~~/server/database/schema.gen";
 import { defaultPageBuilder } from "~~/layers/base/utils/page-builder";
-import { useDb } from "~~/server/utils/db";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { eq } from "drizzle-orm";
 
@@ -32,26 +31,27 @@ export default defineEventHandler(async (event) => {
   };
 
   try {
-    const [page] = await db
-      .insert(pages)
-      .values({
-        status: "draft",
-      })
-      .returning();
+    const [resultPage] = await db.insert(pages).values({
+      status: "draft",
+    });
+    const page = await db.query.pages.findFirst({
+      where: eq(pages.id, resultPage.insertId),
+    });
     let localeRow = null;
     if (page) {
       try {
-        [localeRow] = await db
-          .insert(pagesLocales)
-          .values({
-            pageId: page.id,
-            locale: body.locale!,
-            slug: body.slug!,
-            title: body.title!,
-            seo,
-            builder: defaultPageBuilder,
-          })
-          .returning();
+        const [result] = await db.insert(pagesLocales).values({
+          pageId: page.id,
+          locale: body.locale!,
+          slug: body.slug!,
+          title: body.title!,
+          seo,
+          builder: defaultPageBuilder,
+        });
+
+        localeRow = await db.query.pagesLocales.findFirst({
+          where: eq(pagesLocales.id, result.insertId),
+        });
       } catch (error) {
         // 2️⃣ Check if any locales remain
         const remaining = await db

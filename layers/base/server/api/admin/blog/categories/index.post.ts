@@ -3,7 +3,7 @@ import {
   blogCategories,
   blogCategoriesLocales,
 } from "~~/server/database/schema.gen";
-import { useDb } from "~~/server/utils/db";
+import { eq } from "drizzle-orm";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { checkZod } from "~~/server/utils/checkZod";
 
@@ -33,20 +33,24 @@ export default defineEventHandler(async (event) => {
     });
   }
   // create base category
-  const [category] = await db.insert(blogCategories).values({}).returning();
+  const [result] = await db.insert(blogCategories).values({});
+  const category = await db.query.blogCategories.findFirst({
+    where: eq(blogCategories.id, result.insertId),
+  });
   // create locale
   if (category) {
     try {
-      const [localeRow] = await db
-        .insert(blogCategoriesLocales)
-        .values({
-          categoryId: category.id,
-          locale: body.locale,
-          name: body.name,
-          slug: body.slug,
-          description: body.description ?? null,
-        })
-        .returning();
+      const [resultLocale] = await db.insert(blogCategoriesLocales).values({
+        categoryId: category.id,
+        locale: body.locale,
+        name: body.name,
+        slug: body.slug,
+        description: body.description ?? null,
+      });
+
+      const localeRow = await db.query.blogCategoriesLocales.findFirst({
+        where: eq(blogCategoriesLocales.id, resultLocale.insertId),
+      });
       return {
         category: {
           ...category,

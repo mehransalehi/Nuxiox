@@ -1,6 +1,5 @@
 import { and, eq } from 'drizzle-orm'
 import { pages, pagesLocales } from '~~/server/database/schema.gen'
-import { useDb } from '~~/server/utils/db'
 import { getLocale } from "~~/server/utils/getLocale";
 
 export default defineEventHandler(async (event) => {

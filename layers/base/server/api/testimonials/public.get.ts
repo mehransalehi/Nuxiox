@@ -3,7 +3,7 @@ import {
   testimonials,
   testimonialsLocales,
 } from "~~/server/database/schema.gen";
-import { useDb } from "~~/server/utils/db";
+ ;
 import { getLocale } from "~~/server/utils/getLocale";
 
 export default defineEventHandler(async (event) => {

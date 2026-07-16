@@ -4,7 +4,7 @@ import {
   blogPosts,
   blogPostsLocales,
 } from "~~/server/database/schema.gen";
-import { useDb } from "~~/server/utils/db";
+ ;
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { checkZod } from "~~/server/utils/checkZod";
 

@@ -1,6 +1,5 @@
 import { pages, pagesLocales } from "~~/server/database/schema.gen";
 import { desc } from "drizzle-orm";
-import { useDb } from "~~/server/utils/db";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { getLocale } from "~~/server/utils/getLocale";
 import { eq } from "drizzle-orm";

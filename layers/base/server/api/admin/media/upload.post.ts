@@ -1,10 +1,10 @@
 // server/api/admin/media/upload.post.ts
 import { z } from "zod";
 import { media } from "~~/server/database/schema.gen";
-import { useDb } from "~~/server/utils/db";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { getR2Bucket, uploadToR2 } from "~~/server/utils/r2";
 import { processImage } from "~~/server/utils/imageProcessor";
+import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const admin = await requireAdmin(event);
@@ -29,14 +29,23 @@ export default defineEventHandler(async (event) => {
   });
 
   // Validate file type
-  const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+  const allowedTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+  ];
   if (!allowedTypes.includes(file.type)) {
     throw createError({ statusCode: 400, statusMessage: "Invalid file type" });
   }
 
   // Max 10MB
   if (file.size > 10 * 1024 * 1024) {
-    throw createError({ statusCode: 400, statusMessage: "File too large (max 10MB)" });
+    throw createError({
+      statusCode: 400,
+      statusMessage: "File too large (max 10MB)",
+    });
   }
 
   const timestamp = Date.now();
@@ -51,22 +60,23 @@ export default defineEventHandler(async (event) => {
   await uploadToR2(bucket, path, buffer, file.type);
 
   // Save to DB
-  const [record] = await db
-    .insert(media)
-    .values({
-      filename,
-      originalName: file.name,
-      mimeType: file.type,
-      size: file.size,
-      path,
-      thumbnailPath: null,
-      alt: altEntry?.data?.toString() || null,
-      title: titleEntry?.data?.toString() || null,
-      width,
-      height,
-      uploadedBy: admin.id,
-    })
-    .returning();
+  const [result] = await db.insert(media).values({
+    filename,
+    originalName: file.name,
+    mimeType: file.type,
+    size: file.size,
+    path,
+    thumbnailPath: null,
+    alt: altEntry?.data?.toString() || null,
+    title: titleEntry?.data?.toString() || null,
+    width,
+    height,
+    uploadedBy: admin.id,
+  });
+
+  const record = await db.query.media.findFirst({
+    where: eq(media.id, result.insertId),
+  });
 
   return record;
 });

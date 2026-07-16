@@ -1,5 +1,5 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
-import * as base from '../../layers/base/server/database/schema';
+import * as base from '../../layers/databases/normal/server/database/schema';
 export const blogCategories = base.blogCategories.table;
 export const blogCategoriesLocales = base.blogCategoriesLocales.table;
 export const blogCommentLikes = base.blogCommentLikes.table;

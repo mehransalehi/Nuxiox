@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm"
 import { blogCategories } from "~~/server/database/schema.gen"
-import { useDb } from "~~/server/utils/db"
+ 
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 export default defineEventHandler(async (event) => {

@@ -1,6 +1,6 @@
 // server/api/admin/media/[id]/url.get.ts
 import { media } from "~~/server/database/schema.gen";
-import { useDb } from "~~/server/utils/db";
+ ;
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { getR2Bucket } from "~~/server/utils/r2";
 import { eq } from "drizzle-orm";

@@ -4,12 +4,12 @@ import {
   type SiteSettings,
   type SiteSettingsLocale,
 } from "~~/layers/base/utils/settings";
-import { useDb } from "~~/server/utils/db";
 import { getLocale } from "~~/server/utils/getLocale";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
+import { upsert } from "~~/server/utils/db/upsert";
 
 export default defineEventHandler(async (event) => {
-  const admin = await requireAdmin(event)
+  const admin = await requireAdmin(event);
 
   const db = useDb(event);
   const locale = getLocale(event);
@@ -22,10 +22,9 @@ export default defineEventHandler(async (event) => {
     Object.entries(defaultSettings).map(([key, defaults]) => [
       key,
       { [locale]: { ...defaults, ...(body[key as keyof SiteSettings] ?? {}) } },
-    ])
+    ]),
   ) as SiteSettingsLocale;
 
-  // console.log(payload)
 
   // Helper to upsert + merge existing locales
   const upsertSetting = async <K extends keyof SiteSettingsLocale>(
@@ -45,28 +44,30 @@ export default defineEventHandler(async (event) => {
     };
 
     // Upsert new data
-    await db
-      .insert(settings)
-      .values({
+    await upsert(
+      db,
+      settings,
+      {
         key,
         value: mergedValue,
         description,
         isPublic,
         updatedAt: now,
-      })
-      .onConflictDoUpdate({
-        target: settings.key,
-        set: {
-          value: mergedValue,
-          description,
-          isPublic,
-          updatedAt: now,
-        },
-      });
+      },
+      settings.key,
+      {
+        value: mergedValue,
+        description,
+        isPublic,
+        updatedAt: now,
+      },
+    );
   };
 
   // Define simple metadata for each setting
-  const settingMeta: { [K in keyof SiteSettingsLocale]: { desc: string; isPublic?: boolean } } = {
+  const settingMeta: {
+    [K in keyof SiteSettingsLocale]: { desc: string; isPublic?: boolean };
+  } = {
     general: { desc: "General settings" },
     navbar: { desc: "Navbar settings" },
     footer: { desc: "Footer settings" },
@@ -79,7 +80,7 @@ export default defineEventHandler(async (event) => {
   // Loop all keys and perform upsert
   for (const [key, { desc, isPublic }] of Object.entries(settingMeta) as [
     keyof SiteSettingsLocale,
-    { desc: string; isPublic?: boolean }
+    { desc: string; isPublic?: boolean },
   ][]) {
     await upsertSetting(key, desc, isPublic ?? true);
   }

@@ -1,6 +1,6 @@
 // server/api/admin/media/index.get.ts
 import { media } from "~~/server/database/schema.gen";
-import { useDb } from "~~/server/utils/db";
+ ;
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { desc } from "drizzle-orm";
 

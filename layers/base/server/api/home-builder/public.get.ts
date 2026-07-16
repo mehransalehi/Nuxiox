@@ -1,7 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { settings } from '~~/server/database/schema.gen'
 import { defaultHomeBuilder } from '~~/layers/base/utils/page-builder'
-import { useDb } from '~~/server/utils/db'
 
 export default defineEventHandler(async (event) => {
   const db = useDb(event)
