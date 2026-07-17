@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   // Delete the specific locale
   await db.delete(servicesLocales).where(
     and(
-      eq(servicesLocales.serviceId, id),
+      eq(servicesLocales.service_id, id),
       eq(servicesLocales.locale, locale)
     )
   )
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
   const remainingLocales = await db
     .select({ count: count() })
     .from(servicesLocales)
-    .where(eq(servicesLocales.serviceId, id))
+    .where(eq(servicesLocales.service_id, id))
 
   // If no locales remain, delete the service
   if (remainingLocales[0]?.count === 0) {

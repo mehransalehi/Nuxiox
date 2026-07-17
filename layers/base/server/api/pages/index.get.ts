@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   const result = await db
     .select()
     .from(pages)
-    .leftJoin(pagesLocales, eq(pages.id, pagesLocales.pageId))
-    .orderBy(desc(pages.updatedAt));
+    .leftJoin(pagesLocales, eq(pages.id, pagesLocales.page_id))
+    .orderBy(desc(pages.updated_at));
   return result;
 });

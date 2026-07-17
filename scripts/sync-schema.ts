@@ -1,54 +1,45 @@
-import fs from 'node:fs';
-import path from 'node:path';
-// Use relative imports to your schema files
-import * as mainSchema from '../server/database/schema';
-// Add your layer imports here
-import * as baseLayer from '../layers/base/server/database/schema';
+// scripts/sync-schema.ts
+// Entry point for schema generation.
+// Reads the canonical table definitions from layers/base/server/database/definitions.ts
+// and generates dialect-specific schema files for the active database layer.
+//
+// Usage:
+//   pnpm run db:sync                   # generates both dialects
+//   pnpm run db:sync -- normal          # generates only normal (MySQL)
+//   pnpm run db:sync -- cloudflare      # generates only cloudflare (D1/SQLite)
+//
+// After running, update server/database/schema.gen.ts to point to your active layer.
 
-const allSchemas: any[] = [
-  mainSchema,
-  baseLayer
-];
+import { execSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
 
-const generateSchema = () => {
-  const registry = new Map<string, { tableVar: string, importPath: string, layerName: string, priority: number }>();
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const generatorPath = path.resolve(__dirname, '../layers/databases/generate-schema.ts')
 
-  let content = `// AUTO-GENERATED FILE - DO NOT EDIT\n`;
-  // Identify winners based on priority
-  // Note: We are tracking which VARIABLE name won
-  for (const schemaModule of allSchemas) {
-    let moduleImported = false;
-    for (const [exportName, def] of Object.entries(schemaModule)) {
-      const val = def as any;
-      if (val.name && val.priority !== undefined) {
-        const existing = registry.get(val.name);
-        if (!existing || val.priority > existing.priority) {
-          // We find the file path of the module to create the import string
-          registry.set(val.name, {
-            tableVar: exportName,
-            importPath: val.layer.source, // In a real script, map this to the actual file
-            layerName: val.layer.name,
-            priority: val.priority
-          });
-          //just import the schema module once
-          if (!moduleImported) {
-            // Build the static file content
-            content += `import * as ${val.layer.name} from '${val.layer.source}';\n`;
-            moduleImported = true;
-          }
-        }
-      }
-    }
+const args = process.argv.slice(2)
+const targets = args.length > 0
+  ? args
+  : ['normal', 'cloudflare']  // generate both by default
+
+const dialectMap: Record<string, string> = {
+  normal: 'mysql',
+  cloudflare: 'sqlite',
+}
+
+for (const target of targets) {
+  const dialect = dialectMap[target]
+  if (!dialect) {
+    console.error(`Unknown target "${target}". Valid targets: normal, cloudflare`)
+    process.exit(1)
   }
 
-  // Add other layer imports here if needed
+  console.log(`\nGenerating ${target} (${dialect}) schema...`)
+  execSync(`npx tsx "${generatorPath}" ${dialect}`, {
+    cwd: path.resolve(__dirname, '..'),
+    stdio: 'inherit',
+  })
+}
 
-  for (const [tableName, info] of registry) {
-    content += `export const ${info.tableVar} = ${info.layerName}.${info.tableVar}.table;\n`;
-    console.log(`✅ Included table [${tableName}] from ${info.layerName} Schema (Priority ${info.priority})`);
-  }
-
-  fs.writeFileSync(path.join(process.cwd(), 'server/database/schema.gen.ts'), content);
-};
-
-generateSchema();
+console.log('\n✅ Schema generation complete.')
+console.log('   Remember to update server/database/schema.gen.ts to point to your active layer.')

@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const [page] = await db
     .select()
     .from(pages)
-    .leftJoin(pagesLocales, eq(pages.id, pagesLocales.pageId))
+    .leftJoin(pagesLocales, eq(pages.id, pagesLocales.page_id))
     .where(
       and(
         eq(pages.id, id),

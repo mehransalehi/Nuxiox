@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const offset = (page - 1) * limit;
 
   const items = await db.query.media.findMany({
-    orderBy: [desc(media.createdAt)],
+    orderBy: [desc(media.created_at)],
     limit,
     offset,
   });

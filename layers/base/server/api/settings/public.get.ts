@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const rows = await db
     .select()
     .from(settings)
-    .where(eq(settings.isPublic, true))
+    .where(eq(settings.is_public, true))
 
   const values = rows.reduce<Record<string, any>>((acc, row) => {
       acc[row.key] = row.value

@@ -33,40 +33,37 @@ export default defineEventHandler(async (event) => {
   if (!existingAdmin) {
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const [result] = await db.insert(users).values({
+    const result = await db.insert(users).values({
       username: email.split("@")[0],
       email,
-      passwordHash,
+      password_hash: passwordHash,
       role: "admin",
-    });
+    }).returning({ id: users.id });
 
-    const admin = await db.query.users.findFirst({
-      where: eq(users.id, result.insertId),
-    });
-
-    if (admin) {
-      await setUserSession(event, {
-        user: {
-          id: admin.id,
-          email: admin.email,
-          role: admin.role,
-        },
-      });
-
-      return {
-        firstLogin: true,
-        user: {
-          id: admin.id,
-          email: admin.email,
-          role: admin.role,
-        },
-      };
-    } else {
+    const adminId = result?.[0]?.id;
+    if (!adminId) {
       throw createError({
         statusCode: 401,
         statusMessage: "Invalid credentials",
       });
     }
+
+    await setUserSession(event, {
+      user: {
+        id: adminId,
+        email,
+        role: "admin",
+      },
+    });
+
+    return {
+      firstLogin: true,
+      user: {
+        id: adminId,
+        email,
+        role: "admin",
+      },
+    };
   }
 
   // 4️⃣ Normal login flow
@@ -74,14 +71,14 @@ export default defineEventHandler(async (event) => {
     where: eq(users.email, email),
   });
 
-  if (!user || !user.passwordHash) {
+  if (!user || !user.password_hash) {
     throw createError({
       statusCode: 401,
       statusMessage: "Invalid credentials",
     });
   }
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
+  const valid = await bcrypt.compare(password, user.password_hash);
   if (!valid) {
     throw createError({
       statusCode: 401,

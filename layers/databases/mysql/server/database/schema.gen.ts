@@ -1,4 +1,4 @@
-// AUTO-GENERATED FILE -- DO NOT EDIT
+// AUTO-GENERATED FILE — DO NOT EDIT
 import * as base from './schema'
 
 export const users = base.users.table;

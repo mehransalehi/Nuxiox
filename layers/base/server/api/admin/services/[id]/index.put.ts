@@ -31,9 +31,9 @@ export default defineEventHandler(async (event) => {
       icon: body.icon ?? null,
       image: body.image ?? null,
       link: body.link ?? null,
-      sortOrder: Number(body.sortOrder ?? 0),
-      isActive: Boolean(body.isActive ?? true),
-      updatedAt: new Date(),
+      sort_order: Number(body.sortOrder ?? 0),
+      is_active: Boolean(body.isActive ?? true),
+      updated_at: new Date(),
     })
     .where(eq(services.id, id));
 
@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
     .from(servicesLocales)
     .where(
       and(
-        eq(servicesLocales.serviceId, id),
+        eq(servicesLocales.service_id, id),
         eq(servicesLocales.locale, body.locale),
       ),
     )
@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
       .where(eq(servicesLocales.id, existing.id));
   } else {
     await db.insert(servicesLocales).values({
-      serviceId: id,
+      service_id: id,
       locale: body.locale,
       title: body.title,
       subtitle: body.subtitle ?? null,

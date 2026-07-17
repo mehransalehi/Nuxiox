@@ -37,24 +37,24 @@ export default defineEventHandler(async (event) => {
       title: blogPostsLocales.title,
       slug: blogPostsLocales.slug,
       excerpt: blogPostsLocales.excerpt,
-      featuredImage: blogPosts.featuredImage,
-      publishedAt: blogPosts.publishedAt,
-      createdAt: blogPosts.createdAt,
+      featuredImage: blogPosts.featured_image,
+      publishedAt: blogPosts.published_at,
+      createdAt: blogPosts.created_at,
     })
     .from(blogPosts)
     .innerJoin(
       blogPostsLocales,
-      eq(blogPostsLocales.postId, blogPosts.id),
+      eq(blogPostsLocales.post_id, blogPosts.id),
     )
 
   const withCategory = category
     ? base
-      .innerJoin(blogPostCategories, eq(blogPostCategories.postId, blogPosts.id))
-      .innerJoin(blogCategories, eq(blogCategories.id, blogPostCategories.categoryId))
+      .innerJoin(blogPostCategories, eq(blogPostCategories.post_id, blogPosts.id))
+      .innerJoin(blogCategories, eq(blogCategories.id, blogPostCategories.category_id))
       .innerJoin(
         blogCategoriesLocales,
         and(
-          eq(blogCategoriesLocales.categoryId, blogCategories.id),
+          eq(blogCategoriesLocales.category_id, blogCategories.id),
           eq(blogCategoriesLocales.locale, locale),
         ),
       )
@@ -62,10 +62,10 @@ export default defineEventHandler(async (event) => {
     : base.where(and(...conditions))
 
   const orderBy = sort === 'oldest'
-    ? asc(blogPosts.publishedAt)
+    ? asc(blogPosts.published_at)
     : sort === 'title'
       ? asc(blogPostsLocales.title)
-      : desc(blogPosts.publishedAt)
+      : desc(blogPosts.published_at)
 
   const items = await withCategory
     .limit(pageSize)
@@ -76,13 +76,13 @@ export default defineEventHandler(async (event) => {
     ? await db
       .select({ count: sql<number>`count(*)` })
       .from(blogPosts)
-      .innerJoin(blogPostsLocales, eq(blogPostsLocales.postId, blogPosts.id))
-      .innerJoin(blogPostCategories, eq(blogPostCategories.postId, blogPosts.id))
-      .innerJoin(blogCategories, eq(blogCategories.id, blogPostCategories.categoryId))
+      .innerJoin(blogPostsLocales, eq(blogPostsLocales.post_id, blogPosts.id))
+      .innerJoin(blogPostCategories, eq(blogPostCategories.post_id, blogPosts.id))
+      .innerJoin(blogCategories, eq(blogCategories.id, blogPostCategories.category_id))
       .innerJoin(
         blogCategoriesLocales,
         and(
-          eq(blogCategoriesLocales.categoryId, blogCategories.id),
+          eq(blogCategoriesLocales.category_id, blogCategories.id),
           eq(blogCategoriesLocales.locale, locale),
         ),
       )
@@ -90,7 +90,7 @@ export default defineEventHandler(async (event) => {
     : await db
       .select({ count: sql<number>`count(*)` })
       .from(blogPosts)
-      .innerJoin(blogPostsLocales, eq(blogPostsLocales.postId, blogPosts.id))
+      .innerJoin(blogPostsLocales, eq(blogPostsLocales.post_id, blogPosts.id))
       .where(and(...conditions))
 
   const total = Number(countRows[0]?.count ?? 0)
@@ -100,17 +100,17 @@ export default defineEventHandler(async (event) => {
       id: blogCategories.id,
       name: blogCategoriesLocales.name,
       slug: blogCategoriesLocales.slug,
-      count: sql<number>`count(${blogPostCategories.postId})`,
+      count: sql<number>`count(${blogPostCategories.post_id})`,
     })
     .from(blogCategories)
     .innerJoin(
       blogCategoriesLocales,
       and(
-        eq(blogCategoriesLocales.categoryId, blogCategories.id),
+        eq(blogCategoriesLocales.category_id, blogCategories.id),
         eq(blogCategoriesLocales.locale, locale),
       ),
     )
-    .leftJoin(blogPostCategories, eq(blogPostCategories.categoryId, blogCategories.id))
+    .leftJoin(blogPostCategories, eq(blogPostCategories.category_id, blogCategories.id))
     .groupBy(
       blogCategories.id,
       blogCategoriesLocales.name,

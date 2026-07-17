@@ -1,95 +1,62 @@
-import { sqliteTable, integer, text, index, primaryKey, uniqueIndex } from "drizzle-orm/sqlite-core";
-import { defineTable } from "../../../../../server/utils/schema-types";
-import { sql } from "drizzle-orm";
+import { sqliteTable, integer, text, index, primaryKey, uniqueIndex } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
+import { defineTable } from '../utils/schema-types'
 
-const layer = {
-  source : '../../layers/base/server/database/schema',
-  name : 'base'
-}
+const layer = { source: '../../layers/base/server/database/definitions', name: 'base' }
 
 export const users = defineTable({
   name: "users",
   priority: 10,
   layer,
-  table: sqliteTable("users", {
+  table: sqliteTable(
+    "users",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
-
-    username: text("username").notNull().unique(),
-    email: text("email").notNull().unique(),
-
-    passwordHash: text("password_hash"), 
+    username: text("username").unique().notNull(),
+    email: text("email").unique().notNull(),
+    password_hash: text("password_hash"),
     token: text("token"),
-
-    role: text("role")
-      .$type<"admin" | "user">()
-      .default("user")
-      .notNull(),
-
-    createdAt: text("created_at")
-      .default(sql`(CURRENT_TIMESTAMP)`)
-      .notNull(),
-
-    updatedAt: text("updated_at")
-      .default(sql`(CURRENT_TIMESTAMP)`)
-      .notNull()
-      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
-  }),
-});   
+    role: text("role").notNull().$type<"admin" | "user">().default("user"),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`(CURRENT_TIMESTAMP)`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`(CURRENT_TIMESTAMP)`),
+    },
+  ),
+})
 
 export const settings = defineTable({
   name: "settings",
   priority: 10,
   layer,
-  table: sqliteTable("settings",
-  {
+  table: sqliteTable(
+    "settings",
+    {
     key: text("key").primaryKey(),
-    // Example: "navbar", "footer", "seo"
-
-    value: text("value", { mode: "json" }).notNull(),
-    // JSON string (Drizzle helps parse/serialize)
-
+    value: text("value", { mode: 'json' }).notNull(),
     description: text("description"),
-    // Admin-friendly explanation
-
-    isPublic: integer("is_public", { mode: "boolean" })
-      .default(true)
-      .notNull(),
-    // Controls frontend exposure
-
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-  },
-  (table) => ({
-    isPublicIdx: index("settings_is_public_idx").on(table.isPublic),
-  })),
-});
+    is_public: integer("is_public", { mode: 'boolean' }).notNull().default(true),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+    (table) => ({
+      settings_is_public_idx: index("settings_is_public_idx").on(table.is_public),
+    })
+  ),
+})
 
 export const pages = defineTable({
   name: "pages",
   priority: 10,
   layer,
-  table: sqliteTable("pages", {
+  table: sqliteTable(
+    "pages",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
-
-    status: text("status")
-      .$type<"draft" | "published">()
-      .default("draft")
-      .notNull(),
-
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-  }),
-});
+    status: text("status").notNull().$type<"draft" | "published">().default("draft"),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const pagesLocales = defineTable({
   name: "pages_locales",
@@ -98,60 +65,39 @@ export const pagesLocales = defineTable({
   table: sqliteTable(
     "pages_locales",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-
-      pageId: integer("page_id")
-        .notNull()
-        .references(() => pages.table.id, { onDelete: "cascade" }),
-
-      locale: text("locale").notNull(),
-
-      slug: text("slug").notNull(),
-      title: text("title").notNull(),
-
-      seo: text("seo", { mode: "json" }).notNull(),
-      builder: text("builder", { mode: "json" }).notNull(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    page_id: integer("page_id").notNull().references(() => pages.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    seo: text("seo", { mode: 'json' }).notNull(),
+    builder: text("builder", { mode: 'json' }).notNull(),
     },
     (table) => ({
-      pageLocaleIdx: uniqueIndex("pages_locale_unique").on(
-        table.pageId,
-        table.locale
-      ),
-
-      slugLocaleIdx: uniqueIndex("pages_slug_locale_unique").on(
-        table.slug,
-        table.locale
-      ),
+      pages_locale_unique: uniqueIndex("pages_locale_unique").on(table.page_id, table.locale),
+      pages_slug_locale_unique: uniqueIndex("pages_slug_locale_unique").on(table.slug, table.locale),
     })
   ),
-});
+})
 
 export const services = defineTable({
   name: "services",
   priority: 10,
   layer,
-  table: sqliteTable("services", {
+  table: sqliteTable(
+    "services",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
-
     icon: text("icon"),
     image: text("image"),
     link: text("link"),
-
-    sortOrder: integer("sort_order").default(0).notNull(),
-
-    isActive: integer("is_active", { mode: "boolean" })
-      .default(true)
-      .notNull(),
-
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-  }),
-});
+    sort_order: integer("sort_order").notNull().default(0),
+    is_active: integer("is_active", { mode: 'boolean' }).notNull().default(true),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const servicesLocales = defineTable({
   name: "services_locales",
@@ -160,57 +106,38 @@ export const servicesLocales = defineTable({
   table: sqliteTable(
     "services_locales",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-
-      serviceId: integer("service_id")
-        .notNull()
-        .references(() => services.table.id, { onDelete: "cascade" }),
-
-      locale: text("locale").notNull(),
-
-      title: text("title").notNull(),
-      subtitle: text("subtitle"),
-      description: text("description"),
-
-      extra: text("extra", { mode: "json" })
-        .notNull()
-        .default(sql`'[]'`),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    service_id: integer("service_id").notNull().references(() => services.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    title: text("title").notNull(),
+    subtitle: text("subtitle"),
+    description: text("description"),
+    extra: text("extra", { mode: 'json' }).notNull().default(sql`'[]'`),
     },
     (table) => ({
-      serviceLocaleIdx: uniqueIndex("services_locale_unique").on(
-        table.serviceId,
-        table.locale
-      ),
+      services_locale_unique: uniqueIndex("services_locale_unique").on(table.service_id, table.locale),
     })
   ),
-});
+})
 
 export const colleagues = defineTable({
   name: "colleagues",
   priority: 10,
   layer,
-  table: sqliteTable("colleagues", {
+  table: sqliteTable(
+    "colleagues",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
-
     icon: text("icon"),
     image: text("image"),
     link: text("link"),
-
-    sortOrder: integer("sort_order").default(0).notNull(),
-
-    isActive: integer("is_active", { mode: "boolean" })
-      .default(true)
-      .notNull(),
-
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-  }),
-});
+    sort_order: integer("sort_order").notNull().default(0),
+    is_active: integer("is_active", { mode: 'boolean' }).notNull().default(true),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const colleaguesLocales = defineTable({
   name: "colleagues_locales",
@@ -219,55 +146,36 @@ export const colleaguesLocales = defineTable({
   table: sqliteTable(
     "colleagues_locales",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-
-      colleagueId: integer("colleague_id")
-        .notNull()
-        .references(() => colleagues.table.id, { onDelete: "cascade" }),
-
-      locale: text("locale").notNull(),
-
-      title: text("title").notNull(),
-      subtitle: text("subtitle"),
-      description: text("description"),
-
-      extra: text("extra", { mode: "json" })
-        .notNull()
-        .default(sql`'[]'`),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    colleague_id: integer("colleague_id").notNull().references(() => colleagues.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    title: text("title").notNull(),
+    subtitle: text("subtitle"),
+    description: text("description"),
+    extra: text("extra", { mode: 'json' }).notNull().default(sql`'[]'`),
     },
     (table) => ({
-      colleagueLocaleIdx: uniqueIndex("colleagues_locale_unique").on(
-        table.colleagueId,
-        table.locale
-      ),
+      colleagues_locale_unique: uniqueIndex("colleagues_locale_unique").on(table.colleague_id, table.locale),
     })
   ),
-});
+})
 
 export const testimonials = defineTable({
   name: "testimonials",
   priority: 10,
   layer,
-  table: sqliteTable("testimonials", {
+  table: sqliteTable(
+    "testimonials",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
-
     avatar: text("avatar"),
-
-    rating: integer("rating").default(5).notNull(),
-
-    isActive: integer("is_active", { mode: "boolean" })
-      .default(true)
-      .notNull(),
-
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-  }),
-});
+    rating: integer("rating").notNull().default(5),
+    is_active: integer("is_active", { mode: 'boolean' }).notNull().default(true),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const testimonialsLocales = defineTable({
   name: "testimonials_locales",
@@ -276,57 +184,49 @@ export const testimonialsLocales = defineTable({
   table: sqliteTable(
     "testimonials_locales",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-
-      testimonialId: integer("testimonial_id")
-        .notNull()
-        .references(() => testimonials.table.id, { onDelete: "cascade" }),
-
-      locale: text("locale").notNull(),
-
-      name: text("name").notNull(),
-      role: text("role"),
-      content: text("content").notNull(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    testimonial_id: integer("testimonial_id").notNull().references(() => testimonials.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    name: text("name").notNull(),
+    role: text("role"),
+    content: text("content").notNull(),
     },
     (table) => ({
-      testimonialLocaleIdx: uniqueIndex("testimonials_locale_unique").on(
-        table.testimonialId,
-        table.locale
-      ),
+      testimonials_locale_unique: uniqueIndex("testimonials_locale_unique").on(table.testimonial_id, table.locale),
     })
   ),
-});
+})
 
 export const contactMessages = defineTable({
   name: "contact_messages",
   priority: 10,
   layer,
-  table: sqliteTable("contact_messages", {
+  table: sqliteTable(
+    "contact_messages",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
     name: text("name").notNull(),
     email: text("email").notNull(),
     subject: text("subject"),
     message: text("message").notNull(),
-    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
-  }),
-});
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const blogCategories = defineTable({
   name: "blog_categories",
   priority: 10,
   layer,
-  table: sqliteTable("blog_categories", {
+  table: sqliteTable(
+    "blog_categories",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
-
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-
-    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),
-  }),
-});
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const blogCategoriesLocales = defineTable({
   name: "blog_categories_locales",
@@ -335,31 +235,19 @@ export const blogCategoriesLocales = defineTable({
   table: sqliteTable(
     "blog_categories_locales",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-
-      categoryId: integer("category_id")
-        .notNull()
-        .references(() => blogCategories.table.id, { onDelete: "cascade" }),
-
-      locale: text("locale").notNull(),
-
-      name: text("name").notNull(),
-      slug: text("slug").notNull(),
-      description: text("description"),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    category_id: integer("category_id").notNull().references(() => blogCategories.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description"),
     },
     (table) => ({
-      categoryLocaleIdx: uniqueIndex("blog_categories_locale_unique").on(
-        table.categoryId,
-        table.locale
-      ),
-
-      slugLocaleIdx: uniqueIndex("blog_categories_slug_locale_unique").on(
-        table.slug,
-        table.locale
-      ),
+      blog_categories_locale_unique: uniqueIndex("blog_categories_locale_unique").on(table.category_id, table.locale),
+      blog_categories_slug_locale_unique: uniqueIndex("blog_categories_slug_locale_unique").on(table.slug, table.locale),
     })
   ),
-});
+})
 
 export const blogPosts = defineTable({
   name: "blog_posts",
@@ -368,49 +256,22 @@ export const blogPosts = defineTable({
   table: sqliteTable(
     "blog_posts",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-
-      authorId: integer("author_id").references(() => users.table.id, {
-        onDelete: "set null",
-      }),
-
-      featuredImage: text("featured_image"),
-
-      status: text("status")
-        .$type<"draft" | "published" | "archived">()
-        .default("draft")
-        .notNull(),
-
-      allowComments: integer("allow_comments", { mode: "boolean" })
-        .default(true)
-        .notNull(),
-
-      allowAnonymousComments: integer("allow_anonymous_comments", {
-        mode: "boolean",
-      })
-        .default(true)
-        .notNull(),
-
-      publishedAt: integer("published_at", { mode: "timestamp_ms" }),
-
-      createdAt: integer("created_at", { mode: "timestamp_ms" })
-        .notNull()
-        .defaultNow(),
-
-      updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-        .notNull()
-        .defaultNow(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    author_id: integer("author_id").references(() => users.table.id, { onDelete: "set null" }),
+    featured_image: text("featured_image"),
+    status: text("status").notNull().$type<"draft" | "published" | "archived">().default("draft"),
+    allow_comments: integer("allow_comments", { mode: 'boolean' }).notNull().default(true),
+    allow_anonymous_comments: integer("allow_anonymous_comments", { mode: 'boolean' }).notNull().default(true),
+    published_at: integer("published_at", { mode: 'timestamp_ms' }),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      statusPublishedIdx: index("blog_posts_status_published_idx").on(
-        table.status,
-        table.publishedAt
-      ),
-
-      authorIdx: index("blog_posts_author_idx").on(table.authorId),
+      blog_posts_status_published_idx: index("blog_posts_status_published_idx").on(table.status, table.published_at),
+      blog_posts_author_idx: index("blog_posts_author_idx").on(table.author_id),
     })
   ),
-});
+})
 
 export const blogPostsLocales = defineTable({
   name: "blog_posts_locales",
@@ -419,36 +280,21 @@ export const blogPostsLocales = defineTable({
   table: sqliteTable(
     "blog_posts_locales",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-
-      postId: integer("post_id")
-        .notNull()
-        .references(() => blogPosts.table.id, { onDelete: "cascade" }),
-
-      locale: text("locale").notNull(),
-
-      title: text("title").notNull(),
-      slug: text("slug").notNull(),
-      excerpt: text("excerpt"),
-      content: text("content").notNull(),
-
-      seo: text("seo", { mode: "json" })
-        .notNull()
-        .default(sql`'{}'`),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    post_id: integer("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    title: text("title").notNull(),
+    slug: text("slug").notNull(),
+    excerpt: text("excerpt"),
+    content: text("content").notNull(),
+    seo: text("seo", { mode: 'json' }).notNull().default(sql`'{}'`),
     },
     (table) => ({
-      postLocaleIdx: uniqueIndex("blog_posts_locale_unique").on(
-        table.postId,
-        table.locale
-      ),
-
-      slugLocaleIdx: uniqueIndex("blog_posts_slug_locale_unique").on(
-        table.slug,
-        table.locale
-      ),
+      blog_posts_locale_unique: uniqueIndex("blog_posts_locale_unique").on(table.post_id, table.locale),
+      blog_posts_slug_locale_unique: uniqueIndex("blog_posts_slug_locale_unique").on(table.slug, table.locale),
     })
   ),
-});
+})
 
 export const blogPostCategories = defineTable({
   name: "blog_post_categories",
@@ -457,15 +303,15 @@ export const blogPostCategories = defineTable({
   table: sqliteTable(
     "blog_post_categories",
     {
-      postId: integer("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
-      categoryId: integer("category_id").notNull().references(() => blogCategories.table.id, { onDelete: "cascade" }),
+    post_id: integer("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+    category_id: integer("category_id").notNull().references(() => blogCategories.table.id, { onDelete: "cascade" }),
     },
     (table) => ({
-      pk: primaryKey({ columns: [table.postId, table.categoryId] }),
-      categoryIdx: index("blog_post_categories_category_idx").on(table.categoryId),
+      blog_post_categories_pk: uniqueIndex("blog_post_categories_pk").on(table.post_id, table.category_id),
+      blog_post_categories_category_idx: index("blog_post_categories_category_idx").on(table.category_id),
     })
   ),
-});
+})
 
 export const blogComments = defineTable({
   name: "blog_comments",
@@ -474,25 +320,25 @@ export const blogComments = defineTable({
   table: sqliteTable(
     "blog_comments",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-      postId: integer("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
-      userId: integer("user_id").references(() => users.table.id, { onDelete: "set null" }),
-      parentId: integer("parent_id"),
-      authorName: text("author_name"),
-      authorEmail: text("author_email"),
-      content: text("content").notNull(),
-      seo: text("seo", { mode: "json" }).notNull().default(sql`'{}'`),
-      status: text("status").$type<"pending" | "approved" | "rejected">().default("pending").notNull(),
-      likeCount: integer("like_count").default(0).notNull(),
-      createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
-      updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    post_id: integer("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+    user_id: integer("user_id").references(() => users.table.id, { onDelete: "set null" }),
+    parent_id: integer("parent_id"),
+    author_name: text("author_name"),
+    author_email: text("author_email"),
+    content: text("content").notNull(),
+    seo: text("seo", { mode: 'json' }).notNull().default(sql`'{}'`),
+    status: text("status").notNull().$type<"pending" | "approved" | "rejected">().default("pending"),
+    like_count: integer("like_count").notNull().default(0),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      postStatusIdx: index("blog_comments_post_status_idx").on(table.postId, table.status),
-      parentIdx: index("blog_comments_parent_idx").on(table.parentId),
+      blog_comments_post_status_idx: index("blog_comments_post_status_idx").on(table.post_id, table.status),
+      blog_comments_parent_idx: index("blog_comments_parent_idx").on(table.parent_id),
     })
   ),
-});
+})
 
 export const blogCommentLikes = defineTable({
   name: "blog_comment_likes",
@@ -501,50 +347,41 @@ export const blogCommentLikes = defineTable({
   table: sqliteTable(
     "blog_comment_likes",
     {
-      id: integer("id").primaryKey({ autoIncrement: true }),
-      commentId: integer("comment_id").notNull().references(() => blogComments.table.id, { onDelete: "cascade" }),
-      userId: integer("user_id").notNull().references(() => users.table.id, { onDelete: "cascade" }),
-      createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull().defaultNow(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    comment_id: integer("comment_id").notNull().references(() => blogComments.table.id, { onDelete: "cascade" }),
+    user_id: integer("user_id").notNull().references(() => users.table.id, { onDelete: "cascade" }),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      uniqueLikeIdx: uniqueIndex("blog_comment_likes_unique_idx").on(table.commentId, table.userId),
+      blog_comment_likes_unique_idx: uniqueIndex("blog_comment_likes_unique_idx").on(table.comment_id, table.user_id),
     })
   ),
-});
+})
 
 export const media = defineTable({
   name: "media",
   priority: 10,
   layer,
-  table: sqliteTable("media", {
+  table: sqliteTable(
+    "media",
+    {
     id: integer("id").primaryKey({ autoIncrement: true }),
-    
     filename: text("filename").notNull(),
-    originalName: text("original_name").notNull(),
-    mimeType: text("mime_type").notNull(),
-    size: integer("size").notNull(), // bytes
-    
-    // R2 paths
-    path: text("path").notNull(), // original
-    thumbnailPath: text("thumbnail_path"), // 300x300
-    
-    // SEO
+    original_name: text("original_name").notNull(),
+    mime_type: text("mime_type").notNull(),
+    size: integer("size").notNull(),
+    path: text("path").notNull(),
+    thumbnail_path: text("thumbnail_path"),
     alt: text("alt"),
     title: text("title"),
-    
-    // Dimensions for images
     width: integer("width"),
     height: integer("height"),
-    
-    uploadedBy: integer("uploaded_by").references(() => users.table.id, {
-      onDelete: "set null",
-    }),
-    
-    createdAt: integer("created_at", { mode: "timestamp_ms" })
-      .notNull()
-      .defaultNow(),}, (table) => ({
-    filenameIdx: index("media_filename_idx").on(table.filename),
-    uploadedByIdx: index("media_uploaded_by_idx").on(table.uploadedBy),
-  })),
-});
-
+    uploaded_by: integer("uploaded_by").references(() => users.table.id, { onDelete: "set null" }),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+    (table) => ({
+      media_filename_idx: index("media_filename_idx").on(table.filename),
+      media_uploaded_by_idx: index("media_uploaded_by_idx").on(table.uploaded_by),
+    })
+  ),
+})

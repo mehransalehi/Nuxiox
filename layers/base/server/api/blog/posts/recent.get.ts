@@ -16,18 +16,18 @@ export default defineEventHandler(async (event) => {
       title: blogPostsLocales.title,
       slug: blogPostsLocales.slug,
       excerpt: blogPostsLocales.excerpt,
-      featuredImage: blogPosts.featuredImage,
-      publishedAt: blogPosts.publishedAt,
+      featuredImage: blogPosts.featured_image,
+      publishedAt: blogPosts.published_at,
     })
     .from(blogPosts)
     .innerJoin(
       blogPostsLocales,
       and(
-        eq(blogPostsLocales.postId, blogPosts.id),
+        eq(blogPostsLocales.post_id, blogPosts.id),
         eq(blogPostsLocales.locale, locale),
       ),
     )
     .where(eq(blogPosts.status, 'published'))
-    .orderBy(desc(blogPosts.publishedAt))
+    .orderBy(desc(blogPosts.published_at))
     .limit(limit)
 })

@@ -17,8 +17,8 @@ export default defineEventHandler(async (event) => {
     .select({
       id: pages.id,
       status: pages.status,
-      createdAt: pages.createdAt,
-      updatedAt: pages.updatedAt,
+      createdAt: pages.created_at,
+      updatedAt: pages.updated_at,
 
       locale: pagesLocales.locale,
       title: pagesLocales.title,
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
       builder: pagesLocales.builder,
     })
     .from(pagesLocales)
-    .leftJoin(pages, eq(pages.id, pagesLocales.pageId))
+    .leftJoin(pages, eq(pages.id, pagesLocales.page_id))
     .where(
       and(
         eq(pagesLocales.slug, slug),

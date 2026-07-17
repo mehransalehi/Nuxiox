@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "File not found" });
   }
 
-  setHeader(event, "Content-Type", record.mimeType);
+  setHeader(event, "Content-Type", record.mime_type);
   setHeader(event, "Cache-Control", "public, max-age=31536000");
   
   return object.body;

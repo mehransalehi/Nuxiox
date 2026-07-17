@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
   // 1️⃣ Delete the locale
   const [result] = await db
     .delete(pagesLocales)
-    .where(and(eq(pagesLocales.pageId, id), eq(pagesLocales.locale, locale)));
+    .where(and(eq(pagesLocales.page_id, id), eq(pagesLocales.locale, locale)));
 
 
   if (!result) {
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const remaining = await db
     .select({ id: pagesLocales.id })
     .from(pagesLocales)
-    .where(eq(pagesLocales.pageId, id))
+    .where(eq(pagesLocales.page_id, id))
     .limit(1);
 
   // 3️⃣ If no locales remain → delete page

@@ -9,8 +9,8 @@ export default defineEventHandler(async (event) => {
   if (!id) throw createError({ statusCode: 400, statusMessage: 'Comment id is required' })
 
   const db = useDb(event)
-  await db.delete(blogCommentLikes).where(eq(blogCommentLikes.commentId, id))
-  await db.update(blogComments).set({ likeCount: 0, updatedAt: new Date() }).where(eq(blogComments.id, id))
+  await db.delete(blogCommentLikes).where(eq(blogCommentLikes.comment_id, id))
+  await db.update(blogComments).set({ like_count: 0, updated_at: new Date() }).where(eq(blogComments.id, id))
 
   return { success: true }
 })

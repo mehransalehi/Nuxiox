@@ -52,7 +52,7 @@
               :class="['cursor-pointer border-2 rounded-lg p-2 hover:border-primary', { 'border-primary': selectedMedia?.id === item.id }]"
             >
               <img :src="`/api/admin/media/${item.id}/file`" :alt="item.alt || ''" class="w-full h-32 object-cover rounded" />
-              <p class="text-xs mt-1 truncate">{{ item.originalName }}</p>
+              <p class="text-xs mt-1 truncate">{{ item.original_name }}</p>
             </div>
           </div>
         </div>

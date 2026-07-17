@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
   await db.delete(colleaguesLocales).where(
     and(
-      eq(colleaguesLocales.colleagueId, id),
+      eq(colleaguesLocales.colleague_id, id),
       eq(colleaguesLocales.locale, locale)
     )
   )
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const remaining = await db
     .select({ count: count() })
     .from(colleaguesLocales)
-    .where(eq(colleaguesLocales.colleagueId, id))
+    .where(eq(colleaguesLocales.colleague_id, id))
 
   if (remaining[0]?.count === 0) {
     await db.delete(colleagues).where(eq(colleagues.id, id))

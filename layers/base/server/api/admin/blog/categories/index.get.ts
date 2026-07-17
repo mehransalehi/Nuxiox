@@ -19,21 +19,21 @@ export default defineEventHandler(async (event) => {
       name: blogCategoriesLocales.name,
       slug: blogCategoriesLocales.slug,
       description: blogCategoriesLocales.description,
-      createdAt: blogCategories.createdAt,
-      postsCount: sql<number>`count(${blogPostCategories.postId})`,
+      createdAt: blogCategories.created_at,
+      postsCount: sql<number>`count(${blogPostCategories.post_id})`,
       locale : blogCategoriesLocales.locale
     })
     .from(blogCategories)
     .leftJoin(
       blogCategoriesLocales,
       and(
-        eq(blogCategoriesLocales.categoryId, blogCategories.id)
+        eq(blogCategoriesLocales.category_id, blogCategories.id)
       )
     )
     .leftJoin(
       blogPostCategories,
-      eq(blogPostCategories.categoryId, blogCategories.id)
+      eq(blogPostCategories.category_id, blogCategories.id)
     )
     .groupBy(blogCategories.id)
-    .orderBy(desc(blogCategories.createdAt), asc(blogCategoriesLocales.name))
+    .orderBy(desc(blogCategories.created_at), asc(blogCategoriesLocales.name))
 })

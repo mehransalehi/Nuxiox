@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     const existing = await db
       .select({ id: blogCommentLikes.id })
       .from(blogCommentLikes)
-      .where(and(eq(blogCommentLikes.commentId, id), eq(blogCommentLikes.userId, session.user.id)))
+      .where(and(eq(blogCommentLikes.comment_id, id), eq(blogCommentLikes.user_id, session.user.id)))
       .limit(1)
 
     if (existing.length > 0) {
@@ -20,8 +20,8 @@ export default defineEventHandler(async (event) => {
     }
 
     await db.insert(blogCommentLikes).values({
-      commentId: id,
-      userId: session.user.id,
+      comment_id: id,
+      user_id: session.user.id,
     })
   } else {
     const cookie = getCookie(event, 'blog_comment_likes')
@@ -41,11 +41,11 @@ export default defineEventHandler(async (event) => {
 
   await db
     .update(blogComments)
-    .set({ likeCount: sql`${blogComments.likeCount} + 1` })
+    .set({ like_count: sql`${blogComments.like_count} + 1` })
     .where(eq(blogComments.id, id))
 
   const [comment] = await db
-    .select({ likeCount: blogComments.likeCount })
+    .select({ likeCount: blogComments.like_count })
     .from(blogComments)
     .where(eq(blogComments.id, id))
     .limit(1)

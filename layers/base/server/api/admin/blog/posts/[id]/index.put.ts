@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
     and(
       eq(blogPostsLocales.slug, body.slug),
       eq(blogPostsLocales.locale, body.locale),
-      ne(blogPostsLocales.postId, id) // exclude current post
+      ne(blogPostsLocales.post_id, id) // exclude current post
     )
   )
   .limit(1);
@@ -59,12 +59,12 @@ export default defineEventHandler(async (event) => {
   await db
     .update(blogPosts)
     .set({
-      featuredImage: body.featuredImage || null,
+      featured_image: body.featuredImage || null,
       status: body.status,
-      allowComments: body.allowComments,
-      allowAnonymousComments: body.allowAnonymousComments,
-      publishedAt: body.status === "published" ? new Date() : null,
-      updatedAt: new Date(),
+      allow_comments: body.allowComments,
+      allow_anonymous_comments: body.allowAnonymousComments,
+      published_at: body.status === "published" ? new Date() : null,
+      updated_at: new Date(),
     })
     .where(eq(blogPosts.id, id));
 
@@ -79,18 +79,18 @@ export default defineEventHandler(async (event) => {
     })
     .where(
       and(
-        eq(blogPostsLocales.postId, id),
+        eq(blogPostsLocales.post_id, id),
         eq(blogPostsLocales.locale, body.locale),
       ),
     );
 
-  await db.delete(blogPostCategories).where(eq(blogPostCategories.postId, id));
+  await db.delete(blogPostCategories).where(eq(blogPostCategories.post_id, id));
 
   if (body.categoryIds.length) {
     await db.insert(blogPostCategories).values(
       body.categoryIds.map((categoryId) => ({
-        postId: id,
-        categoryId,
+        post_id: id,
+        category_id: categoryId,
       })),
     );
   }

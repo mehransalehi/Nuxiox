@@ -44,18 +44,18 @@ export default defineEventHandler(async (event) => {
   const [post] = await db
     .insert(blogPosts)
     .values({
-      authorId: admin.id,
-      featuredImage: body.featuredImage || null,
+      author_id: admin.id,
+      featured_image: body.featuredImage || null,
       status: body.status,
-      allowComments: body.allowComments,
-      allowAnonymousComments: body.allowAnonymousComments,
-      publishedAt: body.status === "published" ? new Date() : null,
+      allow_comments: body.allowComments,
+      allow_anonymous_comments: body.allowAnonymousComments,
+      published_at: body.status === "published" ? new Date() : null,
     })
     .returning({ id: blogPosts.id });
 
   if (post) {
     await db.insert(blogPostsLocales).values({
-      postId: post.id,
+      post_id: post.id,
       locale: body.locale,
       title: body.title,
       slug: body.slug,
@@ -67,8 +67,8 @@ export default defineEventHandler(async (event) => {
     if (body.categoryIds.length) {
       await db.insert(blogPostCategories).values(
         body.categoryIds.map((categoryId) => ({
-          postId: post.id,
-          categoryId,
+          post_id: post.id,
+          category_id: categoryId,
         })),
       );
     }

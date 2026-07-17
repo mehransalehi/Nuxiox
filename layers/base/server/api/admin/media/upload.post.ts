@@ -60,22 +60,22 @@ export default defineEventHandler(async (event) => {
   await uploadToR2(bucket, path, buffer, file.type);
 
   // Save to DB
-  const [result] = await db.insert(media).values({
+  const inserted = await db.insert(media).values({
     filename,
-    originalName: file.name,
-    mimeType: file.type,
+    original_name: file.name,
+    mime_type: file.type,
     size: file.size,
     path,
-    thumbnailPath: null,
+    thumbnail_path: null,
     alt: altEntry?.data?.toString() || null,
     title: titleEntry?.data?.toString() || null,
     width,
     height,
-    uploadedBy: admin.id,
-  });
+    uploaded_by: admin.id,
+  }).returning({ id: media.id });
 
   const record = await db.query.media.findFirst({
-    where: eq(media.id, result.insertId),
+    where: eq(media.id, inserted[0].id),
   });
 
   return record;

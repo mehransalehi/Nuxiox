@@ -14,9 +14,9 @@ export default defineEventHandler(async (event) => {
       id: testimonials.id,
       avatar: testimonials.avatar,
       rating: testimonials.rating,
-      isActive: testimonials.isActive,
-      createdAt: testimonials.createdAt,
-      updatedAt: testimonials.updatedAt,
+      isActive: testimonials.is_active,
+      createdAt: testimonials.created_at,
+      updatedAt: testimonials.updated_at,
 
       name: testimonialsLocales.name,
       role: testimonialsLocales.role,
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     .leftJoin(
       testimonialsLocales,
       and(
-        eq(testimonialsLocales.testimonialId, testimonials.id),
+        eq(testimonialsLocales.testimonial_id, testimonials.id),
         eq(testimonialsLocales.locale, locale),
       ),
     )

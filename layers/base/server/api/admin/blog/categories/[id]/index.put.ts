@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
       and(
         eq(t.slug, body.slug),
         eq(t.locale, body.locale),
-        ne(t.categoryId, id) // exclude current category
+        ne(t.category_id, id) // exclude current category
       ),
   });
 
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
     })
     .where(
       and(
-        eq(blogCategoriesLocales.categoryId, id)
+        eq(blogCategoriesLocales.category_id, id)
       )
     )
 

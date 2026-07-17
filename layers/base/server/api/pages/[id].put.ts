@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
       .update(pagesLocales)
       .set(localePayload)
       .where(
-        and(eq(pagesLocales.pageId, id), eq(pagesLocales.locale, body.locale)),
+        and(eq(pagesLocales.page_id, id), eq(pagesLocales.locale, body.locale)),
       );
 
     const updatedLocale = await db.query.pagesLocales.findFirst({

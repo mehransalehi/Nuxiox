@@ -1,11 +1,8 @@
 import { asc, eq, and } from "drizzle-orm"
 import { colleagues, colleaguesLocales } from "~~/server/database/schema.gen"
-import { requireAdmin } from "~~/server/utils/checkAdmin";
 import { getLocale } from "~~/server/utils/getLocale";
 
 export default defineEventHandler(async (event) => {
-  const admin = await requireAdmin(event);
-
   const locale = getLocale(event)
   const db = useDb(event)
 
@@ -15,10 +12,10 @@ export default defineEventHandler(async (event) => {
       icon: colleagues.icon,
       image: colleagues.image,
       link: colleagues.link,
-      sortOrder: colleagues.sortOrder,
-      isActive: colleagues.isActive,
-      createdAt: colleagues.createdAt,
-      updatedAt: colleagues.updatedAt,
+      sortOrder: colleagues.sort_order,
+      isActive: colleagues.is_active,
+      createdAt: colleagues.created_at,
+      updatedAt: colleagues.updated_at,
 
       title: colleaguesLocales.title,
       subtitle: colleaguesLocales.subtitle,
@@ -29,9 +26,9 @@ export default defineEventHandler(async (event) => {
     .leftJoin(
       colleaguesLocales,
       and(
-        eq(colleaguesLocales.colleagueId, colleagues.id),
+        eq(colleaguesLocales.colleague_id, colleagues.id),
         eq(colleaguesLocales.locale, locale)
       )
     )
-    .orderBy(asc(colleagues.sortOrder), asc(colleagues.id))
+    .orderBy(asc(colleagues.sort_order), asc(colleagues.id))
 })

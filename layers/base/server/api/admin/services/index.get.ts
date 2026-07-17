@@ -13,10 +13,10 @@ export default defineEventHandler(async (event) => {
       icon: services.icon,
       image: services.image,
       link: services.link,
-      sortOrder: services.sortOrder,
-      isActive: services.isActive,
-      createdAt: services.createdAt,
-      updatedAt: services.updatedAt,
+      sortOrder: services.sort_order,
+      isActive: services.is_active,
+      createdAt: services.created_at,
+      updatedAt: services.updated_at,
 
       title: servicesLocales.title,
       subtitle: servicesLocales.subtitle,
@@ -28,9 +28,9 @@ export default defineEventHandler(async (event) => {
     .leftJoin(
       servicesLocales,
       and(
-        eq(servicesLocales.serviceId, services.id),
+        eq(servicesLocales.service_id, services.id),
       ),
     )
-    .orderBy(asc(services.sortOrder), asc(services.id))
+    .orderBy(asc(services.sort_order), asc(services.id))
   return result; 
 })

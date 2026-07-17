@@ -1,47 +1,32 @@
 import {
   mysqlTable,
-  int,
-  varchar,
-  text,
-  boolean,
-  json,
-  datetime,
-  index,
-  primaryKey,
-  uniqueIndex,
-} from "drizzle-orm/mysql-core";
-import { defineTable } from "../utils/schema-types";
-import { sql } from "drizzle-orm";
+  int, varchar, text, boolean, json, datetime,
+  bigint,
+  index, primaryKey, uniqueIndex,
+} from 'drizzle-orm/mysql-core'
+import { sql } from 'drizzle-orm'
+import { defineTable } from '../utils/schema-types'
 
-const layer = {
-  source: "../../layers/base/server/database/schema",
-  name: "base",
-};
+const layer = { source: '../../layers/base/server/database/definitions', name: 'base' }
 
 export const users = defineTable({
   name: "users",
   priority: 10,
   layer,
-  table: mysqlTable("users", {
+  table: mysqlTable(
+    "users",
+    {
     id: int("id").primaryKey().autoincrement(),
-
-    username: text("username").notNull().unique(),
-    email: text("email").notNull().unique(),
-
-    passwordHash: text("password_hash"),
+    username: text("username").unique().notNull(),
+    email: text("email").unique().notNull(),
+    password_hash: text("password_hash"),
     token: text("token"),
-
-    role: text("role").$type<"admin" | "user">().default("user").notNull(),
-
-    createdAt: datetime("created_at")
-      .default(sql`(CURRENT_TIMESTAMP)`)
-      .notNull(),
-    
-    updatedAt: datetime("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-      .notNull(),
-  }),
-});
+    role: text("role").notNull().$type<"admin" | "user">().default("user"),
+    created_at: datetime("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+    updated_at: datetime("updated_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+    },
+  ),
+})
 
 export const settings = defineTable({
   name: "settings",
@@ -50,49 +35,33 @@ export const settings = defineTable({
   table: mysqlTable(
     "settings",
     {
-      key: varchar("key", { length: 191 }).primaryKey(),
-
-      value: json("value").$type<Record<string, any>>().notNull(),
-
-      description: text("description"),
-
-      isPublic: boolean("is_public").default(true).notNull(),
-
-      createdAt: datetime("created_at")
-        .default(sql`CURRENT_TIMESTAMP`)
-        .notNull(),
-
-      updatedAt: datetime("updated_at")
-        .default(sql`CURRENT_TIMESTAMP`)
-        .notNull(),
+    key: text("key").primaryKey(),
+    value: json("value").notNull(),
+    description: text("description"),
+    is_public: boolean("is_public").notNull().default(true),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      isPublicIdx: index("settings_is_public_idx").on(table.isPublic),
-    }),
+      settings_is_public_idx: index("settings_is_public_idx").on(table.is_public),
+    })
   ),
-});
+})
 
 export const pages = defineTable({
   name: "pages",
   priority: 10,
   layer,
-  table: mysqlTable("pages", {
+  table: mysqlTable(
+    "pages",
+    {
     id: int("id").primaryKey().autoincrement(),
-
-    status: varchar("status", { length: 191 })
-      .$type<"draft" | "published">()
-      .default("draft")
-      .notNull(),
-
-    createdAt: datetime("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-
-    updatedAt: datetime("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-      .notNull(),
-  }),
-});
+    status: text("status").notNull().$type<"draft" | "published">().default("draft"),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const pagesLocales = defineTable({
   name: "pages_locales",
@@ -101,58 +70,39 @@ export const pagesLocales = defineTable({
   table: mysqlTable(
     "pages_locales",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      pageId: int("page_id")
-        .notNull()
-        .references(() => pages.table.id, { onDelete: "cascade" }),
-
-      locale: varchar("locale", { length: 191 }).notNull(),
-
-      slug: varchar("slug", { length: 191 }).notNull(),
-      title: varchar("title", { length: 191 }).notNull(),
-
-      seo: json("seo").$type<Record<string, any>>().notNull(),
-      builder: json("builder").$type<Record<string, any>>().notNull(),
+    id: int("id").primaryKey().autoincrement(),
+    page_id: int("page_id").notNull().references(() => pages.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    slug: text("slug").notNull(),
+    title: text("title").notNull(),
+    seo: json("seo").notNull(),
+    builder: json("builder").notNull(),
     },
     (table) => ({
-      pageLocaleIdx: uniqueIndex("pages_locale_unique").on(
-        table.pageId,
-        table.locale,
-      ),
-
-      slugLocaleIdx: uniqueIndex("pages_slug_locale_unique").on(
-        table.slug,
-        table.locale,
-      ),
-    }),
+      pages_locale_unique: uniqueIndex("pages_locale_unique").on(table.page_id, table.locale),
+      pages_slug_locale_unique: uniqueIndex("pages_slug_locale_unique").on(table.slug, table.locale),
+    })
   ),
-});
+})
 
 export const services = defineTable({
   name: "services",
   priority: 10,
   layer,
-  table: mysqlTable("services", {
+  table: mysqlTable(
+    "services",
+    {
     id: int("id").primaryKey().autoincrement(),
-
     icon: varchar("icon", { length: 191 }),
     image: varchar("image", { length: 191 }),
     link: varchar("link", { length: 191 }),
-
-    sortOrder: int("sort_order").default(0).notNull(),
-
-    isActive: boolean("is_active").default(true).notNull(),
-
-    createdAt: datetime("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-
-    updatedAt: datetime("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-      .notNull(),
-  }),
-});
+    sort_order: int("sort_order").notNull().default(0),
+    is_active: boolean("is_active").notNull().default(true),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const servicesLocales = defineTable({
   name: "services_locales",
@@ -161,55 +111,38 @@ export const servicesLocales = defineTable({
   table: mysqlTable(
     "services_locales",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      serviceId: int("service_id")
-        .notNull()
-        .references(() => services.table.id, { onDelete: "cascade" }),
-
-      locale: varchar("locale", { length: 191 }).notNull(),
-
-      title: varchar("title", { length: 191 }).notNull(),
-      subtitle: varchar("subtitle", { length: 191 }),
-      description: text("description"),
-
-      extra: json("extra").$type<Record<string, any>>()
-        .notNull()
-        .default(sql`'[]'`),
+    id: int("id").primaryKey().autoincrement(),
+    service_id: int("service_id").notNull().references(() => services.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    title: text("title").notNull(),
+    subtitle: text("subtitle"),
+    description: text("description"),
+    extra: json("extra").notNull().default(sql`'[]'`),
     },
     (table) => ({
-      serviceLocaleIdx: uniqueIndex("services_locale_unique").on(
-        table.serviceId,
-        table.locale,
-      ),
-    }),
+      services_locale_unique: uniqueIndex("services_locale_unique").on(table.service_id, table.locale),
+    })
   ),
-});
+})
 
 export const colleagues = defineTable({
   name: "colleagues",
   priority: 10,
   layer,
-  table: mysqlTable("colleagues", {
+  table: mysqlTable(
+    "colleagues",
+    {
     id: int("id").primaryKey().autoincrement(),
-
     icon: text("icon"),
     image: text("image"),
     link: text("link"),
-
-    sortOrder: int("sort_order").default(0).notNull(),
-
-    isActive: boolean("is_active").default(true).notNull(),
-
-    createdAt: datetime("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-
-    updatedAt: datetime("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-      .notNull(),
-  }),
-});
+    sort_order: int("sort_order").notNull().default(0),
+    is_active: boolean("is_active").notNull().default(true),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const colleaguesLocales = defineTable({
   name: "colleagues_locales",
@@ -218,53 +151,36 @@ export const colleaguesLocales = defineTable({
   table: mysqlTable(
     "colleagues_locales",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      colleagueId: int("colleague_id")
-        .notNull()
-        .references(() => colleagues.table.id, { onDelete: "cascade" }),
-
-      locale: varchar("locale", { length: 191 }).notNull(),
-
-      title: text("title").notNull(),
-      subtitle: text("subtitle"),
-      description: text("description"),
-
-      extra: json("extra").$type<Record<string, any>>()
-        .notNull()
-        .default(sql`'[]'`),
+    id: int("id").primaryKey().autoincrement(),
+    colleague_id: int("colleague_id").notNull().references(() => colleagues.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    title: text("title").notNull(),
+    subtitle: text("subtitle"),
+    description: text("description"),
+    extra: json("extra").notNull().default(sql`'[]'`),
     },
     (table) => ({
-      colleagueLocaleIdx: uniqueIndex("colleagues_locale_unique").on(
-        table.colleagueId,
-        table.locale,
-      ),
-    }),
+      colleagues_locale_unique: uniqueIndex("colleagues_locale_unique").on(table.colleague_id, table.locale),
+    })
   ),
-});
+})
 
 export const testimonials = defineTable({
   name: "testimonials",
   priority: 10,
   layer,
-  table: mysqlTable("testimonials", {
+  table: mysqlTable(
+    "testimonials",
+    {
     id: int("id").primaryKey().autoincrement(),
-
     avatar: varchar("avatar", { length: 191 }),
-
-    rating: int("rating").default(5).notNull(),
-
-    isActive: boolean("is_active").default(true).notNull(),
-
-    createdAt: datetime("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-
-    updatedAt: datetime("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-      .notNull(),
-  }),
-});
+    rating: int("rating").notNull().default(5),
+    is_active: boolean("is_active").notNull().default(true),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const testimonialsLocales = defineTable({
   name: "testimonials_locales",
@@ -273,62 +189,49 @@ export const testimonialsLocales = defineTable({
   table: mysqlTable(
     "testimonials_locales",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      testimonialId: int("testimonial_id")
-        .notNull()
-        .references(() => testimonials.table.id, { onDelete: "cascade" }),
-
-      locale: varchar("locale", { length: 191 }).notNull(),
-
-      name: text("name").notNull(),
-      role: text("role"),
-      content: text("content").notNull(),
+    id: int("id").primaryKey().autoincrement(),
+    testimonial_id: int("testimonial_id").notNull().references(() => testimonials.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    name: text("name").notNull(),
+    role: text("role"),
+    content: text("content").notNull(),
     },
     (table) => ({
-      testimonialLocaleIdx: uniqueIndex("testimonials_locale_unique").on(
-        table.testimonialId,
-        table.locale,
-      ),
-    }),
+      testimonials_locale_unique: uniqueIndex("testimonials_locale_unique").on(table.testimonial_id, table.locale),
+    })
   ),
-});
+})
 
 export const contactMessages = defineTable({
   name: "contact_messages",
   priority: 10,
   layer,
-  table: mysqlTable("contact_messages", {
+  table: mysqlTable(
+    "contact_messages",
+    {
     id: int("id").primaryKey().autoincrement(),
-
-    name: varchar("name", { length: 191 }).notNull(),
-    email: varchar("email", { length: 191 }).notNull(),
-    subject: varchar("subject", { length: 191 }),
-
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    subject: text("subject"),
     message: text("message").notNull(),
-
-    createdAt: datetime("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  }),
-});
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const blogCategories = defineTable({
   name: "blog_categories",
   priority: 10,
   layer,
-  table: mysqlTable("blog_categories", {
+  table: mysqlTable(
+    "blog_categories",
+    {
     id: int("id").primaryKey().autoincrement(),
-
-    createdAt: datetime("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-
-    updatedAt: datetime("updated_at")
-      .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-      .notNull(),
-  }),
-});
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    },
+  ),
+})
 
 export const blogCategoriesLocales = defineTable({
   name: "blog_categories_locales",
@@ -337,32 +240,20 @@ export const blogCategoriesLocales = defineTable({
   table: mysqlTable(
     "blog_categories_locales",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      categoryId: int("category_id")
-        .notNull()
-        .references(() => blogCategories.table.id, { onDelete: "cascade" }),
-
-      locale: varchar("locale", { length: 191 }).notNull(),
-
-      name: varchar("name", { length: 191 }).notNull(),
-      slug: varchar("slug", { length: 191 }).notNull(),
-
-      description: text("description"),
+    id: int("id").primaryKey().autoincrement(),
+    category_id: int("category_id").notNull().references(() => blogCategories.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description"),
     },
     (table) => ({
-      categoryLocaleIdx: uniqueIndex("blog_categories_locale_unique").on(
-        table.categoryId,
-        table.locale,
-      ),
-
-      slugLocaleIdx: uniqueIndex("blog_categories_slug_locale_unique").on(
-        table.slug,
-        table.locale,
-      ),
-    }),
+      blog_categories_locale_unique: uniqueIndex("blog_categories_locale_unique").on(table.category_id, table.locale),
+      blog_categories_slug_locale_unique: uniqueIndex("blog_categories_slug_locale_unique").on(table.slug, table.locale),
+    })
   ),
-});
+})
+
 export const blogPosts = defineTable({
   name: "blog_posts",
   priority: 10,
@@ -370,45 +261,22 @@ export const blogPosts = defineTable({
   table: mysqlTable(
     "blog_posts",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      authorId: int("author_id").references(() => users.table.id, {
-        onDelete: "set null",
-      }),
-
-      featuredImage: varchar("featured_image", { length: 191 }),
-
-      status: varchar("status", { length: 20 })
-        .$type<"draft" | "published" | "archived">()
-        .default("draft")
-        .notNull(),
-
-      allowComments: boolean("allow_comments").default(true).notNull(),
-
-      allowAnonymousComments: boolean("allow_anonymous_comments")
-        .default(true)
-        .notNull(),
-
-      publishedAt: datetime("published_at"),
-
-      createdAt: datetime("created_at")
-        .default(sql`CURRENT_TIMESTAMP`)
-        .notNull(),
-
-      updatedAt: datetime("updated_at")
-        .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-        .notNull(),
+    id: int("id").primaryKey().autoincrement(),
+    author_id: int("author_id").references(() => users.table.id, { onDelete: "set null" }),
+    featured_image: varchar("featured_image", { length: 191 }),
+    status: varchar("status", { length: 20 }).notNull().$type<"draft" | "published" | "archived">().default("draft"),
+    allow_comments: boolean("allow_comments").notNull().default(true),
+    allow_anonymous_comments: boolean("allow_anonymous_comments").notNull().default(true),
+    published_at: datetime("published_at"),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      statusPublishedIdx: index("blog_posts_status_published_idx").on(
-        table.status,
-        table.publishedAt,
-      ),
-
-      authorIdx: index("blog_posts_author_idx").on(table.authorId),
-    }),
+      blog_posts_status_published_idx: index("blog_posts_status_published_idx").on(table.status, table.published_at),
+      blog_posts_author_idx: index("blog_posts_author_idx").on(table.author_id),
+    })
   ),
-});
+})
 
 export const blogPostsLocales = defineTable({
   name: "blog_posts_locales",
@@ -417,37 +285,21 @@ export const blogPostsLocales = defineTable({
   table: mysqlTable(
     "blog_posts_locales",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      postId: int("post_id")
-        .notNull()
-        .references(() => blogPosts.table.id, { onDelete: "cascade" }),
-
-      locale: varchar("locale", { length: 191 }).notNull(),
-
-      title: varchar("title", { length: 191 }).notNull(),
-      slug: varchar("slug", { length: 191 }).notNull(),
-
-      excerpt: text("excerpt"),
-      content: text("content").notNull(),
-
-      seo: json("seo").$type<Record<string, any>>()
-        .notNull()
-        .default(sql`'{}'`),
+    id: int("id").primaryKey().autoincrement(),
+    post_id: int("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+    locale: text("locale").notNull(),
+    title: text("title").notNull(),
+    slug: text("slug").notNull(),
+    excerpt: text("excerpt"),
+    content: text("content").notNull(),
+    seo: json("seo").notNull().default(sql`'{}'`),
     },
     (table) => ({
-      postLocaleIdx: uniqueIndex("blog_posts_locale_unique").on(
-        table.postId,
-        table.locale,
-      ),
-
-      slugLocaleIdx: uniqueIndex("blog_posts_slug_locale_unique").on(
-        table.slug,
-        table.locale,
-      ),
-    }),
+      blog_posts_locale_unique: uniqueIndex("blog_posts_locale_unique").on(table.post_id, table.locale),
+      blog_posts_slug_locale_unique: uniqueIndex("blog_posts_slug_locale_unique").on(table.slug, table.locale),
+    })
   ),
-});
+})
 
 export const blogPostCategories = defineTable({
   name: "blog_post_categories",
@@ -456,22 +308,15 @@ export const blogPostCategories = defineTable({
   table: mysqlTable(
     "blog_post_categories",
     {
-      postId: int("post_id")
-        .notNull()
-        .references(() => blogPosts.table.id, { onDelete: "cascade" }),
-
-      categoryId: int("category_id")
-        .notNull()
-        .references(() => blogCategories.table.id, { onDelete: "cascade" }),
+    post_id: int("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+    category_id: int("category_id").notNull().references(() => blogCategories.table.id, { onDelete: "cascade" }),
     },
     (table) => ({
-      pk: primaryKey({ columns: [table.postId, table.categoryId] }),
-      categoryIdx: index("blog_post_categories_category_idx").on(
-        table.categoryId,
-      ),
-    }),
+      blog_post_categories_pk: uniqueIndex("blog_post_categories_pk").on(table.post_id, table.category_id),
+      blog_post_categories_category_idx: index("blog_post_categories_category_idx").on(table.category_id),
+    })
   ),
-});
+})
 
 export const blogComments = defineTable({
   name: "blog_comments",
@@ -480,52 +325,25 @@ export const blogComments = defineTable({
   table: mysqlTable(
     "blog_comments",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      postId: int("post_id")
-        .notNull()
-        .references(() => blogPosts.table.id, { onDelete: "cascade" }),
-
-      userId: int("user_id").references(() => users.table.id, {
-        onDelete: "set null",
-      }),
-
-      parentId: int("parent_id"),
-
-      authorName: varchar("author_name", { length: 191 }),
-      authorEmail: varchar("author_email", { length: 191 }),
-
-      content: text("content").notNull(),
-
-      seo: json("seo").$type<Record<string, any>>()
-        .notNull()
-        .default(sql`'{}'`),
-
-      status: varchar("status", { length: 20 })
-        .$type<"pending" | "approved" | "rejected">()
-        .default("pending")
-        .notNull(),
-
-      likeCount: int("like_count").default(0).notNull(),
-
-      createdAt: datetime("created_at")
-        .default(sql`CURRENT_TIMESTAMP`)
-        .notNull(),
-
-      updatedAt: datetime("updated_at")
-        .default(sql`CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP`)
-        .notNull(),
+    id: int("id").primaryKey().autoincrement(),
+    post_id: int("post_id").notNull().references(() => blogPosts.table.id, { onDelete: "cascade" }),
+    user_id: int("user_id").references(() => users.table.id, { onDelete: "set null" }),
+    parent_id: int("parent_id"),
+    author_name: text("author_name"),
+    author_email: text("author_email"),
+    content: text("content").notNull(),
+    seo: json("seo").notNull().default(sql`'{}'`),
+    status: text("status").notNull().$type<"pending" | "approved" | "rejected">().default("pending"),
+    like_count: int("like_count").notNull().default(0),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updated_at: datetime("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      postStatusIdx: index("blog_comments_post_status_idx").on(
-        table.postId,
-        table.status,
-      ),
-
-      parentIdx: index("blog_comments_parent_idx").on(table.parentId),
-    }),
+      blog_comments_post_status_idx: index("blog_comments_post_status_idx").on(table.post_id, table.status),
+      blog_comments_parent_idx: index("blog_comments_parent_idx").on(table.parent_id),
+    })
   ),
-});
+})
 
 export const blogCommentLikes = defineTable({
   name: "blog_comment_likes",
@@ -534,28 +352,16 @@ export const blogCommentLikes = defineTable({
   table: mysqlTable(
     "blog_comment_likes",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      commentId: int("comment_id")
-        .notNull()
-        .references(() => blogComments.table.id, { onDelete: "cascade" }),
-
-      userId: int("user_id")
-        .notNull()
-        .references(() => users.table.id, { onDelete: "cascade" }),
-
-      createdAt: datetime("created_at")
-        .default(sql`CURRENT_TIMESTAMP`)
-        .notNull(),
+    id: int("id").primaryKey().autoincrement(),
+    comment_id: int("comment_id").notNull().references(() => blogComments.table.id, { onDelete: "cascade" }),
+    user_id: int("user_id").notNull().references(() => users.table.id, { onDelete: "cascade" }),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      uniqueLikeIdx: uniqueIndex("blog_comment_likes_unique_idx").on(
-        table.commentId,
-        table.userId,
-      ),
-    }),
+      blog_comment_likes_unique_idx: uniqueIndex("blog_comment_likes_unique_idx").on(table.comment_id, table.user_id),
+    })
   ),
-});
+})
 
 export const media = defineTable({
   name: "media",
@@ -564,37 +370,23 @@ export const media = defineTable({
   table: mysqlTable(
     "media",
     {
-      id: int("id").primaryKey().autoincrement(),
-
-      filename: varchar("filename", { length: 191 }).notNull(),
-      originalName: varchar("original_name", { length: 191 }).notNull(),
-      mimeType: varchar("mime_type", { length: 191 }).notNull(),
-
-      size: int("size").notNull(), // bytes
-
-      // R2 paths
-      path: varchar("path", { length: 191 }).notNull(), // original
-      thumbnailPath: varchar("thumbnail_path", { length: 191 }), // 300x300
-
-      // SEO
-      alt: varchar("alt", { length: 191 }),
-      title: varchar("title", { length: 191 }),
-
-      // Dimensions
-      width: int("width"),
-      height: int("height"),
-
-      uploadedBy: int("uploaded_by").references(() => users.table.id, {
-        onDelete: "set null",
-      }),
-
-      createdAt: datetime("created_at")
-        .default(sql`CURRENT_TIMESTAMP`)
-        .notNull(),
+    id: int("id").primaryKey().autoincrement(),
+    filename: text("filename").notNull(),
+    original_name: text("original_name").notNull(),
+    mime_type: text("mime_type").notNull(),
+    size: int("size").notNull(),
+    path: text("path").notNull(),
+    thumbnail_path: text("thumbnail_path"),
+    alt: text("alt"),
+    title: text("title"),
+    width: int("width"),
+    height: int("height"),
+    uploaded_by: int("uploaded_by").references(() => users.table.id, { onDelete: "set null" }),
+    created_at: datetime("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
     },
     (table) => ({
-      filenameIdx: index("media_filename_idx").on(table.filename),
-      uploadedByIdx: index("media_uploaded_by_idx").on(table.uploadedBy),
-    }),
+      media_filename_idx: index("media_filename_idx").on(table.filename),
+      media_uploaded_by_idx: index("media_uploaded_by_idx").on(table.uploaded_by),
+    })
   ),
-});
+})

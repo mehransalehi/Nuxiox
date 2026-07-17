@@ -53,9 +53,9 @@ export default defineEventHandler(async (event) => {
   const lastBlogPostDate = await (async () => {
     try {
       const [row] = await db
-        .select({ createdAt: blogPosts.createdAt, publishedAt: blogPosts.publishedAt })
+        .select({ createdAt: blogPosts.created_at, publishedAt: blogPosts.published_at })
         .from(blogPosts)
-        .orderBy(desc(blogPosts.publishedAt), desc(blogPosts.createdAt))
+        .orderBy(desc(blogPosts.published_at), desc(blogPosts.created_at))
         .limit(1)
       return Number(row?.publishedAt ?? row?.createdAt ?? 0)
     } catch (error) {

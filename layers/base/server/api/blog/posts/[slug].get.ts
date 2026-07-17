@@ -34,15 +34,15 @@ export default defineEventHandler(async (event) => {
       slug: blogPostsLocales.slug,
       excerpt: blogPostsLocales.excerpt,
       content: blogPostsLocales.content,
-      featuredImage: blogPosts.featuredImage,
-      publishedAt: blogPosts.publishedAt,
-      createdAt: blogPosts.createdAt,
+      featuredImage: blogPosts.featured_image,
+      publishedAt: blogPosts.published_at,
+      createdAt: blogPosts.created_at,
     })
     .from(blogPosts)
     .innerJoin(
       blogPostsLocales,
       and(
-        eq(blogPostsLocales.postId, blogPosts.id),
+        eq(blogPostsLocales.post_id, blogPosts.id),
         eq(blogPostsLocales.locale, locale),
       ),
     )
@@ -58,20 +58,20 @@ export default defineEventHandler(async (event) => {
   const comments = await db
     .select({
       id: blogComments.id,
-      postId: blogComments.postId,
-      userId: blogComments.userId,
-      parentId: blogComments.parentId,
-      authorName: blogComments.authorName,
+      postId: blogComments.post_id,
+      userId: blogComments.user_id,
+      parentId: blogComments.parent_id,
+      authorName: blogComments.author_name,
       content: blogComments.content,
-      likeCount: blogComments.likeCount,
-      createdAt: blogComments.createdAt,
+      likeCount: blogComments.like_count,
+      createdAt: blogComments.created_at,
     })
     .from(blogComments)
     .where(and(
-      eq(blogComments.postId, post.id),
+      eq(blogComments.post_id, post.id),
       eq(blogComments.status, 'approved'),
     ))
-    .orderBy(asc(blogComments.createdAt))
+    .orderBy(asc(blogComments.created_at))
 
   const byId = new Map<number, CommentNode>()
   const roots: CommentNode[] = []

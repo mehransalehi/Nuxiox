@@ -28,8 +28,8 @@ export default defineEventHandler(async (event) => {
     .set({
       avatar: body.avatar ?? null,
       rating: body.rating ?? 5,
-      isActive: body.isActive ?? true,
-      updatedAt: new Date(),
+      is_active: body.isActive ?? true,
+      updated_at: new Date(),
     })
     .where(eq(testimonials.id, id))
 
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
     .from(testimonialsLocales)
     .where(
       and(
-        eq(testimonialsLocales.testimonialId, id),
+        eq(testimonialsLocales.testimonial_id, id),
         eq(testimonialsLocales.locale, body.locale)
       )
     )
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
       .where(eq(testimonialsLocales.id, existingLocale.id))
   } else {
     await db.insert(testimonialsLocales).values({
-      testimonialId: id,
+      testimonial_id: id,
       locale: body.locale,
       name: body.name.trim(),
       role: body.role ?? null,

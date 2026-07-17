@@ -1,10 +1,15 @@
-import { desc, eq, and, sql } from 'drizzle-orm'
-import { blogComments, blogPosts, blogPostsLocales, users } from '~~/server/database/schema.gen'
+import { desc, eq, and, sql } from "drizzle-orm";
+import {
+  blogComments,
+  blogPosts,
+  blogPostsLocales,
+  users,
+} from "~~/server/database/schema.gen";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 
 export default defineEventHandler(async (event) => {
-  const admin = await requireAdmin(event)
-  const db = useDb(event)
+  await requireAdmin(event);
+  const db = useDb(event);
 
   return db
     .select({
@@ -13,27 +18,30 @@ export default defineEventHandler(async (event) => {
       locale: blogPostsLocales.locale,
       slug: blogPostsLocales.slug,
       status: blogPosts.status,
-      allowComments: blogPosts.allowComments,
-      allowAnonymousComments: blogPosts.allowAnonymousComments,
-      publishedAt: blogPosts.publishedAt,
-      updatedAt: blogPosts.updatedAt,
+      allowComments: blogPosts.allow_comments,
+      allowAnonymousComments: blogPosts.allow_anonymous_comments,
+      publishedAt: blogPosts.published_at,
+      updatedAt: blogPosts.updated_at,
       authorEmail: users.email,
       commentsCount: sql<number>`count(${blogComments.id})`,
     })
     .from(blogPosts)
-    .leftJoin(
+    .innerJoin(
       blogPostsLocales,
-      and(
-        eq(blogPostsLocales.postId, blogPosts.id),
-      )
+      eq(blogPostsLocales.post_id, blogPosts.id),
     )
-    .leftJoin(users, eq(users.id, blogPosts.authorId))
-    .leftJoin(blogComments, eq(blogComments.postId, blogPosts.id))
+    .leftJoin(users, eq(users.id, blogPosts.author_id))
+    .leftJoin(blogComments, eq(blogComments.post_id, blogPosts.id))
     .groupBy(
       blogPosts.id,
+      blogPostsLocales.id,
       blogPostsLocales.title,
+      blogPostsLocales.locale,
       blogPostsLocales.slug,
-      users.email
+      blogPosts.status,
+      blogPosts.published_at,
+      blogPosts.updated_at,
+      users.email,
     )
-    .orderBy(desc(blogPosts.updatedAt))
-})
+    .orderBy(desc(blogPosts.updated_at));
+});

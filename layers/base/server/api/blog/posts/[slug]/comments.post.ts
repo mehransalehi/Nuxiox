@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   blogComments,
   blogPosts,
+  blogPostsLocales,
   settings,
 } from "~~/server/database/schema.gen";
 import { defaultSettings } from "~~/layers/base/utils/settings";
@@ -65,14 +66,26 @@ export default defineEventHandler(async (event) => {
   }
 
   const [post] = await db
-    .select()
+    .select({
+      id: blogPosts.id,
+      allowComments: blogPosts.allow_comments,
+      allowAnonymousComments: blogPosts.allow_anonymous_comments,
+      status: blogPosts.status,
+    })
     .from(blogPosts)
-    .where(and(eq(blogPosts.slug, slug), eq(blogPosts.status, "published")))
+    .innerJoin(
+      blogPostsLocales,
+      and(
+        eq(blogPostsLocales.post_id, blogPosts.id),
+        eq(blogPostsLocales.slug, slug),
+      ),
+    )
+    .where(eq(blogPosts.status, "published"))
     .limit(1);
 
   if (!post)
     throw createError({ statusCode: 404, statusMessage: "Post not found" });
-  if (!post.allowComments)
+  if (!post.allow_comments)
     throw createError({
       statusCode: 403,
       statusMessage: "Comments are disabled for this post",

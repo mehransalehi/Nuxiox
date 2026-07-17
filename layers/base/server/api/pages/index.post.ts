@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
         const remaining = await db
           .select({ id: pagesLocales.id })
           .from(pagesLocales)
-          .where(eq(pagesLocales.pageId, page.id))
+          .where(eq(pagesLocales.page_id, page.id))
           .limit(1);
 
         // 3️⃣ If no locales remain → delete page

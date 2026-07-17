@@ -31,9 +31,9 @@ export default defineEventHandler(async (event) => {
       icon: body.icon ?? null,
       image: body.image ?? null,
       link: body.link ?? null,
-      sortOrder: Number(body.sortOrder ?? 0),
-      isActive: Boolean(body.isActive ?? true),
-      updatedAt: new Date(),
+      sort_order: Number(body.sortOrder ?? 0),
+      is_active: Boolean(body.isActive ?? true),
+      updated_at: new Date(),
     })
     .where(eq(colleagues.id, id));
 
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     .from(colleaguesLocales)
     .where(
       and(
-        eq(colleaguesLocales.colleagueId, id),
+        eq(colleaguesLocales.colleague_id, id),
         eq(colleaguesLocales.locale, body.locale),
       ),
     )
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
       .where(eq(colleaguesLocales.id, existingLocale.id));
   } else {
     await db.insert(colleaguesLocales).values({
-      colleagueId: id,
+      colleague_id: id,
       locale: body.locale,
       title: String(body.title ?? "").trim(),
       subtitle: body.subtitle ?? null,
