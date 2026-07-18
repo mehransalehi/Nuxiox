@@ -11,9 +11,12 @@ declare global {
 }
 
 const props = defineProps<{ modelValue: string }>()
-const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+}>()
 
 const editorEl = ref<HTMLDivElement | null>(null)
+const pickerRef = ref<{ open: () => void } | null>(null)
 let quill: { root: HTMLElement; on: (eventName: string, handler: () => void) => void } | null = null
 let syncing = false
 
@@ -46,6 +49,18 @@ const ensureQuillLoaded = async () => {
   })
 }
 
+function openMediaLibrary() {
+  pickerRef.value?.open()
+}
+
+function onMediaSelected(media: any) {
+  if (!quill) return
+  const imgUrl = `/api/admin/media/${media.id}/file`
+  // Insert an <img> at the current cursor position
+  quill.root.innerHTML = quill.root.innerHTML + `<img src="${imgUrl}" alt="${media.alt || ''}" />`
+  emit('update:modelValue', quill.root.innerHTML)
+}
+
 onMounted(async () => {
   if (!editorEl.value) return
   await ensureQuillLoaded()
@@ -54,7 +69,14 @@ onMounted(async () => {
   quill = new window.Quill(editorEl.value, {
     theme: 'snow',
     modules: {
-      toolbar: [[{ header: [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike'], [{ list: 'ordered' }, { list: 'bullet' }], ['blockquote', 'code-block', 'link', 'image'], [{ align: [] }], ['clean']],
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['blockquote', 'code-block', 'link'],
+        [{ align: [] }],
+        ['clean'],
+      ],
     },
   })
 
@@ -73,12 +95,22 @@ watch(
     syncing = true
     quill.root.innerHTML = value || ''
     syncing = false
-  }
+  },
 )
 </script>
 
 <template>
-  <div class="rounded-lg border border-base-300 bg-base-100 p-2">
-    <div ref="editorEl" class="min-h-[14rem]" />
+  <div class="space-y-2">
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-medium text-base-content/70">Content</span>
+      <button class="btn btn-ghost btn-xs gap-1 text-primary" type="button" @click="openMediaLibrary">
+        <i class="fa-solid fa-image" />
+        Media Library
+      </button>
+    </div>
+    <div class="rounded-lg border border-base-300 bg-base-100 p-2">
+      <div ref="editorEl" class="min-h-[14rem]" />
+    </div>
   </div>
+  <AdminMediaLibraryPicker ref="pickerRef" @select="onMediaSelected" />
 </template>

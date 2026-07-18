@@ -9,7 +9,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "db:sync": "tsx scripts/sync-schema.ts",
-    "db:generate": "pnpm run db:sync && drizzle-kit generate"
+    "db:generate": "pnpm run db:sync && drizzle-kit generate",
+    "setup": "tsx scripts/setup.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",

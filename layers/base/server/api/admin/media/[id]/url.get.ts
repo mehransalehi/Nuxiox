@@ -1,14 +1,11 @@
 // server/api/admin/media/[id]/url.get.ts
 import { media } from "~~/server/database/schema.gen";
- ;
 import { requireAdmin } from "~~/server/utils/checkAdmin";
-import { getR2Bucket } from "~~/server/utils/r2";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event);
   const db = useDb(event);
-  const bucket = getR2Bucket(event);
   const id = parseInt(getRouterParam(event, "id") || "0");
 
   const record = await db.query.media.findFirst({
@@ -19,12 +16,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Media not found" });
   }
 
-  const object = await bucket.get(record.path);
-  if (!object) {
-    throw createError({ statusCode: 404, statusMessage: "File not found in storage" });
-  }
-
-  // Generate signed URL (valid for 1 hour)
-  const url = await object.writeHttpMetadata({});
   return { url: `/api/admin/media/${id}/file` };
 });

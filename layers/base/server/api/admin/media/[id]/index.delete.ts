@@ -1,14 +1,12 @@
-// server/api/admin/media/[id].delete.ts
+// server/api/admin/media/[id]/index.delete.ts
 import { media } from "~~/server/database/schema.gen";
- ;
 import { requireAdmin } from "~~/server/utils/checkAdmin";
-import { getR2Bucket, deleteFromR2 } from "~~/server/utils/r2";
+import { deleteFile } from "~~/server/utils/mediaStorage";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event);
   const db = useDb(event);
-  const bucket = getR2Bucket(event);
   const id = parseInt(getRouterParam(event, "id") || "0");
 
   const record = await db.query.media.findFirst({
@@ -19,7 +17,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Media not found" });
   }
 
-  await deleteFromR2(bucket, record.path);
+  await deleteFile(event, record.path);
   await db.delete(media).where(eq(media.id, id));
 
   return { success: true };

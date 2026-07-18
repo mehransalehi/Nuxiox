@@ -145,8 +145,7 @@ const save = async () => {
         <AdminUiTextarea :label="$t('admin.blog.excerpt')" v-model="form.excerpt" />
         <AdminLocaleSelector :label="$t('common.locale')" v-model="form.locale" />
       </div>
-      <!-- <AdminQuillEditor v-model="form.content" /> -->
-      <AdminUiTextarea :label="$t('admin.blog.content')" v-model="form.content" />
+      <AdminQuillEditor v-model="form.content" />
       <AdminUiUrl :label="$t('admin.blog.featuredImage')" v-model="form.featuredImage" />
       <AdminListCreator @update="updateSeoEntries" :list="seoEntries" :title="$t('admin.blog.seoMeta')"
         :button-text="$t('admin.blog.addSeoField')" />

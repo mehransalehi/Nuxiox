@@ -36,6 +36,7 @@ const sections = computed(() => [
       { to: '/admin/services', label: $t('admin.sidebar.services'), icon: 'fa-solid fa-briefcase' },
       { to: '/admin/colleagues', label: $t('admin.sidebar.colleagues'), icon: 'fa-solid fa-user-group' },
       { to: '/admin/testimonials', label: $t('admin.sidebar.testimonials'), icon: 'fa-solid fa-quote-left' },
+      { to: '/admin/media', label: 'Media', icon: 'fa-solid fa-images' },
       { to: '/admin/contact-messages', label: $t('admin.sidebar.contactMessages'), icon: 'fa-solid fa-envelope' },
     ],
   },

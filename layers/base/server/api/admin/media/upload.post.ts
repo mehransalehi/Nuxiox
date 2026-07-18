@@ -2,14 +2,13 @@
 import { z } from "zod";
 import { media } from "~~/server/database/schema.gen";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
-import { getR2Bucket, uploadToR2 } from "~~/server/utils/r2";
+import { uploadFile } from "~~/server/utils/mediaStorage";
 import { processImage } from "~~/server/utils/imageProcessor";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const admin = await requireAdmin(event);
   const db = useDb(event);
-  const bucket = getR2Bucket(event);
 
   const form = await readMultipartFormData(event);
   if (!form) {
@@ -28,7 +27,7 @@ export default defineEventHandler(async (event) => {
     type: fileEntry.type || "application/octet-stream",
   });
 
-  // Validate file type
+  // Validate file type — images only
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
@@ -37,35 +36,35 @@ export default defineEventHandler(async (event) => {
     "image/gif",
   ];
   if (!allowedTypes.includes(file.type)) {
-    throw createError({ statusCode: 400, statusMessage: "Invalid file type" });
+    throw createError({ statusCode: 400, statusMessage: "Invalid file type — only images allowed" });
   }
 
-  // Max 10MB
-  if (file.size > 10 * 1024 * 1024) {
+  // Max 2MB
+  if (file.size > 2 * 1024 * 1024) {
     throw createError({
       statusCode: 400,
-      statusMessage: "File too large (max 10MB)",
+      statusMessage: "File too large (max 2MB)",
     });
   }
 
   const timestamp = Date.now();
   const ext = file.name.split(".").pop();
   const filename = `${timestamp}-${Math.random().toString(36).substring(7)}.${ext}`;
-  const path = `uploads/${new Date().getFullYear()}/${new Date().getMonth() + 1}/${filename}`;
+  const filePath = `uploads/${new Date().getFullYear()}/${new Date().getMonth() + 1}/${filename}`;
 
-  // Process image
+  // Process image (extract dimensions)
   const { buffer, width, height } = await processImage(file);
 
-  // Upload to R2
-  await uploadToR2(bucket, path, buffer, file.type);
+  // Upload to storage (filesystem or KV)
+  await uploadFile(event, filePath, buffer, file.type);
 
-  // Save to DB
+  // Save metadata to DB
   const inserted = await db.insert(media).values({
     filename,
     original_name: file.name,
     mime_type: file.type,
     size: file.size,
-    path,
+    path: filePath,
     thumbnail_path: null,
     alt: altEntry?.data?.toString() || null,
     title: titleEntry?.data?.toString() || null,

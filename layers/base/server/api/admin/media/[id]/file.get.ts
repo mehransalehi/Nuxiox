@@ -1,12 +1,10 @@
 // server/api/admin/media/[id]/file.get.ts
 import { media } from "~~/server/database/schema.gen";
- ;
-import { getR2Bucket } from "~~/server/utils/r2";
+import { getFile } from "~~/server/utils/mediaStorage";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const db = useDb(event);
-  const bucket = getR2Bucket(event);
   const id = parseInt(getRouterParam(event, "id") || "0");
 
   const record = await db.query.media.findFirst({
@@ -17,13 +15,13 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: "Media not found" });
   }
 
-  const object = await bucket.get(record.path);
-  if (!object) {
-    throw createError({ statusCode: 404, statusMessage: "File not found" });
+  const result = await getFile(event, record.path);
+  if (!result) {
+    throw createError({ statusCode: 404, statusMessage: "File not found in storage" });
   }
 
   setHeader(event, "Content-Type", record.mime_type);
   setHeader(event, "Cache-Control", "public, max-age=31536000");
-  
-  return object.body;
+
+  return result.body;
 });
