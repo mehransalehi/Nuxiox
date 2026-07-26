@@ -2,7 +2,7 @@
 // To switch database layer, change the import path below:
 //   Normal (MySQL):   '../../layers/databases/normal/server/database/schema'
 //   Cloudflare (D1):  '../../layers/databases/cloudflare/server/database/schema'
-import * as base from '../../layers/databases/cloudflare/server/database/schema';
+import * as base from '../../packages/databases/cloudflare/server/database/schema';
 export const blogCategories = base.blogCategories.table;
 export const blogCategoriesLocales = base.blogCategoriesLocales.table;
 export const blogCommentLikes = base.blogCommentLikes.table;

@@ -1,5 +1,5 @@
 import type { H3Event } from "h3"
-import type { UserSession } from "~~/layers/base/utils/other"
+import type { UserSession } from "~~/packages/base/utils/other"
 
 export async function requireAdmin(event: H3Event): Promise<UserSession> {
   const session = await requireUserSession(event)

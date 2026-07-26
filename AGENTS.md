@@ -7,13 +7,13 @@
 1. **NEVER touch database definitions directly in layer-specific schema files** — edit `layers/base/server/database/definitions.ts` and run `pnpm run db:sync` to regenerate dialect-specific schemas
 2. **NEVER edit `schema.gen.ts` files** — they are auto-generated
 3. **NEVER edit `server/database/schema.ts` or `server/database/schema.gen.ts`** — these are auto-generated
-4. **To switch databases**: change BOTH `layers/dentist/nuxt.config.ts` AND `server/database/schema.gen.ts`
+4. **To switch databases**: change BOTH `themes/dentist/nuxt.config.ts` AND `server/database/schema.gen.ts`
 5. **Media storage is abstracted** — use `uploadFile`/`getFile`/`deleteFile` from `server/utils/mediaStorage.ts`, never direct filesystem calls
 6. **All API routes use `useDb(event)`** — get the database instance from this function, never instantiate a connection directly
 
 ## Project Overview
 
-Nuxiox is a multi-database CMS built on Nuxt 4 with a Nuxt Layers architecture. It supports both MySQL and Cloudflare D1 databases interchangeably through a canonical definition system.
+Nuxiox is a multi-database CMS built on Nuxt 4 with a monorepo structure using `packages/` as the layer source.
 
 ### Quick Facts
 
@@ -85,9 +85,9 @@ Each theme (dentist, denti, denti-one) provides:
 
 | Theme | Path | Features |
 |-------|------|----------|
-| **dentist** (active) | `layers/dentist/` | Full sections: Hero, About, Services, Blog, Testimonials, Why Us, Results, Technology, Contact, Colleagues |
-| **denti** | `layers/denti/` | Lighter profile |
-| **denti-one** | `layers/denti-one/` | Alternative styling |
+| **dentist** (active) | `themes/dentist/` | Full sections: Hero, About, Services, Blog, Testimonials, Why Us, Results, Technology, Contact, Colleagues |
+| **denti** | `themes/denti/` | Lighter profile |
+| **denti-one** | `themes/denti-one/` | Alternative styling |
 
 To switch themes, change the `extends` in `nuxt.config.ts` root file.
 
@@ -129,9 +129,9 @@ definitions.ts  ──→  scripts/sync-schema.ts  ──→  generate-schema.ts
 Two files must be changed:
 
 ```typescript
-// File 1: layers/dentist/nuxt.config.ts
-extends: ['../databases/cloudflare','../base']  // → D1
-extends: ['../databases/normal','../base']      // → MySQL
+// File 1: themes/dentist/nuxt.config.ts
+extends: ['../../layers/databases/cloudflare','../../layers/base']  // → D1
+extends: ['../../layers/databases/normal','../../layers/base']      // → MySQL
 
 // File 2: server/database/schema.gen.ts
 import * as base from '../../layers/databases/cloudflare/server/database/schema';  // → D1
@@ -271,7 +271,7 @@ All routes are in `layers/base/server/api/`. Every admin route requires authenti
 
 ### Component Discovery
 
-Nuxt auto-imports components from layer directories. A component in `layers/dentist/app/components/sections/Hero.vue` is available as `<SectionsHero />` or `<Hero />` depending on naming.
+Nuxt auto-imports components from layer directories. A component in `themes/dentist/app/components/sections/Hero.vue` is available as `<SectionsHero />` or `<Hero />` depending on naming.
 
 ### Available Section Components
 
@@ -388,7 +388,7 @@ SiteSettings = {
 - The root `server/database/schema.gen.ts` is the one that ALL API routes import via `~~/server/database/schema.gen`
 - When adding a new entity to `definitions.ts`, don't forget to add it to `ALL_ENTITIES` array
 - RTL is handled through Tailwind variants, not CSS flips — check `tailwind.config.ts` in base layer for `rtl:` and `ltr:` variants
-- The `layers/dentist/nuxt.config.ts` has BOTH MySQL and Cloudflare configs commented — the currently uncommented one is active
+- The `themes/dentist/nuxt.config.ts` has BOTH MySQL and Cloudflare configs commented — the currently uncommented one is active
 
 ## Available Scripts
 

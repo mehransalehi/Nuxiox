@@ -300,7 +300,7 @@ DB_NAME=${dbNameInput}
   let schemaGen = fs.readFileSync(schemaGenPath, 'utf-8')
   schemaGen = schemaGen.replace(
     /import \* as base from '.*?'/,
-    `import * as base from '../../layers/databases/${dbLayer}/server/database/schema'`,
+    `import * as base from '../../packages/databases/${dbLayer}/server/database/schema'`,
   )
   fs.writeFileSync(schemaGenPath, schemaGen)
   success('Updated server/database/schema.gen.ts')

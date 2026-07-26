@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@source "../../../layers/**/*.{vue,js,ts}";
+@source "../../../packages/**/*.{vue,js,ts}";
 
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark, cupcake;

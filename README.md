@@ -64,9 +64,9 @@ All database tables are defined **once** in `layers/base/server/database/definit
 
 To switch between MySQL and Cloudflare D1:
 
-1. **Edit** `layers/dentist/nuxt.config.ts` — swap the `extends` line:
-   - `'../databases/cloudflare'` → Cloudflare D1
-   - `'../databases/normal'` → MySQL
+1. **Edit** `themes/dentist/nuxt.config.ts` — swap the `extends` line:
+   - `'../../layers/databases/cloudflare'` → Cloudflare D1
+   - `'../../layers/databases/normal'` → MySQL
 
 2. **Edit** `server/database/schema.gen.ts` — change the import path (instructions are in the file comments).
 
@@ -136,9 +136,9 @@ Additionally, **Cloudflare R2** helpers exist in `server/utils/r2.ts` for produc
 
 | Theme | Path | Description |
 |-------|------|-------------|
-| **dentist** | `layers/dentist/` | Active default — full feature set (Hero, About, Services, Blog, Testimonials, Why Us, Results, Technology, Contact, Footer, Colleagues) |
-| **denti** | `layers/denti/` | Lighter variant |
-| **denti-one** | `layers/denti-one/` | Alternative styling |
+| **dentist** | `themes/dentist/` | Active default — full feature set (Hero, About, Services, Blog, Testimonials, Why Us, Results, Technology, Contact, Footer, Colleagues) |
+| **denti** | `themes/denti/` | Lighter variant |
+| **denti-one** | `themes/denti-one/` | Alternative styling |
 
 Each theme layer has its own:
 - `app/pages/` — public pages (index, blog, [slug])

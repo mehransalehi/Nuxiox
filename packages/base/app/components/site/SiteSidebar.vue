@@ -1,0 +1,23 @@
+<script setup lang="ts">
+import type { MenuItem } from '~~/packages/base/utils/settings'
+
+type Props = {
+  menus: MenuItem[]
+}
+
+const props = defineProps<Props>()
+
+</script>
+
+<template>
+  <aside class="min-h-full w-72 bg-base-200 p-4">
+    <div class="text-xs uppercase tracking-widest text-base-content/50 mb-4">
+      {{ $t('site.mainMenu') }}
+    </div>
+    <ul class="menu menu-vertical gap-1">
+      <li v-for="menu in props.menus" :key="menu.label">
+        <NuxtLink :to="$localePath(menu.href)">{{ menu.label }}</NuxtLink>
+      </li>
+    </ul>
+  </aside>
+</template>

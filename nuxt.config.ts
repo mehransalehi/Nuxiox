@@ -34,6 +34,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  extends: ['./layers/dentalis'],
-  watch: ['layers/**/*'],
+  extends: ['./packages/themes/dentalist'],
+  watch: ['packages/**/*'],
 })

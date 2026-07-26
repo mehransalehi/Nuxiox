@@ -117,7 +117,7 @@ Footer Section
 Nuxiox CMS در حال حاضر از معماری Layered و Section-based استفاده می‌کند:
 
 ```
-layers/dentist/app/components/sections/
+themes/dentist/app/components/sections/
 ├── Hero.vue
 ├── About.vue
 ├── Service.vue
