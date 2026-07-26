@@ -1,0 +1,336 @@
+/* ═══════════════════════════════════════════════
+   KidsMed — Pediatric Clinic Theme
+   Style: Claymorphism (Soft 3D, Playful, Bubbly)
+   Colors: Teal + Warm Orange + Mint
+   Fonts: Fredoka (headings) + Nunito (body)
+   ═══════════════════════════════════════════════ */
+
+:root {
+  /* ─── Claymorphism Tokens ─── */
+  --clay-radius: 20px;
+  --clay-border: 3px;
+  --clay-shadow-inner: inset -3px -3px 8px rgba(0, 0, 0, 0.06);
+  --clay-shadow-outer: 5px 5px 12px rgba(0, 0, 0, 0.08);
+  --clay-shadow-hover: 6px 6px 16px rgba(0, 0, 0, 0.12), inset -2px -2px 6px rgba(0, 0, 0, 0.04);
+  --clay-press: scale(0.96);
+
+  /* ─── Brand Colors ─── */
+  --kids-primary: #0D9488;
+  --kids-primary-light: #14B8A6;
+  --kids-primary-dark: #0F766E;
+  --kids-accent: #EA580C;
+  --kids-accent-light: #F97316;
+  --kids-bg: #F0FDFA;
+  --kids-bg-alt: #E8F1F4;
+  --kids-text: #134E4A;
+  --kids-text-muted: #5B7B77;
+  --kids-white: #FFFFFF;
+  --kids-card: rgba(255, 255, 255, 0.85);
+  --kids-border: #99F6E4;
+
+  /* ─── Pastel Accents ─── */
+  --pastel-pink: #FFB5C2;
+  --pastel-blue: #B5D8F7;
+  --pastel-yellow: #FDE88A;
+  --pastel-lavender: #D4C5F9;
+  --pastel-mint: #B5F0DF;
+  --pastel-peach: #FFCFB3;
+
+  /* ─── Animation ─── */
+  --anim-fast: 200ms;
+  --anim-base: 300ms;
+  --anim-slow: 500ms;
+  --anim-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --anim-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --anim-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ─── Base ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Nunito', 'Vazirmatn', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .font-fredoka {
+  font-family: 'Fredoka', 'Vazirmatn', sans-serif;
+}
+
+/* ─── Claymorphism Card ─── */
+.clay-card {
+  border-radius: var(--clay-radius);
+  border: var(--clay-border) solid rgba(255, 255, 255, 0.6);
+  background: var(--kids-card);
+  box-shadow: var(--clay-shadow-inner), var(--clay-shadow-outer);
+  transition: all var(--anim-base) var(--anim-bounce);
+}
+
+.clay-card:hover {
+  box-shadow: var(--clay-shadow-hover);
+  transform: translateY(-3px);
+}
+
+.clay-card:active {
+  transform: var(--clay-press);
+}
+
+/* ─── Clay Button ─── */
+.clay-btn {
+  border-radius: 50px;
+  border: var(--clay-border) solid rgba(255, 255, 255, 0.5);
+  background: var(--kids-primary);
+  color: white;
+  font-family: 'Fredoka', 'Vazirmatn', sans-serif;
+  font-weight: 600;
+  padding: 12px 32px;
+  box-shadow: var(--clay-shadow-inner), var(--clay-shadow-outer);
+  transition: all var(--anim-base) var(--anim-bounce);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clay-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--clay-shadow-hover);
+}
+
+.clay-btn:active {
+  transform: var(--clay-press);
+}
+
+.clay-btn-accent {
+  background: var(--kids-accent);
+}
+
+.clay-btn-outline {
+  background: transparent;
+  color: var(--kids-primary);
+  border-color: var(--kids-primary);
+}
+
+/* ─── Floating Blobs (Decorative) ─── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-1 {
+  width: 300px;
+  height: 300px;
+  background: var(--pastel-pink);
+  top: -100px;
+  right: -80px;
+  animation: blobFloat 8s ease-in-out infinite;
+}
+
+.blob-2 {
+  width: 200px;
+  height: 200px;
+  background: var(--pastel-blue);
+  bottom: -60px;
+  left: -60px;
+  animation: blobFloat 10s ease-in-out infinite reverse;
+}
+
+.blob-3 {
+  width: 150px;
+  height: 150px;
+  background: var(--pastel-yellow);
+  top: 50%;
+  left: -40px;
+  animation: blobFloat 7s ease-in-out infinite 2s;
+}
+
+/* ─── Scroll Reveal Animations ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--anim-smooth), transform 0.8s var(--anim-smooth);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.8s var(--anim-smooth), transform 0.8s var(--anim-smooth);
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.8s var(--anim-smooth), transform 0.8s var(--anim-smooth);
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.8s var(--anim-smooth), transform 0.8s var(--anim-bounce);
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ─── 3D Parallax ─── */
+.parallax-3d {
+  perspective: 1000px;
+}
+
+.parallax-3d-inner {
+  transition: transform 0.3s var(--anim-smooth);
+  transform-style: preserve-3d;
+}
+
+/* ─── Marquee ─── */
+.marquee-track {
+  animation: marquee 20s linear infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─── Floating ─── */
+.float-anim {
+  animation: float 6s ease-in-out infinite;
+}
+
+.float-anim-delayed {
+  animation: float 7s ease-in-out infinite 1.5s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ─── Bounce In ─── */
+.bounce-in {
+  animation: bounceIn 0.6s var(--anim-bounce) both;
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.6); }
+  60% { transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Blob Float ─── */
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(20px, -20px) scale(1.1); }
+  50% { transform: translate(-10px, 10px) scale(0.95); }
+  75% { transform: translate(15px, 15px) scale(1.05); }
+}
+
+/* ─── Stagger Children ─── */
+.stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s var(--anim-spring), transform 0.5s var(--anim-spring);
+}
+
+.stagger.visible > *:nth-child(1) { transition-delay: 0ms; }
+.stagger.visible > *:nth-child(2) { transition-delay: 80ms; }
+.stagger.visible > *:nth-child(3) { transition-delay: 160ms; }
+.stagger.visible > *:nth-child(4) { transition-delay: 240ms; }
+.stagger.visible > *:nth-child(5) { transition-delay: 320ms; }
+.stagger.visible > *:nth-child(6) { transition-delay: 400ms; }
+.stagger.visible > *:nth-child(7) { transition-delay: 480ms; }
+.stagger.visible > *:nth-child(8) { transition-delay: 560ms; }
+
+.stagger.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Background Dots Pattern ─── */
+.dots-pattern {
+  background-image: radial-gradient(circle, var(--kids-border) 1.5px, transparent 1.5px);
+  background-size: 30px 30px;
+}
+
+/* ─── RTL Support ─── */
+html[dir="rtl"] .reveal-left {
+  transform: translateX(50px);
+}
+html[dir="rtl"] .reveal-left.visible {
+  transform: translateX(0);
+}
+html[dir="rtl"] .reveal-right {
+  transform: translateX(-50px);
+}
+html[dir="rtl"] .reveal-right.visible {
+  transform: translateX(0);
+}
+html[dir="rtl"] .marquee-track {
+  animation-direction: reverse;
+}
+html[dir="rtl"] .clay-btn i {
+  transform: scaleX(-1);
+}
+
+/* ─── daisyUI Overrides ─── */
+[data-theme="light"] {
+  --p: 0.55 0.08 180;
+  --s: 0.6 0.12 175;
+  --a: 0.65 0.18 30;
+  --b1: 0.97 0.02 170;
+  --b2: 0.92 0.03 175;
+  --b3: 0.85 0.04 170;
+  --bc: 0.2 0.05 170;
+  --rounded-box: 20px;
+  --rounded-btn: 50px;
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1;
+    transform: none;
+  }
+  .stagger > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  :root {
+    --clay-radius: 16px;
+    --clay-border: 2px;
+  }
+  .blob-1 { width: 150px; height: 150px; }
+  .blob-2 { width: 100px; height: 100px; }
+  .blob-3 { display: none; }
+}

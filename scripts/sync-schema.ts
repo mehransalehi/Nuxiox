@@ -17,7 +17,7 @@ import path from 'node:path'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const generatorPath = path.resolve(__dirname, '../layers/databases/generate-schema.ts')
 
-const args = process.argv.slice(2)
+const args = process.argv.slice(2).filter(a => a !== '--')
 const targets = args.length > 0
   ? args
   : ['normal', 'cloudflare']  // generate both by default

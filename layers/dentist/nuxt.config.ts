@@ -1,7 +1,7 @@
 // ─── Normal Database (MySQL / libsql) ───────────────────────────────────────
 // Active configuration — switch to cloudflare config below for D1.
 // export default defineNuxtConfig({
-//   extends: ['../databases/normal','../base'],
+//   extends: ['../databases/cloudflare','../base'],
 //   css: ['~~/layers/dentist/app/assets/theme.css'],
 //   modules: ['@nuxtjs/i18n'],
 //   i18n: {
