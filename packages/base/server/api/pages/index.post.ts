@@ -31,45 +31,47 @@ export default defineEventHandler(async (event) => {
   };
 
   try {
-    const [resultPage] = await db.insert(pages).values({
-      status: "draft",
-    });
-    const page = await db.query.pages.findFirst({
-      where: eq(pages.id, resultPage.insertId),
-    });
-    let localeRow = null;
-    if (page) {
-      try {
-        const [result] = await db.insert(pagesLocales).values({
-          pageId: page.id,
+    // 1️⃣ Insert page row with .returning() to get the ID back
+    const [pageRow] = await db
+      .insert(pages)
+      .values({ status: "draft" })
+      .returning({ id: pages.id })
+
+    if (!pageRow) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Failed to create page row",
+      })
+    }
+
+    // 2️⃣ Insert locale row
+    let localeRow = null
+    try {
+      const [result] = await db
+        .insert(pagesLocales)
+        .values({
+          page_id: pageRow.id,
           locale: body.locale!,
           slug: body.slug!,
           title: body.title!,
           seo,
           builder: defaultPageBuilder,
-        });
+        })
+        .returning({ id: pagesLocales.id })
 
+      if (result) {
         localeRow = await db.query.pagesLocales.findFirst({
-          where: eq(pagesLocales.id, result.insertId),
-        });
-      } catch (error) {
-        // 2️⃣ Check if any locales remain
-        const remaining = await db
-          .select({ id: pagesLocales.id })
-          .from(pagesLocales)
-          .where(eq(pagesLocales.page_id, page.id))
-          .limit(1);
-
-        // 3️⃣ If no locales remain → delete page
-        if (remaining.length === 0) {
-          await db.delete(pages).where(eq(pages.id, page.id));
-        }
-        throw error;
+          where: eq(pagesLocales.id, result.id),
+        })
       }
+    } catch (error) {
+      // Locale insertion failed — clean up the parent page
+      await db.delete(pages).where(eq(pages.id, pageRow.id))
+      throw error
     }
 
     return {
-      pages: { ...page },
+      pages: { ...pageRow },
       pages_locales: { ...localeRow },
     };
   } catch (error: any) {

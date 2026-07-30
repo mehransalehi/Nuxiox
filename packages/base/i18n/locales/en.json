@@ -75,6 +75,7 @@
     "language": "Language"
   },
   "admin": {
+    "locale": "Language",
     "sidebar": {
       "adminPanel": "Admin Panel",
       "baseLayer": "Base Layer",

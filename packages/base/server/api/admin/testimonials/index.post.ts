@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "Insert failed" })
 
   await db.insert(testimonialsLocales).values({
-    testimonialId: testimonial.id,
+    testimonial_id: testimonial.id,
     locale: body.locale,
     name: body.name.trim(),
     role: body.role ?? null,

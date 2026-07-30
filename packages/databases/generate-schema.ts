@@ -61,7 +61,7 @@ function generateSchemaFile(entities: any[], dialect: string): string {
     lines.push('')
   }
 
-  lines.push("const layer = { source: '../../layers/base/server/database/definitions', name: 'base' }")
+  lines.push("const layer = { source: '../../../../base/server/database/definitions', name: 'base' }")
   lines.push('')
 
   for (const ent of entities) {

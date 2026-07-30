@@ -7,7 +7,7 @@ import {
 import { sql } from 'drizzle-orm'
 import { defineTable } from '../utils/schema-types'
 
-const layer = { source: '../../layers/base/server/database/definitions', name: 'base' }
+const layer = { source: '../../../../base/server/database/definitions', name: 'base' }
 
 export const users = defineTable({
   name: "users",

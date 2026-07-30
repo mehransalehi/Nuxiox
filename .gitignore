@@ -26,3 +26,6 @@ logs
 
 node-compile-cache/
 public/libs
+
+# System artifacts
+tailscale-state

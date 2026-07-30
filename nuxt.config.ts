@@ -34,6 +34,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  extends: ['./packages/themes/dentalist'],
+  extends: ['./packages/themes/dentist'],
   watch: ['packages/**/*'],
 })

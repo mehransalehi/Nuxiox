@@ -110,18 +110,21 @@ export default defineEventHandler(async (event) => {
 
   const status = blogSettings.commentsRequireApproval ? "pending" : "approved";
 
-  const [result] = await db.insert(blogComments).values({
-    postId: post.id,
-    parentId: body.parentId ?? null,
-    userId: user?.id ?? null,
-    authorName: user?.email ?? body.authorName ?? "Guest",
-    authorEmail: user?.email ?? body.authorEmail ?? null,
-    content: body.content,
-    status,
-  });
+  const [result] = await db
+    .insert(blogComments)
+    .values({
+      post_id: post.id,
+      parent_id: body.parentId ?? null,
+      user_id: user?.id ?? null,
+      author_name: user?.email ?? body.authorName ?? "Guest",
+      author_email: user?.email ?? body.authorEmail ?? null,
+      content: body.content,
+      status,
+    })
+    .returning({ id: blogComments.id })
 
   const created = await db.query.blogComments.findFirst({
-    where: eq(blogComments.id, result.insertId),
+    where: eq(blogComments.id, result.id),
   });
 
   return {

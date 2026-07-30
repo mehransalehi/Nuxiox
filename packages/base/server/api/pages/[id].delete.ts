@@ -18,13 +18,13 @@ export default defineEventHandler(async (event) => {
 
   const db = useDb(event);
 
-  // 1️⃣ Delete the locale
-  const [result] = await db
+  // 1️⃣ Delete the locale — use .returning() to get a usable result
+  const deleted = await db
     .delete(pagesLocales)
-    .where(and(eq(pagesLocales.page_id, id), eq(pagesLocales.locale, locale)));
+    .where(and(eq(pagesLocales.page_id, id), eq(pagesLocales.locale, locale)))
+    .returning({ id: pagesLocales.id });
 
-
-  if (!result) {
+  if (!deleted || deleted.length === 0) {
     throw createError({ statusCode: 404, statusMessage: "Locale not found" });
   }
 

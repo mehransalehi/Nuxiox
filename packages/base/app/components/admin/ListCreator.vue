@@ -10,6 +10,7 @@ const myList = ref([...props.list])
 
 // Watch parent list for updates, and update local copy
 watch(() => props.list, (newVal) => {
+  if (!newVal || typeof newVal[Symbol.iterator] !== 'function') return
   myList.value = [...newVal]
 }, { deep: true })
 
@@ -22,7 +23,7 @@ const addToList = () => {
 }
 const removeFromList = (index: number) => {
   myList.value.splice(index, 1);
-  emit('update', myList)
+  emit('update', myList.value)
 }
 
 
@@ -36,9 +37,9 @@ const removeFromList = (index: number) => {
         }}</button>
     </div>
     <div v-for="(item, index) in myList" :key="`${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-      <input v-model="item.key" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" @input="emit('update',myList)"/>
+      <input v-model="item.key" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" @input="emit('update', myList.value)"/>
       <input v-model="item.value" class="input input-bordered" type="text"
-        :placeholder="$t('common.pathPlaceholder') as any"  @input="emit('update',myList)"/>
+        :placeholder="$t('common.pathPlaceholder') as any"  @input="emit('update', myList.value)"/>
       <button class="btn btn-ghost btn-square" @click="removeFromList(index)">✕</button>
     </div>
   </div>

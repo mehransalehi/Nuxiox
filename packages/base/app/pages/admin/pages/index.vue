@@ -33,11 +33,12 @@ const createPage = async () => {
         body: { title: form.title, slug: form.slug, locale: form.locale },
       })
       toastStore.push($t('admin.pages.createSuccess'), 'success')
+      const createdLocale = form.locale
       form.title = ''
       form.slug = ''
       form.locale = ''
       await refresh()
-      await navigateTo(`/admin/pages/${result.pages.id}`)
+      await navigateTo(`/admin/pages/${result.pages.id}?locale=${createdLocale}`)
     } catch (err: any) {
       toastStore.push(err ? (err.statusMessage ? err.statusMessage : err.message) : $t('admin.pages.createFailed'), 'error')
     } finally {

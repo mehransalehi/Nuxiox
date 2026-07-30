@@ -79,8 +79,17 @@ watch(
   (value) => {
     if (!value) return
     Object.assign(form, structuredClone(value))
+    // Parse JSON strings from D1 raw query results
+    if (typeof form.pages_locales.builder === 'string') {
+      form.pages_locales.builder = JSON.parse(form.pages_locales.builder)
+    }
     if (!form.pages_locales.builder) form.pages_locales.builder = structuredClone(defaultPageBuilder)
-    seoEntries.value = Object.entries(form.pages_locales.seo ?? {}).map(([key, value]) => ({ key, value: String(value ?? '') }))
+    if (!form.pages_locales.builder.blocks) form.pages_locales.builder.blocks = []
+    seoEntries.value = Object.entries(
+      typeof form.pages_locales.seo === 'string'
+        ? JSON.parse(form.pages_locales.seo)
+        : (form.pages_locales.seo ?? {})
+    ).map(([key, value]) => ({ key, value: String(value ?? '') }))
     ensureSeoDefaults()
   },
   { immediate: true }
@@ -90,25 +99,42 @@ watch(() => [form.pages_locales.title, form.pages_locales.slug], ensureSeoDefaul
 
 const availableSections = computed(() => sectionsData.value?.sections ?? [])
 
+const getBuilder = () => {
+  let b = form.pages_locales.builder
+  if (typeof b === 'string') {
+    try { b = JSON.parse(b) } catch {}
+    form.pages_locales.builder = b
+  }
+  if (!b || typeof b === 'string') {
+    b = structuredClone(defaultPageBuilder)
+    form.pages_locales.builder = b
+  }
+  if (!b.blocks) b.blocks = []
+  return b
+}
+
 const createUid = () => (globalThis.crypto?.randomUUID?.() ?? `block-${Date.now()}-${Math.random().toString(16).slice(2)}`)
 
 const addSectionBlock = (id: string) => {
   const section = availableSections.value.find((item) => item.id === id)
   if (!section) return
+  const builder = getBuilder()
   const block: PageBlock = {
     uid: createUid(),
     type: section.type,
     sectionId: section.id,
     source: 'sections',
   }
-  form.pages_locales.builder.blocks.push(block)
+  builder.blocks.push(block)
 }
 const updatePageSections = (list: any) => {
-  form.pages_locales.builder.blocks = list;
+  const builder = getBuilder()
+  builder.blocks = list;
 }
 
 const addTextBlock = () => {
-  form.pages_locales.builder.blocks.push({ uid: createUid(), type: 'text', content: '<p>New content</p>' })
+  const builder = getBuilder()
+  builder.blocks.push({ uid: createUid(), type: 'text', content: '<p>New content</p>' })
 }
 
 const updateSeoEntry = (list: any) => {
@@ -194,7 +220,7 @@ const deletePage = async () => {
       <AdminSectionSelector :list="availableSections" @update="addSectionBlock" />
       <button class="btn btn-sm" @click="addTextBlock">{{ $t('common.addTextBlock') }}</button>
       <AdminPageSectionList :list="availableSections" @update="updatePageSections"
-        :selected="form.pages_locales.builder.blocks" />
+        :selected="form.pages_locales.builder?.blocks ?? []" />
     </AdminCard>
   </AdminPage>
 </template>

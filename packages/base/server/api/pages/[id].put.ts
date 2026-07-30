@@ -35,13 +35,13 @@ export default defineEventHandler(async (event) => {
     pagePayload.status = body.status;
   }
 
-  const [result] = await db
+  await db
     .update(pages)
     .set(pagePayload)
     .where(eq(pages.id, id));
 
   const page = await db.query.pages.findFirst({
-    where: eq(pages.id, result.insertId),
+    where: eq(pages.id, id),
   });
   if (!page) {
     throw createError({ statusCode: 404, statusMessage: "Page not found" });
@@ -59,18 +59,16 @@ export default defineEventHandler(async (event) => {
   let localeRow = null;
 
   if (Object.keys(localePayload).length > 0) {
-    const [resultLocale] = await db
+    await db
       .update(pagesLocales)
       .set(localePayload)
       .where(
         and(eq(pagesLocales.page_id, id), eq(pagesLocales.locale, body.locale)),
       );
 
-    const updatedLocale = await db.query.pagesLocales.findFirst({
-      where: eq(pagesLocales.id, resultLocale.insertId),
+    localeRow = await db.query.pagesLocales.findFirst({
+      where: and(eq(pagesLocales.page_id, id), eq(pagesLocales.locale, body.locale)),
     });
-
-    localeRow = updatedLocale;
   }
 
   return {
