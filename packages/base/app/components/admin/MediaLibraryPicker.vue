@@ -51,6 +51,18 @@ function selectMedia(item: any) {
   selectedMedia.value = item
 }
 
+async function deleteMedia(item: any, e: Event) {
+  e.stopPropagation()
+  if (!confirm('Delete this media? This cannot be undone.')) return
+  try {
+    await $fetch(`/api/admin/media/${item.id}`, { method: 'DELETE' })
+    mediaItems.value = mediaItems.value.filter((m) => m.id !== item.id)
+    if (selectedMedia.value?.id === item.id) selectedMedia.value = null
+  } catch (err: any) {
+    alert(err?.message || 'Failed to delete media')
+  }
+}
+
 function confirmSelection() {
   if (selectedMedia.value) {
     emit('select', selectedMedia.value)
@@ -145,7 +157,7 @@ defineExpose({ open })
             v-for="item in filteredMedia"
             :key="item.id"
             :class="[
-              'cursor-pointer overflow-hidden rounded-lg border-2 p-1 transition-all hover:border-primary',
+              'group relative cursor-pointer overflow-hidden rounded-lg border-2 p-1 transition-all hover:border-primary',
               selectedMedia?.id === item.id ? 'border-primary ring-2 ring-primary/30' : 'border-base-300',
             ]"
             @click="selectMedia(item)"
@@ -156,6 +168,16 @@ defineExpose({ open })
               class="aspect-square w-full rounded object-cover"
               loading="lazy"
             />
+            <button
+              class="absolute right-1 top-1 hidden rounded-full bg-error p-1 text-white opacity-0 transition-opacity hover:opacity-100 group-hover:block group-hover:opacity-90"
+              @click="deleteMedia(item, $event)"
+              title="Delete"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+            </button>
             <p class="mt-1 truncate px-1 text-xs">{{ item.original_name }}</p>
           </div>
         </div>

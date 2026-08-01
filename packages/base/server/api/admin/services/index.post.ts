@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     .returning({ id: services.id });
 
   if (!service)
-    throw createError({ statusCode: 400, statusMessage: "Service not saved" });
+    throw createError({ statusCode: 400, message: "Service not saved" });
 
   await db.insert(servicesLocales).values({
     service_id: service.id,

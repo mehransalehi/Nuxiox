@@ -8,7 +8,7 @@ import {
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, message: 'Forbidden' })
 
   const db = useDb(event)
 

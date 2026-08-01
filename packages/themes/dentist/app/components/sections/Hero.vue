@@ -53,7 +53,6 @@ const tags = ['Braces', 'Denta Care', 'Dentist', 'Dentures', 'Invisalign', 'Teet
 
 
   <section class="bg-linear-to-t from-primary/60 via-primary/30 to-primary/10">
-    THIS IS A TEST
     <div class="mx-auto grid min-h-screen max-w-6xl px-6 pt-28 md:grid-cols-2 md:items-center relative overflow-hidden">
       <div class="w-full">
         <UiTopTitle>we care for your smile</UiTopTitle>

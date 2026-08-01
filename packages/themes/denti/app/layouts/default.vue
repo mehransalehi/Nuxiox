@@ -1,8 +1,10 @@
 <script setup lang="ts">
-const { settings } = useSiteSettings()
+const { settings, refreshSettings } = useSiteSettings()
 const { locale, setLocale} = useI18n()
 const layoutOverrides = useLayoutOverrides()
 const route = useRoute()
+
+onMounted(() => refreshSettings())
 
 const direction = computed(() => settings.value.general.direction ?? 'ltr')
 const fontClass = computed(() => (locale.value === 'fa' ? 'font-[Vazirmatn,sans-serif]' : 'font-[Inter,sans-serif]'))

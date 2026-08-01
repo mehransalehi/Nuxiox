@@ -10,10 +10,10 @@ export default defineEventHandler(async (event) => {
   await requireAdmin(event);
 
   const id = Number(getRouterParam(event, "id"));
-  if (!id) throw createError({ statusCode: 400, statusMessage: "Post id is required" });
+  if (!id) throw createError({ statusCode: 400, message: "Post id is required" });
 
   const locale = getQuery(event).locale as string;
-  if (!locale) throw createError({ statusCode: 400, statusMessage: 'Locale is required' })
+  if (!locale) throw createError({ statusCode: 400, message: 'Locale is required' })
     
   const db = useDb(event)
 
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     )
     .limit(1)
 
-  if (!post) throw createError({ statusCode: 404, statusMessage: "Post not found" })
+  if (!post) throw createError({ statusCode: 404, message: "Post not found" })
 
   const categories = await db
     .select({ categoryId: blogPostCategories.category_id })

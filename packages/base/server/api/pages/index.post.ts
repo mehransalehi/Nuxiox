@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   if (!body?.title || !body?.slug || !body?.locale) {
     throw createError({
       statusCode: 400,
-      statusMessage: "Title, slug and locale are required",
+      message: "Title, slug and locale are required",
     });
   }
 
@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
     if (!pageRow) {
       throw createError({
         statusCode: 500,
-        statusMessage: "Failed to create page row",
+        message: "Failed to create page row",
       })
     }
 
@@ -78,13 +78,13 @@ export default defineEventHandler(async (event) => {
     if (error?.message?.includes("UNIQUE")) {
       throw createError({
         statusCode: 409,
-        statusMessage: "Slug already exists for this locale",
+        message: "Slug already exists for this locale",
       });
     }
 
     throw createError({
       statusCode: 500,
-      statusMessage: "Failed to create page or slug must not saved before",
+      message: "Failed to create page or slug must not saved before",
     });
   }
 });

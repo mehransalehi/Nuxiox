@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   if (!id)
     throw createError({
       statusCode: 400,
-      statusMessage: "Comment id is required",
+      message: "Comment id is required",
     });
 
   const body = await readValidatedBody(event, checkZod(schema));

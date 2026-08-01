@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const id = Number(getRouterParam(event, "id"));
   if (!Number.isFinite(id)) {
-    throw createError({ statusCode: 400, statusMessage: "Invalid page id" });
+    throw createError({ statusCode: 400, message: "Invalid page id" });
   }
 
   const body = (await readBody(event)) as UpdatePagePayload;
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
     where: eq(pages.id, id),
   });
   if (!page) {
-    throw createError({ statusCode: 404, statusMessage: "Page not found" });
+    throw createError({ statusCode: 404, message: "Page not found" });
   }
 
   // ---- update locale table ----

@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
 
   const id = Number(getRouterParam(event, 'id'))
   if (!id)
-    throw createError({ statusCode: 400, statusMessage: 'Post id is required' })
+    throw createError({ statusCode: 400, message: 'Post id is required' })
 
   const db = useDb(event)
 

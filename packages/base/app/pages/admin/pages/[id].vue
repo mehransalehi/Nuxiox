@@ -81,7 +81,16 @@ watch(
     Object.assign(form, structuredClone(value))
     // Parse JSON strings from D1 raw query results
     if (typeof form.pages_locales.builder === 'string') {
-      form.pages_locales.builder = JSON.parse(form.pages_locales.builder)
+      try {
+        const parsed = JSON.parse(form.pages_locales.builder)
+        if (typeof parsed === 'object' && parsed !== null) {
+          form.pages_locales.builder = parsed
+        } else {
+          form.pages_locales.builder = structuredClone(defaultPageBuilder)
+        }
+      } catch {
+        form.pages_locales.builder = structuredClone(defaultPageBuilder)
+      }
     }
     if (!form.pages_locales.builder) form.pages_locales.builder = structuredClone(defaultPageBuilder)
     if (!form.pages_locales.builder.blocks) form.pages_locales.builder.blocks = []
@@ -102,7 +111,16 @@ const availableSections = computed(() => sectionsData.value?.sections ?? [])
 const getBuilder = () => {
   let b = form.pages_locales.builder
   if (typeof b === 'string') {
-    try { b = JSON.parse(b) } catch {}
+    try {
+      const parsed = JSON.parse(b)
+      if (typeof parsed === 'object' && parsed !== null) {
+        b = parsed
+      } else {
+        b = structuredClone(defaultPageBuilder)
+      }
+    } catch {
+      b = structuredClone(defaultPageBuilder)
+    }
     form.pages_locales.builder = b
   }
   if (!b || typeof b === 'string') {
@@ -117,6 +135,7 @@ const createUid = () => (globalThis.crypto?.randomUUID?.() ?? `block-${Date.now(
 
 const addSectionBlock = (id: string) => {
   const section = availableSections.value.find((item) => item.id === id)
+  console.log(section);
   if (!section) return
   const builder = getBuilder()
   const block: PageBlock = {

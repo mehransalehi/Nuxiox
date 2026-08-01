@@ -40,7 +40,7 @@ const remove = async (id: number, locale: string) => { await $fetch(`/api/admin/
                 <AdminLocaleSelector :label="$t('common.locale')" v-model="form.locale" />
                 <div class="grid gap-2 md:grid-cols-2">
                     <AdminUiText :label="$t('common.title')" v-model="form.icon" />
-                    <AdminUiUrl :label="$t('common.image')" v-model="form.image" />
+                    <AdminUiUrl :label="$t('common.image')" v-model="form.image" mediaPicker />
                     <AdminUiUrl :label="$t('common.link')" v-model="form.link" />
                     <AdminUiNumber :label="$t('common.order')" v-model="form.sortOrder" />
                 </div>

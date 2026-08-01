@@ -3,7 +3,7 @@ import { blogCommentLikes, blogComments } from '~~/server/database/schema.gen'
 
 export default defineEventHandler(async (event) => {
   const id = Number(getRouterParam(event, 'id'))
-  if (!id) throw createError({ statusCode: 400, statusMessage: 'Comment id is required' })
+  if (!id) throw createError({ statusCode: 400, message: 'Comment id is required' })
 
   const db = useDb(event)
   const session = await getUserSession(event)

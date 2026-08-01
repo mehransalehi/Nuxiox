@@ -23,6 +23,16 @@ const form = reactive({
   locale: '',
 })
 
+const updateStatus = async (pageId: number, locale: string, status: string) => {
+  try {
+    await $fetch(`/api/pages/${pageId}`, { method: 'PUT', body: { status, locale } })
+    toastStore.push($t('admin.pages.saveSuccess'), 'success')
+    await refresh()
+  } catch (err: any) {
+    toastStore.push(err?.message || $t('admin.pages.saveFailed'), 'error')
+  }
+}
+
 const createPage = async () => {
   if (!form.title || !form.slug || !form.locale) return
   creating.value = true
@@ -80,7 +90,16 @@ const createPage = async () => {
               <tr v-for="pageItem in data" :key="pageItem.pages.id">
                 <td class="font-medium">{{ pageItem.pages_locales.title }}</td>
                 <td>/{{ pageItem.pages_locales.slug }}</td>
-                <td>{{ pageItem.pages.status }}</td>
+                <td>
+                  <select
+                    class="select select-bordered select-xs w-28"
+                    :value="pageItem.pages.status"
+                    @change="updateStatus(pageItem.pages.id, pageItem.pages_locales.locale, ($event.target as HTMLSelectElement).value)"
+                  >
+                    <option value="draft">draft</option>
+                    <option value="published">published</option>
+                  </select>
+                </td>
                 <td>{{ pageItem.pages_locales.locale }}</td>
                 <td>
                   <NuxtLink class="link"

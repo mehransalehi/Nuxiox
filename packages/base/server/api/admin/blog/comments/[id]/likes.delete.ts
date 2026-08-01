@@ -3,10 +3,10 @@ import { blogCommentLikes, blogComments } from '~~/server/database/schema.gen'
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  if (session?.user?.role !== 'admin') throw createError({ statusCode: 403, message: 'Forbidden' })
 
   const id = Number(getRouterParam(event, 'id'))
-  if (!id) throw createError({ statusCode: 400, statusMessage: 'Comment id is required' })
+  if (!id) throw createError({ statusCode: 400, message: 'Comment id is required' })
 
   const db = useDb(event)
   await db.delete(blogCommentLikes).where(eq(blogCommentLikes.comment_id, id))

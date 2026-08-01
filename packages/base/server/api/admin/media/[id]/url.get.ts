@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!record) {
-    throw createError({ statusCode: 404, statusMessage: "Media not found" });
+    throw createError({ statusCode: 404, message: "Media not found" });
   }
 
   return { url: `/api/admin/media/${id}/file` };

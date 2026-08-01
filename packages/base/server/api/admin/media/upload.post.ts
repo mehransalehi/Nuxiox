@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 
   const form = await readMultipartFormData(event);
   if (!form) {
-    throw createError({ statusCode: 400, statusMessage: "No file uploaded" });
+    throw createError({ statusCode: 400, message: "No file uploaded" });
   }
 
   const fileEntry = form.find((item) => item.name === "file");
@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const titleEntry = form.find((item) => item.name === "title");
 
   if (!fileEntry || !fileEntry.data) {
-    throw createError({ statusCode: 400, statusMessage: "File is required" });
+    throw createError({ statusCode: 400, message: "File is required" });
   }
 
   const file = new File([fileEntry.data], fileEntry.filename || "upload", {
@@ -36,14 +36,14 @@ export default defineEventHandler(async (event) => {
     "image/gif",
   ];
   if (!allowedTypes.includes(file.type)) {
-    throw createError({ statusCode: 400, statusMessage: "Invalid file type — only images allowed" });
+    throw createError({ statusCode: 400, message: "Invalid file type — only images allowed" });
   }
 
   // Max 2MB
   if (file.size > 2 * 1024 * 1024) {
     throw createError({
       statusCode: 400,
-      statusMessage: "File too large (max 2MB)",
+      message: "File too large (max 2MB)",
     });
   }
 

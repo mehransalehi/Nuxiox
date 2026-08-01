@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
   if (existing) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Post slug already exists for this locale",
+      message: "Post slug already exists for this locale",
     });
   }
 
@@ -75,6 +75,6 @@ export default defineEventHandler(async (event) => {
 
     return { id: post.id };
   } else {
-    throw createError({ statusCode: 400, statusMessage: "Post not saved" });
+    throw createError({ statusCode: 400, message: "Post not saved" });
   }
 });

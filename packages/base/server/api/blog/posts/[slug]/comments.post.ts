@@ -20,7 +20,7 @@ const schema = z.object({
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
   if (!slug)
-    throw createError({ statusCode: 400, statusMessage: "Slug is required" });
+    throw createError({ statusCode: 400, message: "Slug is required" });
 
   const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event);
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
   if (!blogSettings.commentsEnabled) {
     throw createError({
       statusCode: 403,
-      statusMessage: "Comments are disabled by admin",
+      message: "Comments are disabled by admin",
     });
   }
 
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
     if (!verify.success) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Captcha validation failed",
+        message: "Captcha validation failed",
       });
     }
   }
@@ -84,11 +84,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!post)
-    throw createError({ statusCode: 404, statusMessage: "Post not found" });
+    throw createError({ statusCode: 404, message: "Post not found" });
   if (!post.allow_comments)
     throw createError({
       statusCode: 403,
-      statusMessage: "Comments are disabled for this post",
+      message: "Comments are disabled for this post",
     });
 
   const session = await getUserSession(event);
@@ -97,14 +97,14 @@ export default defineEventHandler(async (event) => {
   if (!user?.id && !post.allowAnonymousComments) {
     throw createError({
       statusCode: 403,
-      statusMessage: "You must login to comment on this post",
+      message: "You must login to comment on this post",
     });
   }
 
   if (!user?.id && !blogSettings.allowAnonymousCommentsByDefault) {
     throw createError({
       statusCode: 403,
-      statusMessage: "Guest comments are disabled by admin",
+      message: "Guest comments are disabled by admin",
     });
   }
 

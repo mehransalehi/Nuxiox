@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
 
   const id = Number(getRouterParam(event, "id"))
   if (!id)
-    throw createError({ statusCode: 400, statusMessage: "Category id is required" })
+    throw createError({ statusCode: 400, message: "Category id is required" })
 
   const body = await readValidatedBody(event, checkZod(schema));
   const db = useDb(event)
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
   if (existing) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Slug already exists for this locale",
+      message: "Slug already exists for this locale",
     });
   }
   console.log(body)

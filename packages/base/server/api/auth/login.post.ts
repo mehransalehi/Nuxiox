@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throw createError({
       statusCode: 400,
-      statusMessage: parsed.error.issues?.[0]?.message ?? "Invalid input",
+      message: parsed.error.issues?.[0]?.message ?? "Invalid input",
     });
   }
 
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
     if (!adminId) {
       throw createError({
         statusCode: 401,
-        statusMessage: "Invalid credentials",
+        message: "Invalid credentials",
       });
     }
 
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
   if (!user || !user.password_hash) {
     throw createError({
       statusCode: 401,
-      statusMessage: "Invalid credentials",
+      message: "Invalid credentials",
     });
   }
 
@@ -82,7 +82,7 @@ export default defineEventHandler(async (event) => {
   if (!valid) {
     throw createError({
       statusCode: 401,
-      statusMessage: "Invalid credentials",
+      message: "Invalid credentials",
     });
   }
 

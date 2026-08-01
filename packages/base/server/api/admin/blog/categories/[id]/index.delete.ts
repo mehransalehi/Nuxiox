@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   await requireAdmin(event);
   const id = Number(getRouterParam(event, "id"))
   if (!id)
-    throw createError({ statusCode: 400, statusMessage: "Category id is required" })
+    throw createError({ statusCode: 400, message: "Category id is required" })
 
   const db = useDb(event)
 

@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     .returning({ id: testimonials.id })
 
   if (!testimonial)
-    throw createError({ statusCode: 400, statusMessage: "Insert failed" })
+    throw createError({ statusCode: 400, message: "Insert failed" })
 
   await db.insert(testimonialsLocales).values({
     testimonial_id: testimonial.id,

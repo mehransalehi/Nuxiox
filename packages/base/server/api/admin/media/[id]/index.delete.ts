@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!record) {
-    throw createError({ statusCode: 404, statusMessage: "Media not found" });
+    throw createError({ statusCode: 404, message: "Media not found" });
   }
 
   await deleteFile(event, record.path);

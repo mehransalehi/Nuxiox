@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
   if (!id)
     throw createError({
       statusCode: 400,
-      statusMessage: "Post id is required",
+      message: "Post id is required",
     });
 
   const body = await readValidatedBody(event, checkZod(schema));
@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
   if (existing.length>0) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Slug already exists for this locale",
+      message: "Slug already exists for this locale",
     });
   }
 

@@ -33,7 +33,7 @@ const remove = async (id: number, locale: string) => { await $fetch(`/api/admin/
                 <AdminUiText :label="$t('common.role')" v-model="form.role" />
                 <AdminUiTextarea :label="$t('admin.blog.content')" v-model="form.content" />
                 <AdminLocaleSelector :label="$t('common.locale')" v-model="form.locale" />
-                <AdminUiUrl :label="$t('common.avatar')" v-model="form.avatar" />
+                <AdminUiUrl :label="$t('common.avatar')" v-model="form.avatar" mediaPicker />
                 <AdminUiNumber :label="$t('common.rate')" v-model="form.rating" />
 
                 <AdminUiCheckBox :label="$t('admin.modules.active')" v-model="form.isActive" />

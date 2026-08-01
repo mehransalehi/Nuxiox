@@ -21,7 +21,36 @@ const slug = computed(() => route.params.slug as string)
 const { data, error } = await useFetch<PageRecord>(`/api/pages/public/${slug.value}`)
 if (error.value) throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 
-const page = computed(() => data.value as PageRecord)
+const page = computed(() => {
+  const raw = data.value
+  if (!raw) return null
+  const parsed = structuredClone(raw) as unknown as PageRecord['pages_locales'] & { pages: PageRecord['pages'] }
+  if (typeof parsed.builder === 'string') {
+    try {
+      const b = JSON.parse(parsed.builder)
+      if (typeof b === 'object' && b !== null) {
+        ;(parsed as Record<string, unknown>).builder = b
+      } else {
+        ;(parsed as Record<string, unknown>).builder = { version: 1, blocks: [] }
+      }
+    } catch {
+      ;(parsed as Record<string, unknown>).builder = { version: 1, blocks: [] }
+    }
+  }
+  if (typeof parsed.seo === 'string') {
+    try {
+      const s = JSON.parse(parsed.seo)
+      if (typeof s === 'object' && s !== null) {
+        ;(parsed as Record<string, unknown>).seo = s
+      } else {
+        ;(parsed as Record<string, unknown>).seo = {}
+      }
+    } catch {
+      ;(parsed as Record<string, unknown>).seo = {}
+    }
+  }
+  return parsed as unknown as PageRecord
+})
 const layoutOverrides = useLayoutOverrides()
 const { settings } = useSiteSettings()
 
@@ -56,7 +85,7 @@ useHead(() => {
 </script>
 
 <template>
-  <div class="space-y-10">
+  <div v-if="page" class="space-y-10">
     <template v-for="block in page.builder.blocks" :key="block.uid">
       <div v-if="block.type === 'text'" class="prose max-w-none" v-html="block.content" />
       <component v-else :is="sectionComponentName(block)" />

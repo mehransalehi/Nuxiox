@@ -12,12 +12,12 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!record) {
-    throw createError({ statusCode: 404, statusMessage: "Media not found" });
+    throw createError({ statusCode: 404, message: "Media not found" });
   }
 
   const result = await getFile(event, record.path);
   if (!result) {
-    throw createError({ statusCode: 404, statusMessage: "File not found in storage" });
+    throw createError({ statusCode: 404, message: "File not found in storage" });
   }
 
   setHeader(event, "Content-Type", record.mime_type);

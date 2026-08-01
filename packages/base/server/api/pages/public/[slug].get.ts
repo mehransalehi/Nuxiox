@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
 
   if (!slug) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid slug' })
+    throw createError({ statusCode: 400, message: 'Invalid slug' })
   }
   const locale = getLocale(event)
 
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
     .limit(1)
 
   if (!page) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+    throw createError({ statusCode: 404, message: 'Page not found' })
   }
 
   return page

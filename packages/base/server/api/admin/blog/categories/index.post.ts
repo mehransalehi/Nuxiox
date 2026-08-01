@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
   if (existing) {
     throw createError({
       statusCode: 409,
-      statusMessage: "Category slug already exists for this locale",
+      message: "Category slug already exists for this locale",
     });
   }
   // create base category
@@ -66,13 +66,13 @@ export default defineEventHandler(async (event) => {
     } catch (error) {
       throw createError({
         statusCode: 409,
-        statusMessage: "Error in making category",
+        message: "Error in making category",
       });
     }
   } else {
     throw createError({
       statusCode: 409,
-      statusMessage: "Error in making category",
+      message: "Error in making category",
     });
   }
 });

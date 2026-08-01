@@ -7,13 +7,13 @@ export default defineEventHandler(async (event) => {
 
   const id = Number(getRouterParam(event, "id"));
   if (!Number.isFinite(id)) {
-    throw createError({ statusCode: 400, statusMessage: "Invalid page id" });
+    throw createError({ statusCode: 400, message: "Invalid page id" });
   }
 
   const { locale } = getQuery(event);
 
   if (!locale || typeof locale !== "string") {
-    throw createError({ statusCode: 400, statusMessage: "Locale is required" });
+    throw createError({ statusCode: 400, message: "Locale is required" });
   }
 
   const db = useDb(event);
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
     .returning({ id: pagesLocales.id });
 
   if (!deleted || deleted.length === 0) {
-    throw createError({ statusCode: 404, statusMessage: "Locale not found" });
+    throw createError({ statusCode: 404, message: "Locale not found" });
   }
 
   // 2️⃣ Check if any locales remain

@@ -81,6 +81,19 @@ if (!isNew.value) {
   watch(data, (value) => {
     if (!value) return
 
+    // Parse seo from D1 JSON string if needed
+    let seo: Record<string, string> = {}
+    if (typeof value.seo === 'string') {
+      try {
+        const parsed = JSON.parse(value.seo)
+        if (typeof parsed === 'object' && parsed !== null) {
+          seo = parsed as Record<string, string>
+        }
+      } catch {}
+    } else if (value.seo && typeof value.seo === 'object') {
+      seo = value.seo as Record<string, string>
+    }
+
     Object.assign(form, {
       title: value.title ?? '',
       locale: value.locale ?? locale.value,
@@ -94,9 +107,9 @@ if (!isNew.value) {
       categoryIds: [...(value.categoryIds ?? [])]
     })
 
-    seoEntries.value = Object.entries(value.seo ?? {}).map(([key, value]) => ({
+    seoEntries.value = Object.entries(seo).map(([key, val]) => ({
       key,
-      value: String(value ?? '')
+      value: String(val ?? '')
     }))
 
     ensureSeoDefaults()
@@ -124,7 +137,7 @@ const save = async () => {
       if (isNew.value) {
         const created = await $fetch<{ id: number }>('/api/admin/blog/posts', { method: 'POST', body: payload })
         toastStore.push($t('admin.blog.postCreated'), 'success')
-        await navigateTo(`/admin/blog/posts/${created.id}`)
+        await navigateTo(`/admin/blog/posts/${created.id}?locale=${payload.locale}`)
       } else {
         await $fetch(`/api/admin/blog/posts/${idParam.value}?locale=${localeParam.value}`, { method: 'PUT', body: payload })
         toastStore.push($t('admin.blog.postSaved'), 'success')
@@ -146,7 +159,7 @@ const save = async () => {
         <AdminLocaleSelector :label="$t('common.locale')" v-model="form.locale" />
       </div>
       <AdminQuillEditor v-model="form.content" />
-      <AdminUiUrl :label="$t('admin.blog.featuredImage')" v-model="form.featuredImage" />
+      <AdminUiUrl :label="$t('admin.blog.featuredImage')" v-model="form.featuredImage" mediaPicker />
       <AdminListCreator @update="updateSeoEntries" :list="seoEntries" :title="$t('admin.blog.seoMeta')"
         :button-text="$t('admin.blog.addSeoField')" />
       <div class="grid gap-4 md:grid-cols-3">

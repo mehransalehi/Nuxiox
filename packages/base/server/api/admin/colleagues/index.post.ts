@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
     .returning({ id: colleagues.id })
 
   if (!colleague)
-    throw createError({ statusCode: 400, statusMessage: "Colleague not saved" })
+    throw createError({ statusCode: 400, message: "Colleague not saved" })
 
   await db.insert(colleaguesLocales).values({
     colleague_id: colleague.id,

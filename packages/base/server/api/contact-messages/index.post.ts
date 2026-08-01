@@ -20,13 +20,13 @@ export default defineEventHandler(async (event) => {
     if (message.includes('no such table')) {
       throw createError({
         statusCode: 503,
-        statusMessage: 'Contact messages service is temporarily unavailable',
+        message: 'Contact messages service is temporarily unavailable',
       })
     }
 
     throw createError({
       statusCode: 500,
-      statusMessage: 'Unable to save contact message',
+      message: 'Unable to save contact message',
     })
   }
 })

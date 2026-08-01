@@ -170,7 +170,7 @@ function handleMediaUpdate(media:any) {
         <AdminUiText :label="$t('admin.settings.defaultTitle')" v-model="form.seo.defaultTitle" />
         <AdminUiText :label="$t('admin.settings.titleSuffix')" v-model="form.seo.titleSuffix" />
         <AdminUiTextarea :label="$t('admin.settings.defaultDescription')" v-model="form.seo.defaultDescription" />
-        <AdminUiUrl :label="$t('admin.settings.defaultOgImage')" v-model="form.seo.defaultOgImage" />
+        <AdminUiUrl :label="$t('admin.settings.defaultOgImage')" v-model="form.seo.defaultOgImage" mediaPicker />
         <AdminUiText :label="$t('admin.settings.robotsPolicy')" v-model="form.seo.robots" />
         <AdminUiText :label="$t('admin.settings.twitterHandle')" v-model="form.seo.twitterHandle" />
         <AdminUiText :label="$t('admin.settings.googleVerification')" v-model="form.seo.googleSiteVerification" />

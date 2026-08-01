@@ -9,11 +9,11 @@ export default defineEventHandler(async (event) => {
   const locale = getQuery(event).locale as string
 
   if (!Number.isFinite(id)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid page id' })
+    throw createError({ statusCode: 400, message: 'Invalid page id' })
   }
 
   if (!locale) {
-    throw createError({ statusCode: 400, statusMessage: 'Locale is required' })
+    throw createError({ statusCode: 400, message: 'Locale is required' })
   }
 
   const db = useDb(event)
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     .limit(1)
 
   if (!page) {
-    throw createError({ statusCode: 404, statusMessage: "Page not found" })
+    throw createError({ statusCode: 404, message: "Page not found" })
   }
   return page
 })

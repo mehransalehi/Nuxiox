@@ -5,6 +5,13 @@ useHead(() => ({ title: $t('admin.blog.posts') }))
 
 const { data, refresh } = await useFetch('/api/admin/blog/posts', { default: () => [] as any[] })
 
+const updateStatus = async (id: number, status: string) => {
+  try {
+    await $fetch(`/api/admin/blog/posts/${id}/status`, { method: 'PATCH', body: { status } })
+    await refresh()
+  } catch {}
+}
+
 const removePost = async (id: number) => {
   await $fetch(`/api/admin/blog/posts/${id}`, { method: 'DELETE' })
   await refresh()
@@ -32,7 +39,17 @@ const removePost = async (id: number) => {
         <tbody>
           <tr v-for="row in data" :key="row.id">
             <td>{{ row.title }}</td>
-            <td>{{ row.status }}</td>
+            <td>
+                  <select
+                    class="select select-bordered select-xs w-28"
+                    :value="row.status"
+                    @change="updateStatus(row.id, ($event.target as HTMLSelectElement).value)"
+                  >
+                    <option value="draft">draft</option>
+                    <option value="published">published</option>
+                    <option value="archived">archived</option>
+                  </select>
+                </td>
             <td>{{ row.slug }}</td>
             <td>{{ row.locale }}</td>
             <td>{{ row.commentsCount }}</td>

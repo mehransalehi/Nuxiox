@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
   const locale = getLocale(event)
 
   if (!slug)
-    throw createError({ statusCode: 400, statusMessage: 'Slug is required' })
+    throw createError({ statusCode: 400, message: 'Slug is required' })
 
   const db = useDb(event)
 
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
     .limit(1)
 
   if (!post)
-    throw createError({ statusCode: 404, statusMessage: 'Post not found' })
+    throw createError({ statusCode: 404, message: 'Post not found' })
 
   const comments = await db
     .select({
