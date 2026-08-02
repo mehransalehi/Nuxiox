@@ -207,6 +207,8 @@ export const contactMessages = defineTable({
     id: integer("id").primaryKey({ autoIncrement: true }),
     name: text("name").notNull(),
     email: text("email").notNull(),
+    phone: text("phone"),
+    address: text("address"),
     subject: text("subject"),
     message: text("message").notNull(),
     created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`CURRENT_TIMESTAMP`),

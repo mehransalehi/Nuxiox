@@ -5,6 +5,8 @@ import { checkZod } from "~~/server/utils/checkZod";
 const schema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
+  phone: z.string().optional().default(''),
+  address: z.string().optional().default(''),
   subject: z.string().max(200).optional().default(''),
   message: z.string().min(5).max(5000),
 })

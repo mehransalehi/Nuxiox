@@ -3,8 +3,7 @@ import { useToastStore } from '~~/packages/base/app/stores/toast'
 
 const toastStore = useToastStore()
 
-
-const form = reactive({ name: '', email: '', subject: '', message: '' })
+const form = reactive({ name: '', email: '', phone: '', address: '', subject: '', message: '' })
 const sending = ref(false)
 
 const send = async () => {
@@ -19,6 +18,8 @@ const send = async () => {
     toastStore.push($t('sections.contact.success'), 'success')
     form.name = ''
     form.email = ''
+    form.phone = ''
+    form.address = ''
     form.subject = ''
     form.message = ''
   } catch {

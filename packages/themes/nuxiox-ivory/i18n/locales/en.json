@@ -1,0 +1,112 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "results": "Results",
+    "blog": "Blog",
+    "contact": "Contact Us",
+    "bookConsultation": "Book a Consultation",
+    "bookAppointment": "Book Appointment"
+  },
+  "hero": {
+    "eyebrow": "Innovative tooth restoration technology for a healthy",
+    "titleWord1": "and Confident",
+    "titleWord2": "Smile",
+    "cta": "Book a Consultation",
+    "statRestored": "Patients Restored",
+    "statExperience": "Years of Experience",
+    "statClinics": "Clinics in Europe",
+    "officialPartner": "Official representative of premium Straumann Implants",
+    "lifetimeWarranty": "Lifetime Guarantee Passport"
+  },
+  "partner": {
+    "subtitle": "More than a clinic — Your smile partner",
+    "description": "At our clinic, you're not just receiving treatment — you're gaining a lifelong partner in dental health and well-being.",
+    "card1Title": "Experienced Specialists",
+    "card1Desc": "Board-certified implantologists & cosmetic surgeons with 15+ years experience.",
+    "card2Title": "Personalized Approach",
+    "card2Desc": "Tailored treatment plans and digital 3D smile design for every patient.",
+    "card3Title": "Advanced Technologies",
+    "card3Desc": "3D CBCT tomographic imaging, laser whitening, and Swiss precision milling.",
+    "card4Title": "High Safety Standards",
+    "card4Desc": "100% sterile hospital grade operating suites and biocompatible materials."
+  },
+  "experience": {
+    "heading": "Over 10 Years of experience in dental implantology",
+    "description": "Over the years, our team has earned the trust of thousands of patients. We bring together experienced specialists, proven technologies, and a personalized approach to ensure that everyone who walks through our doors feels confident in the results.",
+    "commitment": "Our commitment goes beyond treatment — we guide every patient through their dental journey with care and expertise."
+  },
+  "quality": {
+    "title": "Certified Quality",
+    "subtitle": "Official Warranty",
+    "viewCertificate": "VIEW CERTIFICATE",
+    "feat1": "Long-lasting, can serve a lifetime with proper care",
+    "feat2": "Strong fixation in the bone thanks to the micro-grooved screw thread",
+    "feat3": "Preserves bone tissue and prevents bone loss",
+    "feat4": "Biocompatible titanium with zero allergy or rejection risk"
+  },
+  "services": {
+    "title": "Expert care for every smile",
+    "subtitle": "Watch video tour of our clinic",
+    "priceTag": "Price",
+    "bookNow": "Book a Consultation",
+    "viewDetails": "View Service Details"
+  },
+  "results": {
+    "title": "Discover the Power of change",
+    "viewCase": "View Case Details",
+    "reviewsCount": "5-star reviews from satisfied patients",
+    "before": "Before",
+    "after": "After"
+  },
+  "contact": {
+    "title": "We're here to Help",
+    "subtext": "Leave your contacts and we will contact you shortly.",
+    "fullName": "Full name",
+    "phone": "Phone number",
+    "problem": "Briefly describe your problem",
+    "preferredDate": "Preferred date of visit",
+    "send": "Send Request",
+    "success": "Your appointment request has been sent successfully!",
+    "locationsTitle": "Our Clinic Locations",
+    "berlin": "Germany, Berlin — Friedrichstraße 123, 10117",
+    "barcelona": "Spain, Barcelona — Carrer De Balmes 200, 08006",
+    "paris": "France, Paris — 45 Rue De Rivoli, 75001",
+    "katowice": "Poland, Katowice — Ul. 3 Maja 15, 40-097"
+  },
+  "blog": {
+    "pageTitle": "Dental Health & Implant Insights",
+    "search": "Search articles...",
+    "readMore": "Read full article",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "prev": "Previous",
+    "next": "Next",
+    "loading": "Loading articles...",
+    "noPosts": "No blog articles found matching your query."
+  },
+  "comments": {
+    "title": "Patient Discussions & Reviews",
+    "required": "Please fill in all required fields",
+    "pending": "Your comment is pending approval",
+    "success": "Comment posted successfully!",
+    "submit": "Submit Comment",
+    "reply": "Reply",
+    "like": "Helpful",
+    "authorName": "Your Name",
+    "authorEmail": "Your Email (kept private)",
+    "contentPlaceholder": "Share your experience or ask our specialists a question..."
+  },
+  "common": {
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "emergencyHotline": "24/7 Emergency Hotline",
+    "close": "Close",
+    "backToTop": "Back to Top"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy"
+  }
+}

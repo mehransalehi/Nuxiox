@@ -14,7 +14,7 @@ const schema = z.object({
   parentId: z.number().int().positive().nullable().optional(),
   authorName: z.string().min(2).max(120).optional(),
   authorEmail: z.string().email().optional(),
-  captchaToken: z.string().min(1),
+  captchaToken: z.string().min(1).optional(),
 });
 
 export default defineEventHandler(async (event) => {
@@ -43,6 +43,12 @@ export default defineEventHandler(async (event) => {
   }
 
   if (blogSettings.recaptchaSecretKey) {
+    if (!body.captchaToken) {
+      throw createError({
+        statusCode: 400,
+        message: "Captcha token is required",
+      });
+    }
     const verify = await $fetch<{ success: boolean }>(
       "https://www.google.com/recaptcha/api/siteverify",
       {
@@ -85,7 +91,7 @@ export default defineEventHandler(async (event) => {
 
   if (!post)
     throw createError({ statusCode: 404, message: "Post not found" });
-  if (!post.allow_comments)
+  if (!post.allowComments)
     throw createError({
       statusCode: 403,
       message: "Comments are disabled for this post",

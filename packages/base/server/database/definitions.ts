@@ -227,6 +227,8 @@ export const CONTACT_MESSAGES = entity('contactMessages', 'contact_messages', [
   col('id', 'int', { primaryKey: { autoIncrement: true } }),
   col('name', 'text', { notNull: true }),
   col('email', 'text', { notNull: true }),
+  col('phone', 'text'),
+  col('address', 'text'),
   col('subject', 'text'),
   col('message', 'text', { notNull: true }),
   col('created_at', 'timestamp', { notNull: true, defaultRaw: 'CURRENT_TIMESTAMP' }),

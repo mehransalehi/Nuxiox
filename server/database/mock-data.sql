@@ -228,12 +228,12 @@ INSERT INTO "blog_comment_likes" ("comment_id", "user_id", "created_at") VALUES
 -- ============================================
 -- 18. CONTACT MESSAGES
 -- ============================================
-INSERT INTO "contact_messages" ("name", "email", "subject", "message", "created_at") VALUES
-('John Smith', 'john.smith@email.com', 'Appointment Request', 'I would like to schedule a teeth cleaning appointment for next week.', unixepoch('now') * 1000),
-('Emily Brown', 'emily.brown@email.com', 'Invisalign Inquiry', 'I am interested in Invisalign treatment. Could you provide pricing information?', unixepoch('now') * 1000),
-('Michael Johnson', 'michael.j@email.com', 'Emergency', 'I have a severe toothache and need to be seen as soon as possible.', unixepoch('now') * 1000),
-('Sarah Davis', 'sarah.davis@email.com', 'Feedback', 'Thank you for the wonderful care during my implant procedure. The team was amazing!', unixepoch('now') * 1000),
-('Robert Wilson', 'robert.w@email.com', 'Insurance Question', 'Do you accept Delta Dental insurance? I am considering switching to your clinic.', unixepoch('now') * 1000);
+INSERT INTO "contact_messages" ("name", "email", "phone", "address", "subject", "message", "created_at") VALUES
+('John Smith', 'john.smith@email.com', '+1 (555) 123-4567', '123 Main St, New York, NY', 'Appointment Request', 'I would like to schedule a teeth cleaning appointment for next week.', unixepoch('now') * 1000),
+('Emily Brown', 'emily.brown@email.com', '+1 (555) 234-5678', '456 Oak Ave, Los Angeles, CA', 'Invisalign Inquiry', 'I am interested in Invisalign treatment. Could you provide pricing information?', unixepoch('now') * 1000),
+('Michael Johnson', 'michael.j@email.com', '+1 (555) 345-6789', '', 'Emergency', 'I have a severe toothache and need to be seen as soon as possible.', unixepoch('now') * 1000),
+('Sarah Davis', 'sarah.davis@email.com', '', '789 Pine Rd, Chicago, IL', 'Feedback', 'Thank you for the wonderful care during my implant procedure. The team was amazing!', unixepoch('now') * 1000),
+('Robert Wilson', 'robert.w@email.com', '+1 (555) 456-7890', '321 Elm St, Houston, TX', 'Insurance Question', 'Do you accept Delta Dental insurance? I am considering switching to your clinic.', unixepoch('now') * 1000);
 
 -- ============================================
 -- 19. MEDIA
