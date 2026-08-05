@@ -1,0 +1,125 @@
+{
+  "site": {
+    "name": "Sunshine Kids Kindergarten",
+    "englishName": "Sunshine Kids Kindergarten",
+    "tagline": "Where curiosity grows into lifelong learning",
+    "copyright": "© 2026 Sunshine Kids Kindergarten. All rights reserved.",
+    "language": "Language"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Programs",
+    "whyus": "Why Us",
+    "team": "Teachers",
+    "gallery": "Gallery",
+    "blog": "News & Blog",
+    "contact": "Contact",
+    "bookAppointment": "Book a Tour"
+  },
+  "hero": {
+    "title": "A Joyful Start for Every Little Explorer",
+    "subtitle": "Nurturing creativity, confidence, and early learning through play-based discovery in a safe, loving environment.",
+    "bookBtn": "Schedule a School Tour",
+    "explorePrograms": "Explore Our Programs",
+    "badge": "Enrolling for 2026-2027",
+    "happyKids": "500+ Happy Children",
+    "certifiedStaff": "100% Certified Teachers",
+    "instagram": "Instagram",
+    "facebook": "Facebook"
+  },
+  "about": {
+    "title": "Welcome to Sunshine Kids",
+    "subtitle": "Building strong foundations through play and guided learning",
+    "description": "At Sunshine Kids, we believe every child is uniquely creative and curious. Our play-based curriculum encourages hands-on exploration, emotional development, and social connection under the guidance of passionate educators.",
+    "exploreBtn": "Learn More About Us",
+    "yearsExp": "15+ Years Experience",
+    "safeEnvironment": "Safe & Eco-Friendly Campus",
+    "smallClasses": "Low Teacher-to-Child Ratio",
+    "ageGroups": "Ages 1.5 to 6 Years Old"
+  },
+  "services": {
+    "title": "Our Learning Programs",
+    "subtitle": "Tailored educational pathways for toddlers, preschoolers, and kindergarteners",
+    "viewDetails": "Program Details",
+    "ageGroupLabel": "Age Group",
+    "scheduleLabel": "Schedule",
+    "all": "All Programs"
+  },
+  "whyus": {
+    "title": "Why Parents Choose Us",
+    "subtitle": "We provide a nurturing haven where your child feels valued, safe, and excited to learn every day",
+    "card1Title": "Certified & Caring Staff",
+    "card1Desc": "Experienced educators specialized in early childhood psychology and creative pedagogy.",
+    "card2Title": "Safety & Cleanliness First",
+    "card2Desc": "Biometric access, 24/7 CCTV monitoring, and daily sanitized classrooms.",
+    "card3Title": "Nutritious Organic Meals",
+    "card3Desc": "Chef-prepared, balanced meals designed by pediatric nutritionists.",
+    "card4Title": "Playful Modern Facilities",
+    "card4Desc": "Spacious outdoor playgrounds, sensory gardens, and interactive STEM corners."
+  },
+  "team": {
+    "title": "Meet Our Dedicated Teachers",
+    "subtitle": "Passionate, certified educators committed to your child's growth and happiness",
+    "roleLabel": "Position",
+    "bioLabel": "About"
+  },
+  "testimonials": {
+    "title": "What Parents Say",
+    "subtitle": "Heartfelt reviews from families in our kindergarten community"
+  },
+  "gallery": {
+    "title": "Life at Sunshine Kids",
+    "subtitle": "A glimpse into our daily activities, celebrations, and outdoor adventures",
+    "clickToEnlarge": "Click image to view in full size"
+  },
+  "blog": {
+    "title": "Parenting & Learning Blog",
+    "subtitle": "Insights, parenting tips, and updates from our early education experts",
+    "readMore": "Read Full Article",
+    "searchPlaceholder": "Search articles...",
+    "allCategories": "All Categories",
+    "comments": "Comments",
+    "leaveComment": "Leave a Comment",
+    "yourComment": "Write your comment here...",
+    "yourName": "Your Name",
+    "postComment": "Submit Comment",
+    "notFound": "No articles found matching your criteria."
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Have questions or want to visit us? We would love to hear from you!",
+    "addressTitle": "Our Location",
+    "addressValue": "742 Evergreen Terrace, Springfield, CA 90210",
+    "phoneTitle": "Phone Number",
+    "phoneValue": "+1 (555) 321-7890",
+    "emailTitle": "Email Address",
+    "emailValue": "hello@sunshinekids-kindergarten.com",
+    "hoursTitle": "Operating Hours",
+    "hoursValue": "Monday – Friday: 7:30 AM – 6:00 PM",
+    "formTitle": "Send Us a Message",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "subject": "Subject",
+    "messageLabel": "Your Message",
+    "submitBtn": "Send Message",
+    "successMsg": "Thank you! Your message has been sent successfully."
+  },
+  "booking": {
+    "modalTitle": "Book a School Tour",
+    "modalSubtitle": "Schedule a personal walk-through and meet our teachers",
+    "parentName": "Parent's Name",
+    "childName": "Child's Name",
+    "childAge": "Child's Age (Years)",
+    "preferredDate": "Preferred Tour Date",
+    "preferredTime": "Preferred Time",
+    "notes": "Special Requests or Questions",
+    "submitBooking": "Confirm Tour Reservation",
+    "successMessage": "Tour booked successfully! We will contact you shortly to confirm your visit.",
+    "closeBtn": "Close"
+  },
+  "cms": {
+    "notFound": "Page not found."
+  }
+}

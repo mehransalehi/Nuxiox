@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@100..900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background-color: #FFFFFF;
+    color: #222222;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4,h5,h6{
+    font-family: 'Lalezar', sans-serif;
+  }
+}
+
+/* Color Variables & Utilities */
+:root {
+  --color-brand-dark: #3A2016;
+  --color-brand-gold: #B68E56;
+  --color-brand-gold-hover: #9E7843;
+  --color-brand-charcoal: #141414;
+  --color-brand-charcoal-card: #1E1E1E;
+  --color-brand-accent-gold: #C5A059;
+  --color-brand-gold-bright: #D4AF37;
+  --color-brand-light-bg: #F8F6F2;
+  --color-brand-cream-border: #E6DFC9;
+  --color-brand-text-dark: #222222;
+  --color-brand-text-muted: #666666;
+}
+
+  h1,h2,h3,h4,h5,h6{
+    font-family: 'Lalezar', sans-serif;
+  }
+/* Custom Buttons & Components */
+.btn-outline-hero {
+  border: 1.5px solid #3A2016;
+  color: #3A2016;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 8px;
+}
+.btn-outline-hero:hover {
+  background-color: #3A2016;
+  color: #ffffff;
+  box-shadow: 0 8px 25px -8px rgba(58, 32, 22, 0.3);
+}
+
+.btn-gold-dark {
+  background: linear-gradient(135deg, #C5A059 0%, #9E7843 100%);
+  color: #FFFFFF;
+  transition: all 0.3s ease;
+}
+.btn-gold-dark:hover {
+  box-shadow: 0 8px 20px -4px rgba(197, 160, 89, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-gold-outline {
+  border: 1.5px solid #C5A059;
+  color: #141414;
+  transition: all 0.3s ease;
+}
+.btn-gold-outline:hover {
+  background-color: #C5A059;
+  color: #FFFFFF;
+}
+
+/* Social icons */
+.social-icon {
+  transition: all 0.25s ease;
+  color: #3A2016;
+}
+.social-icon:hover {
+  color: #B68E56;
+  transform: scale(1.18);
+}
+
+/* Circle Icon Buttons */
+.circle-icon-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 1px solid #E6DFC9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #141414;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+.circle-icon-btn:hover {
+  background-color: #C5A059;
+  color: #FFFFFF;
+  border-color: #C5A059;
+  transform: translateY(-3px);
+}
+
+/* Light & Dark Journal Cards */
+.card-light-journal {
+  background: #FFFFFF;
+  border: 1px solid #EAE5D9;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+}
+.card-light-journal:hover {
+  border-color: #C5A059;
+  box-shadow: 0 15px 35px rgba(197, 160, 89, 0.12);
+}
+
+.card-dark-journal {
+  background-color: #1A1A1A;
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  transition: all 0.3s ease;
+}
+.card-dark-journal:hover {
+  border-color: #C5A059;
+}
+
+/* Scroll Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-35px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(35px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.93) translateY(20px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.active, 
+.reveal-left.active, 
+.reveal-right.active, 
+.reveal-scale.active {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1);
+}
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+.delay-400 { transition-delay: 0.4s; }
+.delay-500 { transition-delay: 0.5s; }
+
+.fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F8F6F2;
+}
+::-webkit-scrollbar-thumb {
+  background: #C5A059;
+  border-radius: 4px;
+}

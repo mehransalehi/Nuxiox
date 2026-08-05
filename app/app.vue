@@ -10,7 +10,7 @@ const { locale, setLocale } = useI18n()
 const layoutOverrides = useLayoutOverrides()
 const route = useRoute()
 
-const direction = computed(() => settings.value.general.direction ?? 'ltr')
+const direction = computed(() => (locale.value === 'fa' || locale.value === 'ar') ? 'rtl' : 'ltr')
 const themeCss = computed(() => {
   const light = settings.value.theme?.light
   const dark = settings.value.theme?.dark

@@ -1,0 +1,6 @@
+{
+  "name": "Kindergarten Website & Theme",
+  "description": "A playful, multilingual kindergarten website and Nuxiox theme featuring interactive tour booking, program showcases, teacher profiles, activity galleries, and full English, Persian, and Arabic i18n support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

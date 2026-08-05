@@ -6,7 +6,7 @@ const route = useRoute()
 
 onMounted(() => refreshSettings())
 
-const direction = computed(() => settings.value.general.direction ?? 'ltr')
+const direction = computed(() => (locale.value === 'fa' || locale.value === 'ar') ? 'rtl' : 'ltr')
 const fontClass = computed(() => {
   return locale.value === 'fa'
     ? 'font-[Vazirmatn,sans-serif]'

@@ -34,6 +34,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  extends: ['./packages/themes/nuxiox-ivory'],
+  extends: ['./packages/themes/kinker'],
   watch: ['packages/**/*'],
 })

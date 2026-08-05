@@ -1,0 +1,188 @@
+{
+  "site": {
+    "title": "Mim Beauty | Luxury Hair & Balayage Boutique",
+    "name": "Mim Beauty",
+    "englishName": "(MIM BEAUTY)",
+    "subtitle": "Luxury Hair & Balayage Boutique",
+    "copyright": "© 2026 All rights reserved by Mim Beauty.",
+    "footerSubtitle": "Mim Beauty Hair Boutique & Salon"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "services": "Services",
+    "pricing": "Pricing",
+    "blog": "Blog",
+    "contact": "Contact",
+    "bookAppointment": "Book Now"
+  },
+  "hero": {
+    "title1": "Hair Beauty Boutique",
+    "title2": "Mim Beauty",
+    "line1": "Entrust your hair to our top specialists.",
+    "line2": "We will make your look unforgettable.",
+    "bookBtn": "Book Appointment",
+    "instagram": "Instagram",
+    "vk": "VK",
+    "facebook": "Facebook"
+  },
+  "promotions": {
+    "specialOffer": "SPECIAL OFFER",
+    "title": "Exclusive Packages & Special Offers",
+    "subtitle": "Crafted with international luxury standards for your hair's health and radiance",
+    "pkg1": {
+      "num": "01",
+      "tag": "MIM CARE ROUTINE",
+      "title": "Keratin & Recovery Package",
+      "desc": "Deep restructuring of damaged hair fibers using organic proteins and crystal hydration.",
+      "f1": "Specialized wash & scalp analysis",
+      "f2": "VIP vitamin cocktail treatment",
+      "f3": "Silkifying finish & journal blowout",
+      "price": "From $85",
+      "btn": "Book Package"
+    },
+    "pkg2": {
+      "num": "02",
+      "tag": "LUXURY BALAYAGE",
+      "title": "Brazilian Balayage & Ombre",
+      "desc": "Advanced lightening without hair damage, powered by Olaplex bond building technology.",
+      "f1": "Customized color mix tailored to skin tone",
+      "f2": "Complete protection with German bonders",
+      "f3": "Radiant pearl cocktail gloss finish",
+      "price": "From $120",
+      "btn": "Book Online"
+    },
+    "pkg3": {
+      "num": "03",
+      "tag": "GLOSS & SHINE",
+      "title": "Color Gloss & Crystal Shine",
+      "desc": "Revitalize hair tones, eliminate brassiness, and create a protective crystal layer.",
+      "f1": "Correction of brassy & orange tones",
+      "f2": "Temporary high-shine gloss layer",
+      "f3": "Free specialized precision haircut",
+      "price": "From $60",
+      "btn": "Book Package"
+    }
+  },
+  "about": {
+    "eyebrow": "A BIT",
+    "title": "About Mim Beauty",
+    "desc": "At Mim Beauty Salon, we combine authentic beauty with the latest international methods. With over 12 years of specialized experience in hair coloring, balayage, and hair health restoration, our goal is to deliver a luxury, personalized experience for every guest.",
+    "exploreBtn": "EXPLORE MORE",
+    "statsNumber": "30,000+",
+    "statsDesc": "Successful appointments and over 99% satisfaction rate at Mim Beauty Salon.",
+    "bestRatings": "Best ratings"
+  },
+  "services": {
+    "eyebrow": "EXCLUSIVE EXPERIENCE",
+    "title": "Specialized Services at Mim Beauty",
+    "subtitle": "An unforgettable journey with top styling, treatment, and coloring techniques",
+    "s1": {
+      "tag": "STYLE & MAKEUP",
+      "title": "Editorial Style & Makeup",
+      "action": "Book Online ←"
+    },
+    "s2": {
+      "tag": "BALAYAGE & CARE",
+      "title": "Hair Drying",
+      "sub": "Balayage & Precision Blowout"
+    },
+    "s3": {
+      "tag": "RELAXATION & SPA",
+      "title": "Keratin & Hair Spa",
+      "action": "Book Online ←"
+    },
+    "s4": {
+      "tag": "GLOSS & SHINE",
+      "title": "Crystal Gloss & Shine",
+      "action": "Book Online ←"
+    }
+  },
+  "hours": {
+    "brandTag": "MIM BEAUTY SALON",
+    "title": "Working Hours & Locations",
+    "subtitle": "Exclusive for ladies - By appointment every day",
+    "scheduleTitle": "Salon Schedule",
+    "weekdays": "Saturday - Thursday:",
+    "weekdaysTime": "10:00 - 19:00",
+    "holidays": "Fridays & Holidays:",
+    "holidaysTime": "By Appointment",
+    "branchesTitle": "Tehran Branches",
+    "b1Title": "Fereshteh Branch:",
+    "b1Address": "Fereshteh St, No. 45, Floor 3",
+    "b2Title": "Saadat Abad Branch:",
+    "b2Address": "Farhang Blvd, Arya Tower, Floor 5",
+    "coloristTag": "Balayage & Color Experts",
+    "coloristDesc": "Top Premium Brands",
+    "teamTag": "International Team",
+    "teamDesc": "Free Consultation",
+    "bookOnline": "Book Appointment Online",
+    "phone": "+98 21 2200 1234"
+  },
+  "portfolio": {
+    "eyebrow": "Follow Us",
+    "titlePrefix": "Follow Us On ",
+    "titleHighlight": "Instagram",
+    "handle": "mimbeauty.salon",
+    "viewInstagram": "View on Instagram"
+  },
+  "testimonials": {
+    "eyebrow": "Testimonials",
+    "titleLine1": "What Our Clients Say",
+    "titleLine2": "Testimonials & Reviews",
+    "next": "Next",
+    "prev": "Previous"
+  },
+  "contact": {
+    "eyebrow": "VISIT US",
+    "title": "Get in Touch with Mim Beauty",
+    "subtitle": "Reach out for free consultations or to reserve your in-person appointment.",
+    "addressTitle": "Salon Address",
+    "addressDetail": "Tehran, Elahiyeh, Fereshteh St, No. 45, Floor 3",
+    "phoneTitle": "Support Phone",
+    "phoneNumber": "+98 21 2200 1234 / +98 912 123 4567",
+    "formTitle": "Send Us a Message",
+    "fullName": "Full Name",
+    "namePlaceholder": "Your name",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "0912...",
+    "messageLabel": "Message or Consultation Request",
+    "messagePlaceholder": "Tell us about your hair type or desired service...",
+    "submitBtn": "Send Message",
+    "alertSuccess": "Your message has been received! We will contact you shortly."
+  },
+  "bookingModal": {
+    "title": "Online Appointment Booking",
+    "subtitle": "Fill in your details and our specialists will contact you",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "e.g. Sarah Smith",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "09121234567",
+    "serviceLabel": "Select Service",
+    "opt1": "Brazilian Balayage & Combined Techniques",
+    "opt2": "Full Color & Editorial Highlights",
+    "opt3": "Keratin, Botox & Hair Recovery",
+    "opt4": "Precision Cut & Styling",
+    "submit": "Confirm Initial Booking",
+    "successTitle": "Booking Registered Successfully",
+    "successMessage": "Our team at Mim Beauty will call you shortly to confirm the appointment time.",
+    "close": "Close"
+  },
+  "blog": {
+    "title": "Hair Care & Styling Blog",
+    "subtitle": "Latest tips, tutorials, and insights on hair health, balayage, and luxury styling",
+    "searchPlaceholder": "Search articles...",
+    "allCategories": "All Categories",
+    "readMore": "Read More",
+    "comments": "Comments",
+    "leaveComment": "Leave a Comment",
+    "yourComment": "Your comment...",
+    "yourName": "Your Name",
+    "postComment": "Submit Comment",
+    "relatedPosts": "Related Articles",
+    "notFound": "No articles found."
+  },
+  "cms": {
+    "notFound": "Page not found."
+  }
+}

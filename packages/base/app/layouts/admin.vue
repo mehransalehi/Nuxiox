@@ -8,7 +8,7 @@ const { settings } = useSiteSettings()
 const { locale, setLocale } = useI18n()
 
 
-const direction = computed(() => locale.value == 'fa' ? "rtl": 'ltr')
+const direction = computed(() => (locale.value === 'fa' || locale.value === 'ar') ? "rtl" : 'ltr')
 
 const { user, clear: clearSession } = useUserSession() as {
   user: Ref<UserSession | null>
@@ -46,13 +46,16 @@ onMounted(() => {
   applyTheme(isDark.value)
 })
 
-/*watch(
+// Admin panel locale follows the admin "website language" setting
+// This ensures admin panel always uses the admin's selected language
+// regardless of the public locale the user selected via the navbar
+watch(
   () => settings.value.general.language,
   (value) => {
-    setLocale(value)
+    if (value && value !== locale.value) setLocale(value)
   },
   { immediate: true }
-)*/
+)
 
 useHead(() => ({
   htmlAttrs: {

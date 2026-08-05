@@ -6,7 +6,6 @@ import { useLoadingStore } from '~~/packages/base/app/stores/loading'
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
 useHead(() => ({ title: $t('admin.sidebar.settings') }))
-const { locale } = useI18n()
 
 const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/settings', {
   default: () => structuredClone(defaultSettings),
@@ -14,12 +13,10 @@ const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/set
 const { setLocale } = useI18n()
 
 const form = reactive<SiteSettings>(structuredClone(defaultSettings))
-form.general.language = locale.value;
 const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo' | 'theme' | 'about'>('general')
 const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
-const currentLocal = ref(locale.value)
 const imageNumber = ref(0)
 
 const defaultTheme = structuredClone(defaultSettings.theme)
@@ -64,7 +61,7 @@ const updateAboutInfo = (list: typeof form.navbar.info) => {
 }
 const saveSettings = async () => {
   saving.value = true
-  setLocale(currentLocal.value)
+  setLocale(form.general.language)
   await loadingStore.withActionLoading(async () => {
     try {
       await $fetch('/api/settings', {
@@ -125,7 +122,7 @@ function handleMediaUpdate(media:any) {
       <div class="grid gap-4 md:grid-cols-2">
         <AdminUiSelect :label="$t('admin.settings.direction')" v-model="form.general.direction"
           :options="[{ key: $t('admin.settings.directionLtr'), value: 'ltr' }, { key: $t('admin.settings.directionRtl'), value: 'rtl' }]" />
-        <AdminLocaleSelector :label="$t('admin.settings.language')" v-model="currentLocal" />
+        <AdminLocaleSelector :label="$t('admin.settings.language')" v-model="form.general.language" />
       </div>
     </AdminCard>
 
