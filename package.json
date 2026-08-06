@@ -11,7 +11,12 @@
     "db:sync": "tsx scripts/sync-schema.ts",
     "db:generate": "pnpm run db:sync && drizzle-kit generate",
     "setup": "tsx scripts/setup.ts",
-    "convert-theme": "tsx scripts/convert-theme.ts"
+    "convert-theme": "tsx scripts/convert-theme.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "test": "vitest run",
+    "test:api": "vitest run tests/api/api.integration.test.ts",
+    "test:dev": "node tests/dev/dev-test.mjs",
+    "test:dev:fix": "node tests/dev/dev-test.mjs --fix"
   },
   "dependencies": {
     "@libsql/client": "^0.17.0",
@@ -30,6 +35,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@nuxt/test-utils": "^4.1.0",
     "@nuxtjs/i18n": "10.2.3",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@tailwindcss/vite": "^4.1.18",
@@ -38,8 +44,10 @@
     "daisyui": "^5.5.18",
     "drizzle-kit": "^0.31.8",
     "nitro-cloudflare-dev": "^0.2.2",
+    "playwright": "^1.62.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
+    "vitest": "^4.1.10",
     "wrangler": "^4.61.1"
   }
 }
