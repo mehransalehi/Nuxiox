@@ -5,7 +5,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         
         <!-- Text & Heading Side -->
-        <div class="lg:col-span-5 space-y-6 text-right order-1 lg:order-1 reveal active">
+        <div class="lg:col-span-5 space-y-6 ltr:text-left rtl:text-right order-1 lg:order-1 reveal active">
           <div class="space-y-2">
             <span class="font-serif italic text-sm tracking-widest text-[#C5A059] font-semibold uppercase block">
               {{ $t('about.eyebrow') }}

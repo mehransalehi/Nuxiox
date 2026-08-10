@@ -98,6 +98,14 @@ ALL visible text MUST use the `$t('key')` helper available in templates:
 
 Never hardcode English or any language text in the template.
 
+### RTL / LTR Direction
+
+The theme must support both RTL (Persian, Arabic) and LTR (English) locales. The layout sets `dir` on `<html>` automatically. The converter will auto-fix `text-right`/`text-left` and horizontal margins (`ml-*`/`mr-*`) to use direction-aware Tailwind variants. Just write your design normally — the converter handles the flipping.
+
+### Arrow icons
+
+Directional icons like `fa-arrow-left` should flip in RTL mode. The converter injects CSS for this automatically.
+
 ### Modals (Booking & Image Gallery)
 
 If your theme has a booking flow or an image gallery, you must:
@@ -147,6 +155,29 @@ For internal links (to blog, posts, pages), use `<a>` tags with the locale prefi
 ```
 
 Where `locale` is the current locale. Or use a simple `<NuxtLink>` — the conversion script will fix the locale prefixing.
+
+### Navbar and Footer
+
+Navbar and Footer receive their data via props from the layout (NOT self-fetching). Define the props and use them in the template:
+
+```vue
+<script setup>
+defineProps<{
+  menus?: { label: string; href: string }[]
+  darkLogo?: string
+  lightLogo?: string
+  info?: { key: string; value: string }[]
+}>()
+</script>
+
+<template>
+  <nav>
+    <a v-for="item in menus" :key="item.href" :href="item.href">{{ item.label }}</a>
+  </nav>
+</template>
+```
+
+The converter will automatically add locale-prefixing to menu links, fix RTL alignment, and validate that props are used.
 
 ---
 
@@ -262,6 +293,7 @@ interface Testimonial {
 ```
 
 ### Blog Post
+
 ```typescript
 interface Post {
   id: number
@@ -273,6 +305,12 @@ interface Post {
   createdAt: string
 }
 ```
+
+**Blog API response** (`GET /api/blog/posts`): Returns `{ items: Post[], categories: [...] }` — the converter-generated blog pages handle this automatically. If you write a custom blog page, use `data.items` and `data.categories` from the response.
+
+### Video Transitions
+
+If your Hero section uses multiple background videos that switch on `@ended`, the converter will add the CSS transition classes to prevent flicker. Just use `classList.replace('opacity-0', 'opacity-100')` in your JS.
 
 ### SiteSettings (from `/api/settings/public`)
 ```typescript
@@ -318,7 +356,10 @@ The Nuxiox conversion script takes your output folder and automatically:
 6. **Only adds modal components** (`BookingModal`, `ImageModal`) to the layout if your theme actually provides them
 7. **Validates** that all i18n locale files have the same keys (warns about missing/extra keys across locales)
 8. **Fixes** Nuxt compatibility (auto-imports, locale paths, `$t()` calls)
-9. **Runs** `pnpm run build` to verify the theme compiles
+9. **Validates** Navbar/Footer props: warns if `menus`, `darkLogo`, `lightLogo`, or `info` props are defined but not used in the template
+10. **Fixes direction**: converts `text-right` → `ltr:text-left rtl:text-right` and horizontal margins (`ml-*`/`mr-*`) → direction-aware variants in all section components
+11. **Adds RTL CSS**: injects arrow-icon flip CSS into `theme.css` so `fa-arrow-left`/`fa-arrow-right` etc. flip in RTL mode
+12. **Runs** `pnpm run build` to verify the theme compiles
 
 **You do NOT need to create any Nuxt-specific files.** Just the SFCs, i18n JSON, and optional UI components.
 

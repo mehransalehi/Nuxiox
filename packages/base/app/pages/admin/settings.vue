@@ -17,7 +17,6 @@ const activeTab = ref<'general' | 'navbar' | 'footer' | 'blog' | 'seo' | 'theme'
 const saving = ref(false)
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
-const imageNumber = ref(0)
 
 const defaultTheme = structuredClone(defaultSettings.theme)
 const resetTheme = () => {
@@ -77,12 +76,6 @@ const saveSettings = async () => {
     }
   })
 }
-
-function handleMediaUpdate(media:any) {
-  if (media) {
-    form.navbar.lightLogo = `/api/admin/media/${media.id}/file`
-  }
-}
 </script>
 
 <template>
@@ -129,9 +122,8 @@ function handleMediaUpdate(media:any) {
     <AdminCard v-if="activeTab === 'navbar'" :title="$t('admin.settings.navbarTitle')"
       :subtitle="$t('admin.settings.navbarDescription')">
       <div class="grid gap-4 md:grid-cols-2">
-        <AdminUiText :label="$t('common.lightLogoUrl')" v-model="form.navbar.lightLogo" />
-        <!-- <AdminFileManager v-model="imageNumber" @update:media="handleMediaUpdate" /> -->
-        <AdminUiText :label="$t('common.darkLogoUrl')" v-model="form.navbar.darkLogo" />
+        <AdminUiText :label="$t('common.lightLogoUrl')" v-model="form.navbar.lightLogo" mediaPicker />
+        <AdminUiText :label="$t('common.darkLogoUrl')" v-model="form.navbar.darkLogo" mediaPicker />
       </div>
       <AdminMenuCreator @update="updateNavbarMenu" :list="form.navbar.menus" handler="navbar" />
       <AdminListCreator @update="updateNavbarInfo" :list="form.navbar.info" />
@@ -141,8 +133,8 @@ function handleMediaUpdate(media:any) {
     <AdminCard v-if="activeTab === 'footer'" :title="$t('admin.settings.footerTitle')"
       :subtitle="$t('admin.settings.footerDescription')">
       <div class="grid gap-4 md:grid-cols-2">
-        <AdminUiText :label="$t('common.lightLogoUrl')" v-model="form.footer.lightLogo" />
-        <AdminUiText :label="$t('common.darkLogoUrl')" v-model="form.footer.darkLogo" />
+        <AdminUiText :label="$t('common.lightLogoUrl')" v-model="form.footer.lightLogo" mediaPicker />
+        <AdminUiText :label="$t('common.darkLogoUrl')" v-model="form.footer.darkLogo" mediaPicker />
       </div>
       <AdminMenuCreator @update="updateFooterMenu" :list="form.footer.menus" handler="footer" />
       <AdminListCreator @update="updateFooterInfo" :list="form.footer.info" />

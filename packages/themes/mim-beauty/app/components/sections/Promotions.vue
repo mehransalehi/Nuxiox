@@ -39,7 +39,7 @@ const modalStore = useModalStore()
               />
             </div>
 
-            <div class="space-y-2 text-right">
+            <div class="space-y-2 ltr:text-left rtl:text-right">
               <span class="font-serif italic text-xs text-[#C5A059] tracking-widest uppercase block">{{ $t('promotions.pkg1.tag') }}</span>
               <h3 class="text-2xl sm:text-3xl font-black text-[#222222] leading-tight tracking-tight">
                 {{ $t('promotions.pkg1.title') }}
@@ -99,7 +99,7 @@ const modalStore = useModalStore()
               />
             </div>
 
-            <div class="space-y-2 text-right">
+            <div class="space-y-2 ltr:text-left rtl:text-right">
               <span class="font-serif italic text-xs text-[#D4AF37] tracking-widest uppercase block">{{ $t('promotions.pkg2.tag') }}</span>
               <h3 class="text-2xl sm:text-3xl font-black text-[#D4AF37] leading-tight tracking-tight">
                 {{ $t('promotions.pkg2.title') }}
@@ -150,7 +150,7 @@ const modalStore = useModalStore()
               />
             </div>
 
-            <div class="space-y-2 text-right">
+            <div class="space-y-2 ltr:text-left rtl:text-right">
               <span class="font-serif italic text-xs text-[#C5A059] tracking-widest uppercase block">{{ $t('promotions.pkg3.tag') }}</span>
               <h3 class="text-2xl sm:text-3xl font-black text-[#222222] leading-tight tracking-tight">
                 {{ $t('promotions.pkg3.title') }}

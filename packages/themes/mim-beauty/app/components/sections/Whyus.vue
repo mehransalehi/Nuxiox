@@ -6,7 +6,7 @@
         <h2 class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">چرا سالن میم بیوتی؟</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-right">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 ltr:text-left rtl:text-right">
         <div class="card-light-journal p-8 rounded-3xl space-y-4">
           <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] text-xl">
             <i class="fa-solid fa-gem"></i>
@@ -25,7 +25,7 @@
 
         <div class="card-light-journal p-8 rounded-3xl space-y-4">
           <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] text-xl">
-            <i class="fa-solid fa-[#C5A059] fa-shield-halved"></i>
+            <i class="text-[#C5A059] fa-shield-halved"></i>
           </div>
           <h3 class="text-xl font-bold text-[#222222]">ضمانت سلامت مو</h3>
           <p class="text-xs text-stone-600 leading-relaxed">حفظ کامل لطافت طبیعی مو همراه با ماندگاری شاین مرواریدی و رنگساژ.</p>

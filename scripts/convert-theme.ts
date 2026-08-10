@@ -529,8 +529,122 @@ ${C.bold}Example:${C.reset}
       /from\s+['\"]\.\.\/stores\/modal['\"]/g,
       "from '~~/packages/base/app/stores/modal'",
     )
-    // 2. $t() used in script section instead of in template — fine, keep as-is
-    ensureDir(path.dirname(destPath))
+    // 2. Fix refs without .value inside array literals used in event handlers.
+    // AI often produces: `const videos = [video1Ref, video2Ref]` then uses
+    // `videos[next]!.currentTime`. The refs must be unwrapped at declaration:
+    // `const videos = [video1Ref.value, video2Ref.value]`.
+    content = content.replace(
+      /(const\s+\w+\s*=\s*\[)([^\]]*Ref,?[^\]]*)(\])/g,
+      (match, prefix, body, suffix) => {
+        // Only touch arrays where every element is a Ref variable
+        const items = body.split(',').map((s) => s.trim()).filter(Boolean)
+        if (items.length && items.every((it) => /^\w+Ref\s*$/.test(it))) {
+          const fixed = items.map((it) => `${it}.value`).join(', ')
+          warn(`  Unwrapped refs in array: ${body.trim()} → ${fixed}`)
+          return `${prefix}${fixed}${suffix}`
+        }
+        return match
+      }
+    )
+    // 3. Fix malformed Tailwind classes in fa-icon syntax
+    // AI sometimes produces: `fa-[#C5A059]` as a class instead of `text-[#C5A059]`
+    content = content.replace(
+      /fa-\[#[A-Fa-f0-9]{3,6}\]/g,
+      (match) => {
+        const color = match.match(/#[A-Fa-f0-9]{3,6}/)?.[0] || '#C5A059'
+        warn(`  Fixed malformed class '${match}' → 'text-[${color}]' in ${file}`)
+        return `text-[${color}]`
+      }
+    )
+    // 4. Warn about hardcoded text strings (potential i18n misses)
+    const hardcodedTexts = content.match(/>[^<]{3,}[^<]*</g)
+    if (hardcodedTexts) {
+      const nonI18nTexts = hardcodedTexts.filter(
+        (t) => !t.includes('{{') && !t.includes('$t(') && !t.includes('v-') && !t.includes('</')
+      )
+      if (nonI18nTexts.length > 0) {
+        for (const text of nonI18nTexts.slice(0, 3)) {
+          warn(`  Possible hardcoded text in ${file}: "${text.slice(1, 60)}"`)
+        }
+      }
+    }
+
+    // 5. Check Navbar/Footer props are actually used in the template
+    if (file === 'Navbar.vue' || file === 'Footer.vue') {
+      const template = content.match(/<template>[\s\S]*<\/template>/)?.[0] || ''
+      const hasMenusProp = content.includes('menus?:') || content.includes('menus:')
+      const hasLogoProp = content.includes('darkLogo?:') || content.includes('darkLogo:')
+      const hasInfoProp = content.includes('info?:') || content.includes('info:')
+      const usesMenus = template.includes('menus') || content.includes('props.menus')
+      const usesLogo = template.includes('darkLogo') || template.includes('lightLogo') || content.includes('props.darkLogo') || content.includes('props.lightLogo')
+      const usesInfo = template.includes('info') || content.includes('props.info')
+
+      if (hasMenusProp && !usesMenus) {
+        warn(`  ${file}: 'menus' prop is defined but never used in the template. Iterate over it with v-for to render admin-configured nav links.`)
+      }
+      if (hasLogoProp && !usesLogo) {
+        warn(`  ${file}: 'darkLogo'/'lightLogo' props are defined but never used. Render them as <img> with a text fallback.`)
+      }
+      if (hasInfoProp && !usesInfo) {
+        warn(`  ${file}: 'info' prop is defined but never used. Render its items dynamically for contact details.`)
+      }
+    }
+
+    // 6. Fix RTL/LTR direction — convert hardcoded text-right/text-left to use Tailwind variants
+    content = content.replace(
+      /(?<![-\w])text-right(?=[\s"'`}])/g,
+      'ltr:text-left rtl:text-right'
+    )
+    // Fix margin-left → ltr:ml-* rtl:mr-*
+    content = content.replace(
+      /(?<![-\w])ml-(\d+(?:\.\d+)?(?:\/\d+)?(?![-\w]))/g,
+      'ltr:ml-$1 rtl:mr-$1'
+    )
+    // Fix margin-right → ltr:mr-* rtl:ml-*
+        content = content.replace(
+          /(?<![-\\w])mr-(\\d+(?:\\.\\d+)?(?:\\/\\d+)?(?![-\\w]))/g,
+          'ltr:mr-$1 rtl:ml-$1'
+        )
+
+        // 7. Inject localeHref helper into Navbar/Footer for locale-aware menu links
+            if ((file === 'Navbar.vue' || file === 'Footer.vue') && !content.includes('localeHref')) {
+              // Replace `:href="item.href"` with `:href="localeHref(item.href)"` in v-for="item in menus" loops
+              content = content.replace(
+                /(:href=")item\.href(")/g,
+                '$1localeHref(item.href)$2'
+              )
+              // Inject the localeHref helper function before </script>
+              const scriptEnd = content.lastIndexOf('</script>')
+              if (scriptEnd !== -1) {
+                const helper = `
+
+        const localePath = useLocalePath()
+
+        // Locale-prefix internal paths, leave external/anchor links as-is
+        function localeHref(href: string) {
+          if (!href || href.startsWith('#') || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//')) {
+            return href
+          }
+          return localePath(href)
+        }
+                content = content.slice(0, scriptEnd) + helper + content.slice(scriptEnd)
+                ok(`  Added localeHref helper to ${file} for locale-aware menu links`)
+              }
+            }
+
+            // 8. Fix video elements missing opacity transitions (Hero.vue video switching)
+            if (content.includes('@ended') && content.includes('opacity-') && !content.includes('transition-opacity')) {
+              content = content.replace(
+                /(class="[^"]*opacity-\d+[^"]*")/g,
+                (match) => {
+                  if (match.includes('transition-opacity')) return match
+                  return match.replace('"', ' transition-opacity duration-1000"')
+                }
+              )
+              ok(`  Added transition-opacity to video elements in ${file}`)
+            }
+
+            ensureDir(path.dirname(destPath))
     fs.writeFileSync(destPath, content, 'utf-8')
     ok(`Copied ${path.relative(ROOT, srcPath)} → ${path.relative(ROOT, destPath)}`)
   }
@@ -620,6 +734,28 @@ ${C.bold}Example:${C.reset}
       )
     }
     if (assetFiles.length > 0) ok(`Found ${assetFiles.length} asset files`)
+
+    // Inject RTL arrow icon CSS into theme.css if it exists
+    const themeCssPath = path.resolve(themeAppDir, 'assets/theme.css')
+    if (fs.existsSync(themeCssPath)) {
+      let css = fs.readFileSync(themeCssPath, 'utf-8')
+      if (!css.includes('RTL-aware arrow icons')) {
+        css += `
+
+/* RTL-aware arrow icons — flip direction in RTL mode */
+[dir="rtl"] .fa-arrow-left,
+[dir="rtl"] .fa-arrow-right,
+[dir="rtl"] .fa-chevron-left,
+[dir="rtl"] .fa-chevron-right,
+[dir="rtl"] .fa-angle-left,
+[dir="rtl"] .fa-angle-right {
+  transform: scaleX(-1);
+}
+`
+        fs.writeFileSync(themeCssPath, css, 'utf-8')
+        ok('Added RTL arrow icon flip CSS to theme.css')
+      }
+    }
   }
 
   // ── Generate Nuxt-specific files ───────────────────────────────────

@@ -13,8 +13,8 @@ export default defineNuxtConfig({
       link: [
         {
           rel: 'stylesheet',
-          // href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
-          href: 'http://localhost:3000/libs/fontawesome-6.5.2/css/all.min.css',
+          href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css',
+          // href: 'http://localhost:3000/libs/fontawesome-6.5.2/css/all.min.css',
         },
       ],
     },
@@ -34,6 +34,6 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  extends: ['./packages/themes/kinker'],
+  extends: ['./packages/themes/mim-beauty'],
   watch: ['packages/**/*'],
 })

@@ -13,6 +13,7 @@ const props = defineProps<{
 const modalStore = useModalStore()
 
 const { locale, setLocale, locales } = useI18n()
+const localePath = useLocalePath()
 const isScrolled = ref(false)
 const isMobileMenuOpen = ref(false)
 const isLangOpen = ref(false)
@@ -21,6 +22,14 @@ const localeLabels: Record<string, string> = {
   en: 'English',
   fa: 'فارسی',
   ar: 'العربية',
+}
+
+// Helper: locale-prefix internal paths, leave external/anchor links as-is
+function localeHref(href: string) {
+  if (!href || href.startsWith('#') || href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//')) {
+    return href
+  }
+  return localePath(href)
 }
 
 function handleScroll() {
@@ -57,10 +66,16 @@ onUnmounted(() => {
     <div class="w-full px-6 sm:px-12 md:px-16 lg:px-24 flex items-center justify-between">
       <!-- Logo Left -->
       <NuxtLink :to="$localePath('/')" class="flex items-center gap-3 group">
-        <div class="relative flex items-center justify-center">
+        <img
+          v-if="lightLogo"
+          :src="lightLogo"
+          :alt="$t('site.name')"
+          class="h-10 w-auto"
+        />
+        <div v-else class="relative flex items-center justify-center">
           <span class="font-serif italic text-4xl sm:text-5xl font-normal tracking-tight text-[#3A2016]">MB</span>
         </div>
-        <div class="flex flex-col text-right leading-tight">
+        <div class="flex flex-col ltr:text-left rtl:text-right leading-tight">
           <span class="font-bold text-base text-[#3A2016] tracking-wide">{{ $t('site.name') }}</span>
           <span class="font-serif text-[11px] text-stone-500 tracking-widest font-normal">{{ $t('site.englishName') }}</span>
         </div>
@@ -69,12 +84,22 @@ onUnmounted(() => {
       <!-- Desktop Nav & Locale Dropdown & Booking Button -->
       <div class="hidden lg:flex items-center gap-8">
         <nav class="flex items-center gap-6 sm:gap-8 text-sm font-semibold text-[#3A2016]">
-          <a href="#hero" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.home') }}</a>
-          <a href="#about" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.about') }}</a>
-          <a href="#services" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.services') }}</a>
-          <a href="#promotions" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.pricing') }}</a>
-          <NuxtLink :to="$localePath('/blog')" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.blog') }}</NuxtLink>
-          <a href="#contact" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.contact') }}</a>
+          <template v-if="menus && menus.length > 0">
+            <a
+              v-for="item in menus"
+              :key="item.href"
+              :href="localeHref(item.href)"
+              class="hover:text-[#B68E56] transition-colors py-1"
+            >{{ item.label }}</a>
+          </template>
+          <template v-else>
+            <a href="#hero" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.home') }}</a>
+            <a href="#about" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.about') }}</a>
+            <a href="#services" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.services') }}</a>
+            <a href="#promotions" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.pricing') }}</a>
+            <NuxtLink :to="$localePath('/blog')" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.blog') }}</NuxtLink>
+            <a href="#contact" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.contact') }}</a>
+          </template>
         </nav>
 
         <!-- Locale Selector -->
@@ -126,12 +151,23 @@ onUnmounted(() => {
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <a href="#hero" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.home') }}</a>
-      <a href="#about" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.about') }}</a>
-      <a href="#services" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.services') }}</a>
-      <a href="#promotions" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.pricing') }}</a>
-      <NuxtLink :to="$localePath('/blog')" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.blog') }}</NuxtLink>
-      <a href="#contact" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.contact') }}</a>
+      <template v-if="menus && menus.length > 0">
+        <a
+          v-for="item in menus"
+          :key="item.href"
+          :href="localeHref(item.href)"
+          @click="toggleMobileMenu"
+          class="hover:text-[#B68E56] transition-colors"
+        >{{ item.label }}</a>
+      </template>
+      <template v-else>
+        <a href="#hero" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.home') }}</a>
+        <a href="#about" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.about') }}</a>
+        <a href="#services" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.services') }}</a>
+        <a href="#promotions" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.pricing') }}</a>
+        <NuxtLink :to="$localePath('/blog')" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.blog') }}</NuxtLink>
+        <a href="#contact" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.contact') }}</a>
+      </template>
 
       <!-- Mobile locale selector -->
       <div class="flex items-center gap-2 mt-2">

@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@100..900&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-@import "tailwindcss";
 
 @layer base {
   body {
@@ -13,6 +12,16 @@
   h1,h2,h3,h4,h5,h6{
     font-family: 'Lalezar', sans-serif;
   }
+}
+
+/* RTL-aware arrow icons — flip direction in RTL mode */
+[dir="rtl"] .fa-arrow-left,
+[dir="rtl"] .fa-arrow-right,
+[dir="rtl"] .fa-chevron-left,
+[dir="rtl"] .fa-chevron-right,
+[dir="rtl"] .fa-angle-left,
+[dir="rtl"] .fa-angle-right {
+  transform: scaleX(-1);
 }
 
 /* Color Variables & Utilities */

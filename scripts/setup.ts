@@ -145,12 +145,12 @@ async function main() {
   // ── 2. Template / Theme Selection ───────────────────────────────────
   step('Template Selection')
 
-  // Auto-discover template layers (exclude base and databases/)
+  // Auto-discover theme layers from packages/themes/
   const templateLayers: { name: string; path: string; description: string }[] = []
-  const layersDir = path.join(ROOT, 'layers')
+  const layersDir = path.join(ROOT, 'packages/themes')
   for (const entry of fs.readdirSync(layersDir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue
-    if (entry.name === 'base' || entry.name === 'databases') continue
+    if (entry.name.startsWith('.')) continue
     const nuxtConfigPath = path.join(layersDir, entry.name, 'nuxt.config.ts')
     const appPath = path.join(layersDir, entry.name, 'app')
     if (!fs.existsSync(nuxtConfigPath)) continue
@@ -173,7 +173,7 @@ async function main() {
   }
 
   if (templateLayers.length === 0) {
-    warn('No template layers found in layers/ — defaulting to "dentist"')
+    warn('No theme layers found in packages/themes/ — defaulting to "dentist"')
   }
 
   let chosenTemplate = templateLayers.length > 0
@@ -248,14 +248,14 @@ DB_NAME=${dbNameInput}
   const rootConfigPath = path.join(ROOT, 'nuxt.config.ts')
   let rootConfig = fs.readFileSync(rootConfigPath, 'utf-8')
   rootConfig = rootConfig.replace(
-    /extends:\s*\[[^\]]*\]/,
-    `extends: ['./layers/${chosenTemplate}']`,
+    /extends:\s*\[[\s\S]*?\]/,
+    `extends: ['./packages/themes/${chosenTemplate}']`,
   )
   fs.writeFileSync(rootConfigPath, rootConfig)
-  success(`Updated root nuxt.config.ts → extends ./layers/${chosenTemplate}`)
+  success(`Updated root nuxt.config.ts → extends ./packages/themes/${chosenTemplate}`)
 
   // 4b. Update the chosen template's nuxt.config.ts to extend the correct database layer
-  const themeConfigPath = path.join(ROOT, `layers/${chosenTemplate}/nuxt.config.ts`)
+  const themeConfigPath = path.join(ROOT, `packages/themes/${chosenTemplate}/nuxt.config.ts`)
   let themeConfig: string
   try {
     themeConfig = fs.readFileSync(themeConfigPath, 'utf-8')
@@ -265,35 +265,35 @@ DB_NAME=${dbNameInput}
   }
 
   if (isCloudflare) {
-    // Set extends to [database, base]
-    if (themeConfig.includes('../databases/')) {
+    // Set extends to [base, database]
+    if (themeConfig.includes('../../databases/')) {
       themeConfig = themeConfig.replace(
-        /extends:\s*\[[^\]]*\]/,
-        `extends: ['../databases/cloudflare','../base']`,
+        /extends:\s*\[[\s\S]*?\]/,
+        `extends: ['../../base', '../../databases/cloudflare']`,
       )
     } else {
       themeConfig = themeConfig.replace(
-        /extends:\s*\[[^\]]*\]/,
-        `extends: ['../databases/cloudflare','../base'],\n  nitro: {\n    preset: 'cloudflare-module',\n  }`,
+        /extends:\s*\[[\s\S]*?\]/,
+        `extends: ['../../base', '../../databases/cloudflare'],\n  nitro: {\n    preset: 'cloudflare-module',\n  }`,
       )
     }
     // Ensure cloudflare-module preset exists
     if (!themeConfig.includes('cloudflare-module')) {
       themeConfig = themeConfig.replace(
-        /(extends:\s*\[[^\]]*\])/,
+        /(extends:\s*\[[\s\S]*?\])/,
         `$1,\n  nitro: {\n    preset: 'cloudflare-module',\n  }`,
       )
     }
   } else {
-    // Normal/MySQL — set extends to [database, base], remove cloudflare preset
+    // Normal/MySQL — set extends to [base, database], remove cloudflare preset
     themeConfig = themeConfig.replace(
-      /extends:\s*\[[^\]]*\]/,
-      `extends: ['../databases/normal','../base']`,
+      /extends:\s*\[[\s\S]*?\]/,
+      `extends: ['../../base', '../../databases/normal']`,
     )
-    themeConfig = themeConfig.replace(/nitro:\s*\{[^}]*\},?\n?/g, '')
+    themeConfig = themeConfig.replace(/nitro:\s*\{[\s\S]*?\},?\n?/g, '')
   }
   fs.writeFileSync(themeConfigPath, themeConfig)
-  success(`Updated layers/${chosenTemplate}/nuxt.config.ts → extends ${isCloudflare ? 'cloudflare' : 'normal'} + base`)
+  success(`Updated packages/themes/${chosenTemplate}/nuxt.config.ts → extends ${isCloudflare ? 'cloudflare' : 'normal'} + base`)
 
   // 4c. Update server/database/schema.gen.ts
   const schemaGenPath = path.join(ROOT, 'server/database/schema.gen.ts')
@@ -318,7 +318,7 @@ DB_NAME=${dbNameInput}
   step('Running database migrations')
   if (isCloudflare) {
     info('Generating D1 migrations...')
-    run('npx drizzle-kit generate --config=layers/databases/cloudflare/drizzle.config.ts')
+    run('npx drizzle-kit generate --config=packages/databases/cloudflare/drizzle.config.ts')
 
     // Find the generated migration SQL file (drizzle-kit outputs 0000_*.sql)
     const migrationsDir = path.join(ROOT, 'server/database/migrations')
@@ -552,7 +552,7 @@ DB_NAME=${dbNameInput}
     }
   } else {
     info('Running MySQL migrations...')
-    run('npx drizzle-kit migrate --config=layers/databases/normal/drizzle.config.ts')
+    run('npx drizzle-kit migrate --config=packages/databases/normal/drizzle.config.ts')
   }
 
   // ── 8. Build project ───────────────────────────────────────────────
@@ -593,7 +593,12 @@ DB_NAME=${dbNameInput}
               if (await confirm('Create the D1 database on Cloudflare?', true)) {
                 info('Creating D1 database...')
                 const result = runCapture('npx wrangler d1 create nuxiox_db 2>&1')
-                const m = result.stdout.match(/database_id\s*=\s*"([a-f0-9-]+)"/i)
+                // Handle both JSON output (newer wrangler) and TOML (older wrangler)
+                // JSON: {"uuid":"...","name":"..."} or {"database_id":"..."}
+                const jsonUuid = result.stdout.match(/"uuid"\s*:\s*"([a-f0-9-]+)"/i)
+                const jsonDbId = result.stdout.match(/"database_id"\s*:\s*"([a-f0-9-]+)"/i)
+                const tomlMatch = result.stdout.match(/database_id\s*=\s*"([a-f0-9-]+)"/i)
+                const m = jsonUuid || jsonDbId || tomlMatch
                 if (m) {
                   let c = fs.readFileSync(wranglerPath, 'utf-8')
                   c = c.replace(/database_id\s*=\s*"[^"]*"/, `database_id = "${m[1]}"`)
@@ -607,7 +612,7 @@ DB_NAME=${dbNameInput}
               info(`D1 database already exists on Cloudflare`)
             }
 
-      // --- KV namespace: create on Cloudflare if still placeholder ---
+      // --- KV namespace: verify existence on Cloudflare, create if missing ---
       if (mediaBackend === 'kv') {
         const kvId = (() => {
           try {
@@ -616,11 +621,18 @@ DB_NAME=${dbNameInput}
             return m ? m[1] : ''
           } catch { return '' }
         })()
-        if (!kvId || kvId.includes('TODO') || kvId.includes('<')) {
+        const kvExists = kvId && !kvId.includes('<') && !kvId.includes('TODO')
+          ? runCapture('npx wrangler kv namespace list 2>&1').stdout.includes(kvId)
+          : false
+        if (!kvExists) {
           if (await confirm('Create KV namespace for MEDIA_KV?', true)) {
             info('Creating KV namespace...')
             const result = runCapture('npx wrangler kv namespace create MEDIA_KV 2>&1')
-            const m = result.stdout.match(/id\s*=\s*"([a-f0-9-]+)"/i)
+            // Handle both JSON output (newer wrangler): {"id":"...","title":"..."}
+            // and TOML output (older wrangler): id = "..."
+            const jsonMatch = result.stdout.match(/"id"\s*:\s*"([a-f0-9-]+)"/i)
+            const tomlMatch = result.stdout.match(/id\s*=\s*"([a-f0-9-]+)"/i)
+            const m = jsonMatch || tomlMatch
             if (m) {
               let c = fs.readFileSync(wranglerPath, 'utf-8')
               c = c.replace(/^id\s*=\s*"[^"]*"/m, `id = "${m[1]}"`)
@@ -628,11 +640,12 @@ DB_NAME=${dbNameInput}
               fs.writeFileSync(wranglerPath, c)
               success('KV namespace created and wrangler.toml updated')
             } else {
-              warn('Could not parse KV namespace ID. Update wrangler.toml manually.')
+              warn(`Could not parse KV namespace ID from output:\n  ${result.stdout.slice(0, 200)}`)
+              info('Update wrangler.toml manually, then re-run setup.')
             }
           }
         } else {
-          info('KV namespace already configured')
+          info('KV namespace exists on Cloudflare')
         }
       }
 

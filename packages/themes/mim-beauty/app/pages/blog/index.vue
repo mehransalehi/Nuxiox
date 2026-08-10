@@ -15,43 +15,19 @@ interface Post {
 const searchQuery = ref('')
 const selectedCategory = ref('ALL')
 
-const fallbackPosts: Post[] = [
-  {
-    id: 1,
-    title: 'تکنیک‌های مراقبت از موهای بالیاژ شده در تابستان',
-    slug: 'balayage-summer-care',
-    category: 'بالیاژ',
-    excerpt: 'چگونه شادابی و درخشش رنگساژ مرواریدی و بالیاژ خود را در برابر آفتاب و کلر استخر حفظ کنیم؟',
-    featuredImage: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80',
-    createdAt: '۲۰۲۶/۰۷/۱۵'
-  },
-  {
-    id: 2,
-    title: 'تفاوت بوتاکس مو، پروتئین‌تراپی و کراتین چیست؟',
-    slug: 'botox-vs-keratin',
-    category: 'احیا و کراتین',
-    excerpt: 'راهنمای کامل انتخاب بهترین پکیج احیا بر اساس جنس اسکالپ و آسیب‌دیدگی ساقه مو.',
-    featuredImage: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
-    createdAt: '۲۰۲۶/۰۷/۱۰'
-  },
-  {
-    id: 3,
-    title: 'رازهای شاین کریستالی و تثبیت تناژ مرواریدی',
-    slug: 'crystal-shine-secrets',
-    category: 'رنگساژ',
-    excerpt: 'بررسی نقش شامپوهای ضد زردی و کوکتل‌های ویتامینه ارگانیک در ماندگاری رنگساژ.',
-    featuredImage: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=800&q=80',
-    createdAt: '۲۰۲۶/۰۷/۰۱'
-  }
-]
 
-const posts = ref<Post[]>(fallbackPosts)
+
+const posts = ref<Post[]>()
+const categories = ref<{ id: number; name: string; slug: string; count: number }[]>([])
 
 async function fetchPosts() {
   try {
-    const data = await $fetch<Post[]>('/api/blog/posts')
-    if (data && data.length > 0) {
-      posts.value = data
+    const data = await $fetch<any>('/api/blog/posts')
+    if (data?.items && data.items.length > 0) {
+      posts.value = data.items
+    }
+    if (data?.categories) {
+      categories.value = data.categories
     }
   } catch (e) {
     // Keep fallback
@@ -59,11 +35,25 @@ async function fetchPosts() {
 }
 
 const filteredPosts = computed(() => {
-  return posts.value.filter(post => {
+  const list = posts.value || []
+  return list.filter(post => {
     const matchesSearch = !searchQuery.value || post.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.value.toLowerCase()))
     const matchesCategory = selectedCategory.value === 'ALL' || post.category === selectedCategory.value
     return matchesSearch && matchesCategory
   })
+})
+
+const categoryOptions = computed(() => {
+  const cats = categories.value || []
+  if (cats.length > 0) {
+    return categories.value.map(c => ({ value: c.name, label: c.name }))
+  }
+  // Fallback hardcoded categories
+  return [
+    { value: 'بالیاژ', label: 'بالیاژ' },
+    { value: 'احیا و کراتین', label: 'احیا و کراتین' },
+    { value: 'رنگساژ', label: 'رنگساژ' },
+  ]
 })
 
 onMounted(() => {
@@ -104,9 +94,7 @@ onMounted(() => {
           class="w-full sm:w-auto bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-xs text-[#222222] focus:outline-none focus:border-[#C5A059] transition-colors"
         >
           <option value="ALL">{{ $t('blog.allCategories') }}</option>
-          <option value="بالیاژ">بالیاژ</option>
-          <option value="احیا و کراتین">احیا و کراتین</option>
-          <option value="رنگساژ">رنگساژ</option>
+          <option v-for="cat in categoryOptions" :key="cat.value" :value="cat.value">{{ cat.label }}</option>
         </select>
       </div>
 

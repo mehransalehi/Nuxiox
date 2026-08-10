@@ -10,34 +10,8 @@ interface Post {
   createdAt: string
 }
 
-const fallbackPosts: Post[] = [
-  {
-    id: 1,
-    title: 'تکنیک‌های مراقبت از موهای بالیاژ شده در تابستان',
-    slug: 'balayage-summer-care',
-    excerpt: 'چگونه شادابی و درخشش رنگساژ مرواریدی و بالیاژ خود را در برابر آفتاب و کلر استخر حفظ کنیم؟',
-    featuredImage: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80',
-    createdAt: '۲۰۲۶/۰۷/۱۵'
-  },
-  {
-    id: 2,
-    title: 'تفاوت بوتاکس مو، پروتئین‌تراپی و کراتین چیست؟',
-    slug: 'botox-vs-keratin',
-    excerpt: 'راهنمای کامل انتخاب بهترین پکیج احیا بر اساس جنس اسکالپ و آسیب‌دیدگی ساقه مو.',
-    featuredImage: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80',
-    createdAt: '۲۰۲۶/۰۷/۱۰'
-  },
-  {
-    id: 3,
-    title: 'رازهای شاین کریستالی و تثبیت تناژ مرواریدی',
-    slug: 'crystal-shine-secrets',
-    excerpt: 'بررسی نقش شامپوهای ضد زردی و کوکتل‌های ویتامینه ارگانیک در ماندگاری رنگساژ.',
-    featuredImage: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=800&q=80',
-    createdAt: '۲۰۲۶/۰۷/۰۱'
-  }
-]
 
-const posts = ref<Post[]>(fallbackPosts)
+const posts = ref<Post[]>()
 
 async function fetchPosts() {
   try {
@@ -60,7 +34,7 @@ onMounted(() => {
     <div class="max-w-7xl mx-auto px-6 sm:px-12 md:px-16">
       
       <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-16 reveal active">
-        <div class="text-right space-y-2">
+        <div class="ltr:text-left rtl:text-right space-y-2">
           <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('nav.blog') }}</span>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">{{ $t('blog.title') }}</h2>
         </div>
@@ -88,7 +62,7 @@ onMounted(() => {
               />
             </div>
 
-            <div class="p-6 space-y-3 text-right">
+            <div class="p-6 space-y-3 ltr:text-left rtl:text-right">
               <span class="text-[11px] text-[#C5A059] font-bold block">{{ post.createdAt }}</span>
               <h3 class="text-lg font-bold text-[#222222] group-hover:text-[#C5A059] transition-colors leading-snug">
                 {{ post.title }}
@@ -99,7 +73,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="p-6 pt-0 text-right">
+          <div class="p-6 pt-0 ltr:text-left rtl:text-right">
             <NuxtLink
               :to="$localePath(`/blog/${post.slug}`)"
               class="inline-flex items-center gap-2 text-xs font-bold text-[#222222] hover:text-[#C5A059] transition-colors"

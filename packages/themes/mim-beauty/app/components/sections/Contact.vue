@@ -35,7 +35,7 @@ async function handleSubmit(e: Event) {
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
         
         <!-- Contact Info -->
-        <div class="lg:col-span-5 space-y-8 text-right reveal active">
+        <div class="lg:col-span-5 space-y-8 ltr:text-left rtl:text-right reveal active">
           <div>
             <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block mb-2">{{ $t('contact.eyebrow') }}</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-[#222222]">{{ $t('contact.title') }}</h2>
@@ -91,7 +91,7 @@ async function handleSubmit(e: Event) {
                     required
                     :placeholder="$t('contact.phonePlaceholder')"
                     dir="ltr"
-                    class="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-xs text-[#222222] focus:outline-none focus:border-[#C5A059] transition-colors text-right"
+                    class="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-xs text-[#222222] focus:outline-none focus:border-[#C5A059] transition-colors ltr:text-left rtl:text-right"
                   />
                 </div>
               </div>

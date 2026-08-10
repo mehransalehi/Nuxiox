@@ -71,10 +71,10 @@ async function startDevServer() {
     devProcess.stdout.on('data', (data) => {
       const text = data.toString()
       devOutput += text
-      // Show last line in output
+      // Show errors in real-time (Nuxt format: [ERROR], [request error], etc.)
       const lines = text.trim().split('\n')
       for (const line of lines) {
-        if (line.includes('ERROR') || line.includes('error') || line.includes('Error')) {
+        if (line.includes('ERROR') || line.includes('error') || line.includes('Error') || line.includes('[request error]')) {
           process.stdout.write(`  ⚠  ${line}\n`)
         }
       }
@@ -189,6 +189,7 @@ async function testPage(browser, pageConfig) {
     hasContent: false,
     networkErrors: [],
     consoleErrors: [],
+    consoleWarnings: [],
     pageErrors: [],
     statusCode: 0,
     emptyBody: false,
@@ -200,10 +201,13 @@ async function testPage(browser, pageConfig) {
   })
   const page = await context.newPage()
 
-  // Collect console errors
+  // Collect console errors and warnings
   page.on('console', (msg) => {
     if (msg.type() === 'error') {
       result.consoleErrors.push(msg.text())
+    } else if (msg.type() === 'warning') {
+      result.consoleWarnings = result.consoleWarnings || []
+      result.consoleWarnings.push(msg.text())
     }
   })
 
@@ -253,6 +257,7 @@ async function testPage(browser, pageConfig) {
     }
 
     // Determine pass/fail
+    // Warnings alone don't fail — only errors fail
     const hasErrors =
       result.consoleErrors.length > 0 ||
       result.pageErrors.length > 0
@@ -265,7 +270,8 @@ async function testPage(browser, pageConfig) {
     result.passed = !hasErrors && !hasServerError && contentOk
 
     if (result.passed) {
-      log('OK', `${label} (${url}) — ${result.statusCode}, ${result.hasContent ? 'has content' : 'empty'}`)
+      const warnCount = result.consoleWarnings.length
+      log('OK', `${label} (${url}) — ${result.statusCode}, ${result.hasContent ? 'has content' : 'empty'}${warnCount ? `, ${warnCount} warnings` : ''}`)
     } else {
       log('FAIL', `${label} (${url}) — ${result.statusCode}`)
       if (hasContent && result.emptyBody) {
@@ -274,6 +280,11 @@ async function testPage(browser, pageConfig) {
       if (result.consoleErrors.length) {
         for (const err of result.consoleErrors.slice(0, 5)) {
           log('FAIL', `  → Console error: ${err.slice(0, 200)}`)
+        }
+      }
+      if (result.consoleWarnings.length) {
+        for (const w of result.consoleWarnings.slice(0, 5)) {
+          log('FAIL', `  ⚠ Console warning: ${w.slice(0, 200)}`)
         }
       }
       if (result.pageErrors.length) {
@@ -306,10 +317,9 @@ function analyzeDevOutput() {
   const errors = []
   const errorLines = devOutput.split('\n').filter(
     (line) =>
-      line.includes('[ERROR]') ||
-      line.includes('ERROR ') ||
-      line.includes('error ') ||
-      line.includes('[nuxt]') && (line.includes('error') || line.includes('Error')) ||
+      (line.includes('[ERROR]') || line.includes('ERROR ') || line.includes('error ') || line.includes('[request error]')) ||
+      (line.includes('[nuxt]') && (line.includes('error') || line.includes('Error'))) ||
+      line.includes('[nitro]') && (line.includes('ERROR') || line.includes('error')) ||
       line.includes('Cannot find module') ||
       line.includes('Module not found') ||
       line.includes('unexpected') ||
@@ -325,7 +335,7 @@ function analyzeDevOutput() {
 // Report
 // ==============================================================
 
-function printReport(results) {
+function printReport(results, devErrors) {
   console.log('\n' + '='.repeat(60))
   console.log('  DEVELOPMENT TEST REPORT')
   console.log('='.repeat(60))
@@ -336,11 +346,19 @@ function printReport(results) {
   for (const r of results) {
     const icon = r.passed ? '✓' : '✗'
     const content = r.hasContent ? 'content' : 'empty'
-    console.log(`  ${icon} ${r.label.padEnd(15)} ${r.statusCode} ${content.padEnd(8)} ${r.consoleErrors.length} console errs, ${r.pageErrors.length} page errs`)
+    const warns = r.consoleWarnings?.length || 0
+    console.log(`  ${icon} ${r.label.padEnd(15)} ${r.statusCode} ${content.padEnd(8)} ${r.consoleErrors.length} errs, ${r.pageErrors.length} page errs${warns ? `, ${warns} warns` : ''}`)
   }
 
   console.log('-'.repeat(60))
   console.log(`  Passed: ${passed}/${total}`)
+
+  if (devErrors && devErrors.length > 0) {
+    console.log(`  ⚠ Dev server errors: ${devErrors.length}`)
+    for (const err of devErrors.slice(0, 3)) {
+      console.log(`    ${err.slice(0, 120)}`)
+    }
+  }
 
   if (passed === total) {
     console.log('  ✅ ALL PAGES PASS')
@@ -414,7 +432,14 @@ async function runDevTest() {
   const browser = await chromium.launch(launchOptions)
 
   try {
-    // 4. Check dev output for errors
+    // 4. Test each page
+    const results = []
+    for (const pageConfig of PAGES) {
+      const result = await testPage(browser, pageConfig)
+      results.push(result)
+    }
+
+    // 5. Check dev output for errors (AFTER pages are loaded — catches SSR errors)
     const devErrors = analyzeDevOutput()
     if (devErrors.length > 0) {
       log('WARN', `Found ${devErrors.length} potential issues in dev output:`)
@@ -423,15 +448,8 @@ async function runDevTest() {
       }
     }
 
-    // 5. Test each page
-    const results = []
-    for (const pageConfig of PAGES) {
-      const result = await testPage(browser, pageConfig)
-      results.push(result)
-    }
-
     // 6. Print report
-    printReport(results)
+    printReport(results, devErrors)
 
     // 7. Check for retry logic
     const allPassed = results.every((r) => r.passed)

@@ -48,7 +48,7 @@ const modalStore = useModalStore()
               </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-right pt-2 relative z-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 ltr:text-left rtl:text-right pt-2 relative z-10">
               <!-- Hours Schedule -->
               <div class="bg-[#FAF8F5] border border-stone-200/80 rounded-2xl p-5 space-y-3">
                 <div class="flex items-center gap-2 text-[#C5A059] font-bold text-xs">
