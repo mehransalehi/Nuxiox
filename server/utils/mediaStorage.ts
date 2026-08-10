@@ -2,15 +2,16 @@
 // Unified media storage — uses filesystem (Node.js) or KV (Cloudflare)
 import { promises as fs } from 'fs'
 import * as path from 'path'
+import { getCloudflareEnv } from './cloudflare'
 
 const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads')
 
 function isCloudflare(event: any): boolean {
-  return typeof event.context?.cloudflare?.env !== 'undefined'
+  return typeof getCloudflareEnv(event).MEDIA_KV !== 'undefined'
 }
 
 function getKV(event: any): any {
-  return event.context.cloudflare.env.MEDIA_KV
+  return getCloudflareEnv(event).MEDIA_KV
 }
 
 /**

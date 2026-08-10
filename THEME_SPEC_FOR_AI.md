@@ -313,6 +313,9 @@ interface Post {
 If your Hero section uses multiple background videos that switch on `@ended`, the converter will add the CSS transition classes to prevent flicker. Just use `classList.replace('opacity-0', 'opacity-100')` in your JS.
 
 ### SiteSettings (from `/api/settings/public`)
+
+> **Note**: Settings are per-locale. The endpoint returns the data for the current locale automatically (`?locale=` query param overrides it), so `useSiteSettings()` always gives you the right language's values.
+
 ```typescript
 interface SiteSettings {
   general: {
@@ -332,12 +335,35 @@ interface SiteSettings {
     lightLogo: string
     info: { key: string; value: string }[]
   }
+  blog: {
+    commentsEnabled: boolean
+    commentsRequireApproval: boolean
+    allowAnonymousCommentsByDefault: boolean
+    recaptchaSiteKey: string
+    recaptchaSecretKey: string
+  }
   seo: {
+    // Locale-specific fields (siteName, titles, description, og image)
     siteName: string
     defaultTitle: string
     titleSuffix: string
     defaultDescription: string
+    defaultOgImage: string
+    // Site-wide fields (shared across all locales)
+    siteUrl: string
     robots: string
+    twitterHandle: string
+    googleSiteVerification: string
+    bingSiteVerification: string
+    yandexVerification: string
+  }
+  theme: {
+    preset: string
+    light: { primary: string; secondary: string; accent: string; neutral: string }
+    dark: { primary: string; secondary: string; accent: string; neutral: string }
+  }
+  about: {
+    info: { key: string; value: string }[]
   }
 }
 ```

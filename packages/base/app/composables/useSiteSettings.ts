@@ -1,11 +1,16 @@
 import { defaultSettings, type SiteSettings } from '~~/packages/base/utils/settings'
 
 export const useSiteSettings = () => {
+  const { locale } = useI18n()
+
   const { data, refresh } = useAsyncData<SiteSettings>('site-settings', () =>
-    $fetch('/api/settings/public').catch(() => structuredClone(defaultSettings)),
+    $fetch('/api/settings/public', {
+      params: { locale: locale.value },
+    }).catch(() => structuredClone(defaultSettings)),
     {
       default: () => structuredClone(defaultSettings),
-      watch: [],
+      watch: [locale],
+      immediate: true,
     },
   )
 

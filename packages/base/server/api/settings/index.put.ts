@@ -1,5 +1,7 @@
 import { settings } from "~~/server/database/schema.gen";
 import {
+  defaultSeoSettingsGlobal,
+  defaultSeoSettingsLocale,
   defaultSettings,
   type SiteSettings,
   type SiteSettingsLocale,
@@ -12,10 +14,10 @@ export default defineEventHandler(async (event) => {
   const admin = await requireAdmin(event);
 
   const db = useDb(event);
-  const locale = getLocale(event);
   const now = new Date();
 
-  const body = (await readBody(event)) as Partial<SiteSettings>;
+  const body = (await readBody(event)) as Partial<SiteSettings & { _locale?: string }>;
+  const locale = body._locale || getLocale(event);
 
   // Generate a localized payload for each section dynamically
   const payload = Object.fromEntries(
@@ -24,6 +26,27 @@ export default defineEventHandler(async (event) => {
       { [locale]: { ...defaults, ...(body[key as keyof SiteSettings] ?? {}) } },
     ]),
   ) as SiteSettingsLocale;
+
+  // Override SEO payload: split locale fields under [locale], globals under globals
+  if (body.seo) {
+    payload.seo = {
+      [locale]: {
+        siteName: body.seo.siteName,
+        defaultTitle: body.seo.defaultTitle,
+        titleSuffix: body.seo.titleSuffix,
+        defaultDescription: body.seo.defaultDescription,
+        defaultOgImage: body.seo.defaultOgImage,
+      },
+      globals: {
+        siteUrl: body.seo.siteUrl,
+        robots: body.seo.robots,
+        twitterHandle: body.seo.twitterHandle,
+        googleSiteVerification: body.seo.googleSiteVerification,
+        bingSiteVerification: body.seo.bingSiteVerification,
+        yandexVerification: body.seo.yandexVerification,
+      },
+    }
+  }
 
 
   // Helper to upsert + merge existing locales

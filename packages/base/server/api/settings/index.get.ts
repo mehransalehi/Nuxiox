@@ -1,6 +1,8 @@
 import { settings } from '~~/server/database/schema.gen'
 import {
   defaultSettings,
+  defaultSeoSettingsGlobal,
+  defaultSeoSettingsLocale,
   type SiteSettings,
   type SiteSettingsLocale,
 } from "~~/packages/base/utils/settings";
@@ -11,7 +13,7 @@ import { requireAdmin } from "~~/server/utils/checkAdmin";
 export default defineEventHandler(async (event) => {
   const admin = await requireAdmin(event)
   const db = useDb(event)
-  const locale = getLocale(event)
+  const locale = getQuery(event).locale || getLocale(event)
 
   const rows = await db.select().from(settings)
 
@@ -20,6 +22,11 @@ export default defineEventHandler(async (event) => {
 
     return acc
   }, {})
+
+  // Merge SEO: locale fields from seo[locale], global fields from seo.globals
+  const seoFromDB = values.seo ?? {}
+  const seoLocaleValues = seoFromDB[locale] ?? {}
+  const seoGlobalValues = seoFromDB.globals ?? {}
 
   const response: SiteSettings = {
   general: {
@@ -39,8 +46,10 @@ export default defineEventHandler(async (event) => {
     ...(values.blog?.[locale] ?? {}),
   },
   seo: {
-    ...defaultSettings.seo,
-    ...(values.seo?.[locale] ?? {}),
+    ...defaultSeoSettingsGlobal,
+    ...seoGlobalValues,
+    ...defaultSeoSettingsLocale,
+    ...seoLocaleValues,
   },
   theme: {
     ...defaultSettings.theme,

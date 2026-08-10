@@ -1,10 +1,8 @@
 // server/utils/r2.ts
+import { getCloudflareEnv } from './cloudflare'
+
 export function getR2Bucket(event: any) {
-  if (import.meta.dev) {
-    // Local development - uses preview bucket
-    return event.context.cloudflare.env.MEDIA_BUCKET;
-  }
-  return event.context.cloudflare.env.MEDIA_BUCKET;
+  return getCloudflareEnv(event).MEDIA_BUCKET;
 }
 
 export async function uploadToR2(

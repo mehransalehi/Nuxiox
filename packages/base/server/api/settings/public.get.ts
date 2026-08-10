@@ -1,53 +1,58 @@
 import { eq } from 'drizzle-orm'
 import { settings } from '~~/server/database/schema.gen'
-import { defaultSettings,SiteSettings } from '~~/packages/base/utils/settings'
+import { defaultSeoSettingsGlobal, defaultSeoSettingsLocale, defaultSettings, SiteSettings } from '~~/packages/base/utils/settings'
 import { getLocale } from "~~/server/utils/getLocale";
 
 export default defineEventHandler(async (event) => {
   const db = useDb(event)
-  const locale = getLocale(event)
+  const locale = getQuery(event).locale || getLocale(event)
   const rows = await db
     .select()
     .from(settings)
     .where(eq(settings.is_public, true))
 
   const values = rows.reduce<Record<string, any>>((acc, row) => {
-      acc[row.key] = row.value
-  
+      acc[row.key] = typeof row.value == 'string' ? JSON.parse(row.value) : row.value
       return acc
     }, {})
-  
-    // console.log(values.about);
+
+    // Merge SEO: locale fields from seo[locale], global fields from seo.globals
+    const seoFromDB = values.seo ?? {}
+    const seoLocaleValues = seoFromDB[locale] ?? {}
+    const seoGlobalValues = seoFromDB.globals ?? {}
+
     const response: SiteSettings = {
       general: {
         ...defaultSettings.general,
-        ...((values.general ? values.general[locale] : false ) ?? {}),
+        ...(values.general?.[locale] ?? {}),
       },
       navbar: {
         ...defaultSettings.navbar,
-        ...((values.navbar ? values.navbar[locale] : false ) ?? {}),
+        ...(values.navbar?.[locale] ?? {}),
       },
       footer: {
         ...defaultSettings.footer,
-        ...((values.footer ? values.footer[locale] : false ) ?? {}),
+        ...(values.footer?.[locale] ?? {}),
       },
       blog: {
         ...defaultSettings.blog,
-        ...((values.blog ? values.blog[locale] : false ) ?? {}),
+        ...(values.blog?.[locale] ?? {}),
       },
       seo: {
-        ...defaultSettings.seo,
-        ...((values.seo ? values.seo[locale] : false ) ?? {}),
+        ...defaultSeoSettingsGlobal,
+        ...seoGlobalValues,
+        ...defaultSeoSettingsLocale,
+        ...seoLocaleValues,
       },
       theme: {
         ...defaultSettings.theme,
-        ...((values.theme ? values.theme[locale] : false ) ?? {}),
+        ...(values.theme?.[locale] ?? {}),
       },
       about: {
         ...defaultSettings.about,
-        ...((values.about ? values.about[locale] : false ) ?? {}),
+        ...(values.about?.[locale] ?? {}),
       },
     }
-  
+
     return response
 })

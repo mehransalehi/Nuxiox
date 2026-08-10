@@ -36,19 +36,24 @@ export type BlogSettings = {
   recaptchaSecretKey: string
 }
 
-export type SeoSettings = {
+export type SeoSettingsLocale = {
   siteName: string
-  siteUrl: string
   defaultTitle: string
   titleSuffix: string
   defaultDescription: string
   defaultOgImage: string
+}
+
+export type SeoSettingsGlobal = {
+  siteUrl: string
   robots: string
   twitterHandle: string
   googleSiteVerification: string
   bingSiteVerification: string
   yandexVerification: string
 }
+
+export type SeoSettings = SeoSettingsLocale & SeoSettingsGlobal
 
 export type AboutSettings = {
   info: InfoItem[]
@@ -93,6 +98,23 @@ export const defaultThemePalette: ThemePalette = {
   neutral: '#3d4451',
 }
 
+export const defaultSeoSettingsLocale: SeoSettingsLocale = {
+  siteName: 'Nuxiox',
+  defaultTitle: 'Nuxiox',
+  titleSuffix: '',
+  defaultDescription: 'Modern website powered by Nuxiox.',
+  defaultOgImage: '',
+}
+
+export const defaultSeoSettingsGlobal: SeoSettingsGlobal = {
+  siteUrl: '',
+  robots: 'index,follow',
+  twitterHandle: '',
+  googleSiteVerification: '',
+  bingSiteVerification: '',
+  yandexVerification: '',
+}
+
 export const defaultSettings: SiteSettings = {
   general: {
     showSidebar: true,
@@ -133,17 +155,8 @@ export const defaultSettings: SiteSettings = {
     recaptchaSecretKey: '',
   },
   seo: {
-    siteName: 'Nuxiox',
-    siteUrl: '',
-    defaultTitle: 'Nuxiox',
-    titleSuffix: '',
-    defaultDescription: 'Modern website powered by Nuxiox.',
-    defaultOgImage: '',
-    robots: 'index,follow',
-    twitterHandle: '',
-    googleSiteVerification: '',
-    bingSiteVerification: '',
-    yandexVerification: '',
+    ...defaultSeoSettingsGlobal,
+    ...defaultSeoSettingsLocale,
   },
   theme: {
     preset: 'light',
