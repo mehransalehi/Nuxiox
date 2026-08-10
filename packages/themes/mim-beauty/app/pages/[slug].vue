@@ -12,6 +12,7 @@ import Contact from '../components/sections/Contact.vue'
 import Team from '../components/sections/Team.vue'
 import Blog from '../components/sections/Blog.vue'
 import Results from '../components/sections/Results.vue'
+import { useSiteSettings } from '~~/packages/base/app/composables/useSiteSettings'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
@@ -27,11 +28,13 @@ interface CMSPage {
   id: number
   title: string
   slug: string
+  seo?: Record<string, string>
   builder: {
     blocks: PageBlock[]
   }
 }
 
+const { settings } = useSiteSettings()
 const page = ref<CMSPage | null>(null)
 const isLoading = ref(true)
 
@@ -66,6 +69,29 @@ async function fetchPage() {
 
 onMounted(() => {
   fetchPage()
+})
+
+useHead(() => {
+  const seo = (page.value?.seo ?? {}) as Record<string, string>
+  return {
+    title: typeof seo.title === 'string' && seo.title
+      ? seo.title
+      : page.value?.title || settings.value.seo.defaultTitle,
+    link: [
+      typeof seo.canonical === 'string' && seo.canonical
+        ? { rel: 'canonical', href: seo.canonical }
+        : undefined,
+    ].filter(Boolean),
+    meta: [
+      typeof seo.description === 'string' && seo.description
+        ? { name: 'description', content: seo.description }
+        : { name: 'description', content: settings.value.seo.defaultDescription },
+      { property: 'og:title', content: String(seo.ogTitle ?? seo.title ?? page.value?.title ?? settings.value.seo.defaultTitle) },
+      { property: 'og:description', content: String(seo.ogDescription ?? seo.description ?? settings.value.seo.defaultDescription) },
+      { property: 'og:image', content: String(seo.ogImage ?? settings.value.seo.defaultOgImage ?? '') },
+      { name: 'robots', content: String(seo.robots ?? settings.value.seo.robots) },
+    ].filter((item) => item && item.content),
+  }
 })
 </script>
 

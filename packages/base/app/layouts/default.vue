@@ -4,8 +4,6 @@ const { locale, setLocale} = useI18n()
 const layoutOverrides = useLayoutOverrides()
 const route = useRoute()
 
-onMounted(() => refreshSettings())
-
 const direction = computed(() => (locale.value === 'fa' || locale.value === 'ar') ? "rtl": 'ltr')
 
 /*watch(

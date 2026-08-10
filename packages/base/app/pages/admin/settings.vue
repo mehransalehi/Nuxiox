@@ -24,7 +24,8 @@ const localeOptions = computed(() =>
 const { data, pending, error, refresh } = await useFetch<SiteSettings>('/api/settings', {
   query: computed(() => ({ locale: editingLocale.value })),
   default: () => structuredClone(defaultSettings),
-  watch: false,
+  watch: [editingLocale],
+  immediate: true,
 })
 
 const form = reactive<SiteSettings>(structuredClone(defaultSettings))
@@ -52,10 +53,9 @@ watch(
   { immediate: true }
 )
 
-// Switching locale re-fetches the data for that locale
+// Switching locale is handled by the watcher on editingLocale via useFetch
 const switchLocale = async (locale: string) => {
   editingLocale.value = locale
-  await refresh()
 }
 
 const updateNavbarMenu = (menu: typeof form.navbar.menus) => {
