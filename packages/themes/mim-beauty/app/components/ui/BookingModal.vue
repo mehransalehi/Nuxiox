@@ -34,7 +34,7 @@ function handleClose() {
       @click.self="handleClose"
     >
       <div class="bg-white rounded-2xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative border border-stone-200">
-        <button
+        <button data-i18n="bookingModal.close"
           @click="handleClose"
           class="absolute top-5 left-5 text-stone-400 hover:text-stone-700 transition-colors"
           :aria-label="$t('bookingModal.close')"
@@ -43,13 +43,13 @@ function handleClose() {
         </button>
 
         <div class="text-right mb-6">
-          <h3 class="text-xl font-bold text-[#222222]">{{ $t('bookingModal.title') }}</h3>
-          <p class="text-xs text-stone-500 font-normal mt-1">{{ $t('bookingModal.subtitle') }}</p>
+          <h3 data-i18n="bookingModal.title" class="text-xl font-bold text-[#222222]">{{ $t('bookingModal.title') }}</h3>
+          <p data-i18n="bookingModal.subtitle" class="text-xs text-stone-500 font-normal mt-1">{{ $t('bookingModal.subtitle') }}</p>
         </div>
 
         <form v-if="!isSuccess" @submit="handleSubmit" class="space-y-4 text-right font-medium">
           <div>
-            <label class="block text-xs font-semibold text-stone-700 mb-1">{{ $t('bookingModal.nameLabel') }}</label>
+            <label data-i18n="bookingModal.nameLabel" class="block text-xs font-semibold text-stone-700 mb-1">{{ $t('bookingModal.nameLabel') }}</label>
             <input
               v-model="formData.fullName"
               type="text"
@@ -60,7 +60,7 @@ function handleClose() {
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-stone-700 mb-1">{{ $t('bookingModal.phoneLabel') }}</label>
+            <label data-i18n="bookingModal.phoneLabel" class="block text-xs font-semibold text-stone-700 mb-1">{{ $t('bookingModal.phoneLabel') }}</label>
             <input
               v-model="formData.phone"
               type="tel"
@@ -72,19 +72,19 @@ function handleClose() {
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-stone-700 mb-1">{{ $t('bookingModal.serviceLabel') }}</label>
+            <label data-i18n="bookingModal.serviceLabel" class="block text-xs font-semibold text-stone-700 mb-1">{{ $t('bookingModal.serviceLabel') }}</label>
             <select
               v-model="formData.service"
               class="w-full px-4 py-2.5 rounded-lg bg-stone-50 border border-stone-200 focus:outline-none focus:border-[#C5A059] text-xs text-[#222222] transition-colors"
             >
-              <option value="opt1">{{ $t('bookingModal.opt1') }}</option>
-              <option value="opt2">{{ $t('bookingModal.opt2') }}</option>
-              <option value="opt3">{{ $t('bookingModal.opt3') }}</option>
-              <option value="opt4">{{ $t('bookingModal.opt4') }}</option>
+              <option data-i18n="bookingModal.opt1" value="opt1">{{ $t('bookingModal.opt1') }}</option>
+              <option data-i18n="bookingModal.opt2" value="opt2">{{ $t('bookingModal.opt2') }}</option>
+              <option data-i18n="bookingModal.opt3" value="opt3">{{ $t('bookingModal.opt3') }}</option>
+              <option data-i18n="bookingModal.opt4" value="opt4">{{ $t('bookingModal.opt4') }}</option>
             </select>
           </div>
 
-          <button type="submit" class="w-full py-3 btn-gold-dark rounded-lg font-bold text-xs transition-all mt-2 shadow-sm">
+          <button data-i18n="bookingModal.submit" type="submit" class="w-full py-3 btn-gold-dark rounded-lg font-bold text-xs transition-all mt-2 shadow-sm">
             {{ $t('bookingModal.submit') }}
           </button>
         </form>
@@ -93,9 +93,9 @@ function handleClose() {
           <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl mx-auto mb-1 border border-emerald-200">
             <i class="fa-solid fa-check"></i>
           </div>
-          <h4 class="text-lg font-bold text-[#222222]">{{ $t('bookingModal.successTitle') }}</h4>
-          <p class="text-xs text-stone-500 font-normal leading-relaxed">{{ $t('bookingModal.successMessage') }}</p>
-          <button @click="handleClose" class="btn-gold-dark px-6 py-2 text-xs font-bold mt-3 rounded-lg">
+          <h4 data-i18n="bookingModal.successTitle" class="text-lg font-bold text-[#222222]">{{ $t('bookingModal.successTitle') }}</h4>
+          <p data-i18n="bookingModal.successMessage" class="text-xs text-stone-500 font-normal leading-relaxed">{{ $t('bookingModal.successMessage') }}</p>
+          <button data-i18n="bookingModal.close" @click="handleClose" class="btn-gold-dark px-6 py-2 text-xs font-bold mt-3 rounded-lg">
             {{ $t('bookingModal.close') }}
           </button>
         </div>

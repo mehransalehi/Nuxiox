@@ -37,9 +37,9 @@ async function handleSubmit(e: Event) {
         <!-- Contact Info -->
         <div class="lg:col-span-5 space-y-8 ltr:text-left rtl:text-right reveal active">
           <div>
-            <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block mb-2">{{ $t('contact.eyebrow') }}</span>
-            <h2 class="text-3xl sm:text-4xl font-extrabold text-[#222222]">{{ $t('contact.title') }}</h2>
-            <p class="text-[#666666] text-sm font-normal mt-3 leading-relaxed">
+            <span data-i18n="contact.eyebrow" class="font-serif italic text-2xl text-[#C5A059] tracking-widest block mb-2">{{ $t('contact.eyebrow') }}</span>
+            <h2 data-i18n="contact.title" class="text-3xl sm:text-4xl font-extrabold text-[#222222]">{{ $t('contact.title') }}</h2>
+            <p data-i18n="contact.subtitle" class="text-[#666666] text-sm font-normal mt-3 leading-relaxed">
               {{ $t('contact.subtitle') }}
             </p>
           </div>
@@ -50,8 +50,8 @@ async function handleSubmit(e: Event) {
                 <i class="fa-solid fa-location-dot"></i>
               </div>
               <div>
-                <h4 class="font-bold text-[#222222]">{{ $t('contact.addressTitle') }}</h4>
-                <p class="text-stone-500 mt-1">{{ $t('contact.addressDetail') }}</p>
+                <h4 data-i18n="contact.addressTitle" class="font-bold text-[#222222]">{{ $t('contact.addressTitle') }}</h4>
+                <p data-i18n="contact.addressDetail" class="text-stone-500 mt-1">{{ $t('contact.addressDetail') }}</p>
               </div>
             </div>
 
@@ -60,8 +60,8 @@ async function handleSubmit(e: Event) {
                 <i class="fa-solid fa-phone"></i>
               </div>
               <div>
-                <h4 class="font-bold text-[#222222]">{{ $t('contact.phoneTitle') }}</h4>
-                <p class="text-stone-500 mt-1" dir="ltr">{{ $t('contact.phoneNumber') }}</p>
+                <h4 data-i18n="contact.phoneTitle" class="font-bold text-[#222222]">{{ $t('contact.phoneTitle') }}</h4>
+                <p data-i18n="contact.phoneNumber" class="text-stone-500 mt-1" dir="ltr">{{ $t('contact.phoneNumber') }}</p>
               </div>
             </div>
           </div>
@@ -70,11 +70,11 @@ async function handleSubmit(e: Event) {
         <!-- Contact Form -->
         <div class="lg:col-span-7 reveal active delay-200">
           <div class="card-light-journal p-8 rounded-2xl space-y-6">
-            <h3 class="text-xl font-bold text-[#222222]">{{ $t('contact.formTitle') }}</h3>
+            <h3 data-i18n="contact.formTitle" class="text-xl font-bold text-[#222222]">{{ $t('contact.formTitle') }}</h3>
             <form @submit="handleSubmit" class="space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs text-stone-600 mb-1">{{ $t('contact.fullName') }}</label>
+                  <label data-i18n="contact.fullName" class="block text-xs text-stone-600 mb-1">{{ $t('contact.fullName') }}</label>
                   <input
                     v-model="formData.fullName"
                     type="text"
@@ -84,7 +84,7 @@ async function handleSubmit(e: Event) {
                   />
                 </div>
                 <div>
-                  <label class="block text-xs text-stone-600 mb-1">{{ $t('contact.phoneLabel') }}</label>
+                  <label data-i18n="contact.phoneLabel" class="block text-xs text-stone-600 mb-1">{{ $t('contact.phoneLabel') }}</label>
                   <input
                     v-model="formData.phone"
                     type="tel"
@@ -96,8 +96,8 @@ async function handleSubmit(e: Event) {
                 </div>
               </div>
               <div>
-                <label class="block text-xs text-stone-600 mb-1">{{ $t('contact.messageLabel') }}</label>
-                <textarea
+                <label data-i18n="contact.messageLabel" class="block text-xs text-stone-600 mb-1">{{ $t('contact.messageLabel') }}</label>
+                <textarea data-i18n="contact.messagePlaceholder"
                   v-model="formData.message"
                   rows="4"
                   required
@@ -105,7 +105,7 @@ async function handleSubmit(e: Event) {
                   class="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-xs text-[#222222] focus:outline-none focus:border-[#C5A059] transition-colors"
                 ></textarea>
               </div>
-              <button type="submit" class="btn-gold-dark px-8 py-3 rounded-lg text-xs font-semibold w-full sm:w-auto">
+              <button data-i18n="contact.submitBtn" type="submit" class="btn-gold-dark px-8 py-3 rounded-lg text-xs font-semibold w-full sm:w-auto">
                 {{ $t('contact.submitBtn') }}
               </button>
             </form>

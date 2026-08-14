@@ -22,6 +22,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { injectDataI18n } from './inject-i18n.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')
@@ -160,6 +161,7 @@ useHead(() => ({
 
 <template>
   <div class="min-h-screen flex flex-col">
+    <AdminToolbar />
     <Navbar
       v-if="!layoutOverrides.hideNavbar"
       :menus="settings?.navbar?.menus"
@@ -601,10 +603,10 @@ ${C.bold}Example:${C.reset}
       'ltr:ml-$1 rtl:mr-$1'
     )
     // Fix margin-right → ltr:mr-* rtl:ml-*
-        content = content.replace(
-          /(?<![-\\w])mr-(\\d+(?:\\.\\d+)?(?:\\/\\d+)?(?![-\\w]))/g,
-          'ltr:mr-$1 rtl:ml-$1'
-        )
+    content = content.replace(
+      /(?<![-\w])mr-(\d+(?:\.\d+)?(?:\/\d+)?(?![-\w]))/g,
+      'ltr:mr-$1 rtl:ml-$1'
+    )
 
         // 7. Inject localeHref helper into Navbar/Footer for locale-aware menu links
             if ((file === 'Navbar.vue' || file === 'Footer.vue') && !content.includes('localeHref')) {
@@ -627,8 +629,9 @@ ${C.bold}Example:${C.reset}
           }
           return localePath(href)
         }
-                content = content.slice(0, scriptEnd) + helper + content.slice(scriptEnd)
-                ok(`  Added localeHref helper to ${file} for locale-aware menu links`)
+        `
+        content = content.slice(0, scriptEnd) + helper + content.slice(scriptEnd)
+        ok(`  Added localeHref helper to ${file} for locale-aware menu links`)
               }
             }
 
@@ -642,6 +645,34 @@ ${C.bold}Example:${C.reset}
                 }
               )
               ok(`  Added transition-opacity to video elements in ${file}`)
+            }
+
+            // 9. Auto-add data-i18n attributes to elements using $t('key')
+            content = injectDataI18n(content)
+
+            // 10. Auto-add data-nuxiox-img attributes to <img> tags
+            // Uses the alt text or filename as a key hint
+            if (content.includes('<img')) {
+              content = content.replace(
+                /<img(\s[^>]*?)\s*\/?>/g,
+                (match, attrs) => {
+                  // Skip if already has data-nuxiox-img
+                  if (attrs.includes('data-nuxiox-img=')) return match
+                  // Skip if it's a dynamic src (v-bind or :)
+                  if (attrs.includes(':src') || attrs.includes('v-bind:src')) return match
+                  // Extract a key from alt text, or generate from filename
+                  const altMatch = attrs.match(/alt=["']([^"']+)["']/)
+                  const srcMatch = attrs.match(/src=["']([^"']+)["']/)
+                  let key = 'image'
+                  if (altMatch) {
+                    key = altMatch[1].toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'image'
+                  } else if (srcMatch) {
+                    const filename = srcMatch[1].split('/').pop()?.split('.')[0] || 'image'
+                    key = filename.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'image'
+                  }
+                  return '<img' + attrs.replace('/>', '>').replace(' />', '>') + ' data-nuxiox-img="' + key + '">'
+                }
+              )
             }
 
             ensureDir(path.dirname(destPath))
@@ -783,25 +814,25 @@ ${C.bold}Example:${C.reset}
   // pages/index.vue
   writeFile(
     path.resolve(themeAppDir, 'pages/index.vue'),
-    pageIndexTemplate(),
+    injectDataI18n(pageIndexTemplate()),
   )
 
   // pages/[slug].vue
   writeFile(
     path.resolve(themeAppDir, 'pages/[slug].vue'),
-    pageSlugTemplate(),
+    injectDataI18n(pageSlugTemplate()),
   )
 
   // pages/blog/index.vue
   writeFile(
     path.resolve(themeAppDir, 'pages/blog/index.vue'),
-    blogIndexTemplate(),
+    injectDataI18n(blogIndexTemplate()),
   )
 
   // pages/blog/[slug].vue
   writeFile(
     path.resolve(themeAppDir, 'pages/blog/[slug].vue'),
-    blogShowTemplate(),
+    injectDataI18n(blogShowTemplate()),
   )
 
   // ── Write root nuxt.config.ts to point to the new theme ────────────

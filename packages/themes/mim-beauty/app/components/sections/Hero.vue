@@ -63,13 +63,13 @@ onMounted(() => {
         
         <!-- Social Icons Right -->
         <div class="w-full md:w-auto flex md:flex-col items-center md:justify-center rtl:justify-end flex-row gap-6 order-2 md:order-1">
-          <a href="https://instagram.com" target="_blank" :title="$t('hero.instagram')" class="social-icon text-2xl p-1" :aria-label="$t('hero.instagram')">
+          <a data-i18n="hero.instagram" href="https://instagram.com" target="_blank" :title="$t('hero.instagram')" class="social-icon text-2xl p-1" :aria-label="$t('hero.instagram')">
             <i class="fa-brands fa-instagram"></i>
           </a>
-          <a href="https://vk.com" target="_blank" :title="$t('hero.vk')" class="social-icon text-xl p-1" :aria-label="$t('hero.vk')">
+          <a data-i18n="hero.vk" href="https://vk.com" target="_blank" :title="$t('hero.vk')" class="social-icon text-xl p-1" :aria-label="$t('hero.vk')">
             <i class="fa-brands fa-vk"></i>
           </a>
-          <a href="https://facebook.com" target="_blank" :title="$t('hero.facebook')" class="social-icon text-xl p-1" :aria-label="$t('hero.facebook')">
+          <a data-i18n="hero.facebook" href="https://facebook.com" target="_blank" :title="$t('hero.facebook')" class="social-icon text-xl p-1" :aria-label="$t('hero.facebook')">
             <i class="fa-brands fa-facebook-f"></i>
           </a>
         </div>
@@ -77,21 +77,21 @@ onMounted(() => {
         <!-- Main Heading & Content -->
         <div class="m-0! xl:me-24! md:me-6! space-y-6 fade-in ltr:text-left text-left md:rtl:text-right order-1 md:order-2 ltr:ltr:ml-4 rtl:ltr:mr-4 ltr:sm:ltr:ml-8 rtl:sm:ltr:mr-8 ltr:lg:ltr:ml-16 rtl:lg:ltr:mr-16 ltr:xl:ltr:ml-24 rtl:xl:ltr:mr-24 rtl:ml-24">
           <div class="space-y-1">
-            <h1 class="text-6xl sm:text-7xl lg:text-7xl xl:text-8xl font-extrabold text-[#3A2016] tracking-tight leading-[1.1] text-shadow-lg text-shadow-[#B68E56] md:text-shadow-transparent">
+            <h1 data-i18n="hero.title1" class="text-6xl sm:text-7xl lg:text-7xl xl:text-8xl font-extrabold text-[#3A2016] tracking-tight leading-[1.1] text-shadow-lg text-shadow-[#B68E56] md:text-shadow-transparent">
               {{ $t('hero.title1') }}
             </h1>
-            <h2 class="text-6xl sm:text-7xl lg:text-7xl xl:text-8xl font-extrabold text-[#B68E56] tracking-tight leading-[1.1] text-shadow-lg text-shadow-black md:text-shadow-transparent">
+            <h2 data-i18n="hero.title2" class="text-6xl sm:text-7xl lg:text-7xl xl:text-8xl font-extrabold text-[#B68E56] tracking-tight leading-[1.1] text-shadow-lg text-shadow-black md:text-shadow-transparent">
               {{ $t('hero.title2') }}
             </h2>
           </div>
 
           <div class="space-y-1 text-[#3A2016] text-base sm:text-lg font-medium leading-relaxed pt-2 text-shadow-md text-shadow-[#B68E56] md:text-shadow-transparent">
-            <p>{{ $t('hero.line1') }}</p>
-            <p>{{ $t('hero.line2') }}</p>
+            <p data-i18n="hero.line1">{{ $t('hero.line1') }}</p>
+            <p data-i18n="hero.line2">{{ $t('hero.line2') }}</p>
           </div>
 
           <div class="pt-4 flex rtl:justify-end md:rtl:justify-start">
-            <button @click="modalStore.openBooking()" class="btn-outline-hero px-10 py-3 text-base font-semibold text-shadow-md text-shadow-[#B68E56] md:text-shadow-transparent">
+            <button data-i18n="hero.bookBtn" @click="modalStore.openBooking()" class="btn-outline-hero px-10 py-3 text-base font-semibold text-shadow-md text-shadow-[#B68E56] md:text-shadow-transparent">
               {{ $t('hero.bookBtn') }}
             </button>
           </div>

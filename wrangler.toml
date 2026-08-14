@@ -3,6 +3,14 @@ name = "nuxiox"
 main = "./.output/server/index.mjs"
 compatibility_date = "2024-11-01"
 
+# ── Image optimization ─────────────────────────────────────────────────
+# Cloudflare Polish (automatic WebP/AVIF conversion at the edge, zero
+# Workers CPU time) is a ZONE-level setting — it CANNOT be configured here.
+# Enable it via:
+#   • Dashboard:  Speed → Optimization → Polish → Lossy
+#   • Setup CLI:  pnpm run setup → Cloudflare Deployment → enable Polish
+#   • API:        PATCH /zones/{zone_id}/settings/polish {"value":"lossy"}
+
 # This defines where your static assets (images, JS, CSS) live after building
 assets = { directory = "./.output/public/", binding = "ASSETS" }
 

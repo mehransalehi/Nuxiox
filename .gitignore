@@ -29,3 +29,9 @@ public/libs
 
 # System artifacts
 tailscale-state
+
+# Hermes agent session data (not project-related)
+.hermes/
+
+# Temp test scripts from development
+scripts/tmp-*

@@ -71,8 +71,8 @@ onMounted(() => {
       <!-- Page Header -->
       <div class="text-center max-w-3xl mx-auto space-y-3">
         <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">BLOG & ARTICLES</span>
-        <h1 class="text-4xl sm:text-6xl font-extrabold text-[#222222] font-sans">{{ $t('blog.title') }}</h1>
-        <p class="text-[#666666] text-sm sm:text-base font-normal">
+        <h1 data-i18n="blog.title" class="text-4xl sm:text-6xl font-extrabold text-[#222222] font-sans">{{ $t('blog.title') }}</h1>
+        <p data-i18n="blog.subtitle" class="text-[#666666] text-sm sm:text-base font-normal">
           {{ $t('blog.subtitle') }}
         </p>
       </div>
@@ -93,7 +93,7 @@ onMounted(() => {
           v-model="selectedCategory"
           class="w-full sm:w-auto bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-xs text-[#222222] focus:outline-none focus:border-[#C5A059] transition-colors"
         >
-          <option value="ALL">{{ $t('blog.allCategories') }}</option>
+          <option data-i18n="blog.allCategories" value="ALL">{{ $t('blog.allCategories') }}</option>
           <option v-for="cat in categoryOptions" :key="cat.value" :value="cat.value">{{ cat.label }}</option>
         </select>
       </div>
@@ -135,14 +135,14 @@ onMounted(() => {
               :to="$localePath(`/blog/${post.slug}`)"
               class="inline-flex items-center gap-2 text-xs font-bold text-[#222222] hover:text-[#C5A059] transition-colors"
             >
-              <span>{{ $t('blog.readMore') }}</span>
+              <span data-i18n="blog.readMore">{{ $t('blog.readMore') }}</span>
               <i class="fa-solid fa-arrow-left text-xs"></i>
             </NuxtLink>
           </div>
         </article>
       </div>
 
-      <div v-else class="text-center py-16 text-stone-500">
+      <div data-i18n="blog.notFound" v-else class="text-center py-16 text-stone-500">
         {{ $t('blog.notFound') }}
       </div>
 

@@ -22,6 +22,10 @@ export async function processImage(file: File) {
     const dims = getGIFDimensions(uint8Array)
     width = dims.width
     height = dims.height
+  } else if (file.type === 'image/x-icon' || file.type === 'image/vnd.microsoft.icon') {
+    const dims = getICODimensions(uint8Array)
+    width = dims.width
+    height = dims.height
   }
 
   return { buffer: uint8Array, width, height }
@@ -96,6 +100,20 @@ function getGIFDimensions(data: Uint8Array) {
     const width = (data[7] << 8) | data[6]
     const height = (data[9] << 8) | data[8]
     return { width, height }
+  }
+  return { width: undefined, height: undefined }
+}
+
+function getICODimensions(data: Uint8Array) {
+  // ICO: reserved(2) + type(2) + count(2), then 16-byte directory entries.
+  // First entry: byte 0 = width (0 means 256), byte 1 = height (0 means 256).
+  if (data.length >= 22 && data[0] === 0 && data[1] === 0 && data[2] === 1 && data[3] === 0) {
+    const rawW = data[6]
+    const rawH = data[7]
+    return {
+      width: rawW === 0 ? 256 : rawW,
+      height: rawH === 0 ? 256 : rawH,
+    }
   }
   return { width: undefined, height: undefined }
 }

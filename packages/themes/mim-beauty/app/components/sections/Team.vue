@@ -55,9 +55,9 @@ onMounted(() => {
   <section id="team" class="w-full bg-[#FAF8F5] py-20 border-b border-[#E6DFC9] relative">
     <div class="max-w-7xl mx-auto px-6 sm:px-12 md:px-16">
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-16 reveal active">
-        <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('hours.teamTag') }}</span>
-        <h2 class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">{{ $t('hours.teamTag') }}</h2>
-        <p class="text-stone-600 text-sm sm:text-base font-normal">
+        <span data-i18n="hours.teamTag" class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('hours.teamTag') }}</span>
+        <h2 data-i18n="hours.teamTag" class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">{{ $t('hours.teamTag') }}</h2>
+        <p data-i18n="hours.teamDesc" class="text-stone-600 text-sm sm:text-base font-normal">
           {{ $t('hours.teamDesc') }}
         </p>
       </div>

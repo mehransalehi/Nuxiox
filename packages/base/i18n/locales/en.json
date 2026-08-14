@@ -93,7 +93,18 @@
       "colleagues": "Colleagues",
       "testimonials": "Testimonials",
       "contactMessages": "Contact Messages",
+      "i18n": "Translations",
+      "customImages": "Custom Images",
       "logout": "Logout"
+    },
+    "customImages": {
+      "title": "Custom Images",
+      "subtitle": "Images you replaced via inline edit mode across the site",
+      "save": "Save Changes",
+      "discard": "Discard",
+      "change": "Change",
+      "reset": "Reset",
+      "empty": "No custom images yet. Replace an image on the site in edit mode and it will appear here."
     },
     "topbar": {
       "title": "Dashboard",
@@ -141,6 +152,7 @@
       "language": "Website language",
       "directionLtr": "Left to right (LTR)",
       "directionRtl": "Right to left (RTL)",
+      "favicon": "Favicon (site icon)",
       "navbarTitle": "Navbar Settings",
       "navbarDescription": "Manage menu items, logos, and info links.",
       "footerTitle": "Footer Settings",

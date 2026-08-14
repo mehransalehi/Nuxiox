@@ -37,6 +37,7 @@ useHead(() => ({
 
 <template>
   <UiToastStack />
+  <AdminToolbar />
 
   <div v-if="settings.general.showSidebar" class="drawer lg:drawer-open rtl:drawer-end">
     <input id="main-drawer" type="checkbox" class="drawer-toggle" />

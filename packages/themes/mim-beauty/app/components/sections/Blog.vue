@@ -35,11 +35,11 @@ onMounted(() => {
       
       <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-16 reveal active">
         <div class="ltr:text-left rtl:text-right space-y-2">
-          <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('nav.blog') }}</span>
-          <h2 class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">{{ $t('blog.title') }}</h2>
+          <span data-i18n="nav.blog" class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('nav.blog') }}</span>
+          <h2 data-i18n="blog.title" class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">{{ $t('blog.title') }}</h2>
         </div>
 
-        <NuxtLink
+        <NuxtLink data-i18n="blog.readMore"
           :to="$localePath('/blog')"
           class="btn-gold-outline px-6 py-2.5 rounded-xl text-xs font-bold transition-all hover:-translate-y-0.5"
         >
@@ -78,7 +78,7 @@ onMounted(() => {
               :to="$localePath(`/blog/${post.slug}`)"
               class="inline-flex items-center gap-2 text-xs font-bold text-[#222222] hover:text-[#C5A059] transition-colors"
             >
-              <span>{{ $t('blog.readMore') }}</span>
+              <span data-i18n="blog.readMore">{{ $t('blog.readMore') }}</span>
               <i class="fa-solid fa-arrow-left text-xs"></i>
             </NuxtLink>
           </div>

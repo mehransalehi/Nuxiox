@@ -123,7 +123,7 @@ defineExpose({ open })
       <div v-if="activeTab === 'upload'" class="space-y-4">
         <div>
           <label class="label"><span class="label-text">File (image, max 2MB)</span></label>
-          <input type="file" accept="image/*" class="file-input file-input-bordered w-full" @change="handleFileSelect" />
+          <input type="file" accept="image/*,.ico" class="file-input file-input-bordered w-full" @change="handleFileSelect" />
         </div>
         <div class="grid gap-4 md:grid-cols-2">
           <AdminUiText label="Alt Text (SEO)" v-model="uploadForm.alt" />

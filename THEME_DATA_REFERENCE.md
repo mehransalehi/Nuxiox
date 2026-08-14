@@ -892,7 +892,7 @@ authorEmail: emailField.value || undefined
 
 ## 10. i18n — Internationalization — REQUIRED
 
-**The system supports three locales: `en`, `fa`, `ar`.**
+Every theme MUST provide translation files for all three locales under `app/i18n/locales/` (or `i18n/locales/` at the theme root).
 
 ### What you MUST do:
 
@@ -993,6 +993,42 @@ const pageTitle = computed(() => t('blog.pageTitle'))
 **⚠️ CRITICAL: Do NOT hardcode any user-facing string in English.** Every visible text
 must go through `$t()` or `t()`. The only exceptions are pure data values from the API
 (e.g. service titles from the database are already localized).
+
+### data-i18n Attribute — REQUIRED for every `$t()` call
+
+**Every element that uses `$t('key.path')` in its template MUST have a `data-i18n="key.path"` attribute.**
+
+This enables the admin inline edit mode (see §15):
+
+```vue
+<!-- CORRECT: -->
+<h2 data-i18n="sections.services.title" class="text-3xl font-bold">
+  {{ $t('sections.services.title') }}
+</h2>
+
+<!-- WRONG — missing data-i18n: -->
+<h2 class="text-3xl font-bold">
+  {{ $t('sections.services.title') }}
+</h2>
+```
+
+The `data-i18n` value MUST match the exact key passed to `$t()`.
+
+### Dynamic i18n Override System
+
+The CMS supports **runtime translation overrides** stored in the database. This allows admins to edit any translation from the admin panel without rebuilding the site.
+
+**How it works:**
+1. Default translations are bundled in the JSON files (unchanged)
+2. Overrides are stored in the `settings` table (key: `i18n_overrides`)
+3. A Nuxt plugin (`i18n-overrides`) fetches overrides and merges them via `nuxt.$i18n.mergeLocaleMessage()`
+4. The merge happens on both SSR and client — so SSR HTML includes overrides
+
+**Admin features:**
+- **Bulk editor** at `/admin/i18n` — shows all keys per locale, allows editing
+- **Inline edit mode** on public pages — click the admin toolbar's "Edit" button, then click any text with `data-i18n` to edit it in-place
+
+> **The `convert-theme.ts` script automatically adds `data-i18n` attributes** to every element that uses `$t('key')` in the template. You only need to ensure your component uses `$t()` for user-facing text.
 
 ---
 

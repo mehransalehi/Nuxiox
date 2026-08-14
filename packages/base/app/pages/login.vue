@@ -61,16 +61,16 @@ const login = async () => {
 <template>
   <div class="min-h-screen flex items-center justify-center px-4">
     <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-      <h1 class="text-2xl font-bold text-gray-900 mb-2 text-center">
+      <h1 data-i18n="auth.signIn" class="text-2xl font-bold text-gray-900 mb-2 text-center">
         {{ $t('auth.signIn') }}
       </h1>
-      <p class="text-sm text-gray-500 mb-6 text-center">
+      <p data-i18n="auth.loginToPanel" class="text-sm text-gray-500 mb-6 text-center">
         {{ $t('auth.loginToPanel') }}
       </p>
 
       <form class="space-y-4" @submit.prevent="login">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label data-i18n="auth.email" class="block text-sm font-medium text-gray-700 mb-1">
             {{ $t('auth.email') }}
           </label>
           <input
@@ -83,7 +83,7 @@ const login = async () => {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label data-i18n="auth.password" class="block text-sm font-medium text-gray-700 mb-1">
             {{ $t('auth.password') }}
           </label>
           <input
@@ -104,8 +104,8 @@ const login = async () => {
           :disabled="loading"
           class="w-full flex justify-center items-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span v-if="!loading">{{ $t('auth.login') }}</span>
-          <span v-else class="animate-pulse">{{ $t('auth.signingIn') }}</span>
+          <span data-i18n="auth.login" v-if="!loading">{{ $t('auth.login') }}</span>
+          <span data-i18n="auth.signingIn" v-else class="animate-pulse">{{ $t('auth.signingIn') }}</span>
         </button>
       </form>
     </div>

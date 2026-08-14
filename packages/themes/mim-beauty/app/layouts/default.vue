@@ -23,6 +23,7 @@ useHead(() => ({
 
 <template>
   <div class="min-h-screen flex flex-col bg-white selection:bg-[#B68E56] selection:text-white">
+    <AdminToolbar />
     <Navbar
       v-if="!layoutOverrides.hideNavbar"
       :menus="settings?.navbar?.menus"

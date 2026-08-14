@@ -48,6 +48,20 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  // Override general payload: locale fields under [locale], favicon under globals (site-wide)
+  if (body.general) {
+    payload.general = {
+      [locale]: {
+        showSidebar: body.general.showSidebar,
+        direction: body.general.direction,
+        language: body.general.language,
+      },
+      globals: {
+        favicon: body.general.favicon,
+      },
+    }
+  }
+
 
   // Helper to upsert + merge existing locales
   const upsertSetting = async <K extends keyof SiteSettingsLocale>(

@@ -117,8 +117,8 @@ useHead(() => {
       </template>
 
       <div v-else class="max-w-3xl mx-auto px-6 py-24 text-center space-y-4">
-        <h1 class="text-3xl font-extrabold text-[#222222] font-sans">{{ $t('cms.notFound') }}</h1>
-        <NuxtLink :to="$localePath('/')" class="btn-gold-dark inline-block px-8 py-3 rounded-xl text-xs font-bold">
+        <h1 data-i18n="cms.notFound" class="text-3xl font-extrabold text-[#222222] font-sans">{{ $t('cms.notFound') }}</h1>
+        <NuxtLink data-i18n="nav.home" :to="$localePath('/')" class="btn-gold-dark inline-block px-8 py-3 rounded-xl text-xs font-bold">
           {{ $t('nav.home') }}
         </NuxtLink>
       </div>

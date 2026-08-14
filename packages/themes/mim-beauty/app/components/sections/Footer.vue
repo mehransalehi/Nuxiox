@@ -31,7 +31,7 @@ function localeHref(href: string) {
           class="h-10 w-auto brightness-0 invert"
         />
         <span v-else class="font-serif italic text-3xl font-normal text-[#D4AF37]">MB</span>
-        <span class="text-xs text-stone-400">{{ $t('site.footerSubtitle') }}</span>
+        <span data-i18n="site.footerSubtitle" class="text-xs text-stone-400">{{ $t('site.footerSubtitle') }}</span>
       </div>
 
       <!-- Footer nav links -->
@@ -46,12 +46,12 @@ function localeHref(href: string) {
 
       <!-- Social links -->
       <div class="flex items-center gap-4 text-white text-base">
-        <a href="https://instagram.com" target="_blank" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" :aria-label="$t('hero.instagram')"><i class="fa-brands fa-instagram"></i></a>
+        <a data-i18n="hero.instagram" href="https://instagram.com" target="_blank" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" :aria-label="$t('hero.instagram')"><i class="fa-brands fa-instagram"></i></a>
         <a href="https://t.me" target="_blank" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
         <a href="https://whatsapp.com" target="_blank" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
       </div>
 
-      <p class="text-xs text-stone-500">
+      <p data-i18n="site.copyright" class="text-xs text-stone-500">
         {{ $t('site.copyright') }}
       </p>
     </div>

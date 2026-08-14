@@ -37,7 +37,9 @@ const sections = computed(() => [
       { to: '/admin/colleagues', label: $t('admin.sidebar.colleagues'), icon: 'fa-solid fa-user-group' },
       { to: '/admin/testimonials', label: $t('admin.sidebar.testimonials'), icon: 'fa-solid fa-quote-left' },
       { to: '/admin/media', label: 'Media', icon: 'fa-solid fa-images' },
+      { to: '/admin/custom-images', label: $t('admin.sidebar.customImages'), icon: 'fa-solid fa-wand-magic-sparkles' },
       { to: '/admin/contact-messages', label: $t('admin.sidebar.contactMessages'), icon: 'fa-solid fa-envelope' },
+      { to: '/admin/i18n', label: $t('admin.sidebar.i18n'), icon: 'fa-solid fa-language' },
     ],
   },
 ])

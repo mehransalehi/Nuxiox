@@ -12,6 +12,7 @@ export type GeneralSettings = {
   showSidebar: boolean
   direction: 'ltr' | 'rtl'
   language: 'en' | 'fa' | 'ar'
+  favicon: string
 }
 
 export type NavbarSettings = {
@@ -120,6 +121,7 @@ export const defaultSettings: SiteSettings = {
     showSidebar: true,
     direction: 'ltr',
     language: 'en',
+    favicon: '',
   },
   navbar: {
     menus: [

@@ -22,11 +22,11 @@ const images = [
       
       <!-- Section Title -->
       <div class="text-center max-w-2xl mx-auto space-y-2 mb-14 reveal active">
-        <span class="text-xs font-semibold text-stone-500 tracking-wider uppercase block">{{ $t('portfolio.eyebrow') }}</span>
-        <h2 class="text-3xl sm:text-5xl font-extrabold text-stone-900 font-sans tracking-tight">
-          {{ $t('portfolio.titlePrefix') }}<span class="text-[#B68E56] font-serif italic">{{ $t('portfolio.titleHighlight') }}</span>
+        <span data-i18n="portfolio.eyebrow" class="text-xs font-semibold text-stone-500 tracking-wider uppercase block">{{ $t('portfolio.eyebrow') }}</span>
+        <h2 data-i18n="portfolio.titlePrefix" class="text-3xl sm:text-5xl font-extrabold text-stone-900 font-sans tracking-tight">
+          {{ $t('portfolio.titlePrefix') }}<span data-i18n="portfolio.titleHighlight" class="text-[#B68E56] font-serif italic">{{ $t('portfolio.titleHighlight') }}</span>
         </h2>
-        <p class="text-xs text-stone-500 pt-1">{{ $t('portfolio.handle') }}</p>
+        <p data-i18n="portfolio.handle" class="text-xs text-stone-500 pt-1">{{ $t('portfolio.handle') }}</p>
       </div>
 
       <!-- 5-Column Grid -->
@@ -70,7 +70,7 @@ const images = [
             <img :src="images[4]" alt="Featured Instagram Post" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-end p-6 text-white text-center">
               <i class="fa-brands fa-instagram text-3xl mb-2"></i>
-              <span class="text-xs font-bold tracking-wider">{{ $t('portfolio.viewInstagram') }}</span>
+              <span data-i18n="portfolio.viewInstagram" class="text-xs font-bold tracking-wider">{{ $t('portfolio.viewInstagram') }}</span>
             </div>
           </div>
         </div>

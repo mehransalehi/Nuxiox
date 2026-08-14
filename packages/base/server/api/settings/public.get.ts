@@ -21,10 +21,16 @@ export default defineEventHandler(async (event) => {
     const seoLocaleValues = seoFromDB[locale] ?? {}
     const seoGlobalValues = seoFromDB.globals ?? {}
 
+    // Merge general: locale fields from general[locale], global favicon from general.globals
+    const generalFromDB = values.general ?? {}
+    const generalLocaleValues = generalFromDB[locale] ?? {}
+    const generalGlobalValues = generalFromDB.globals ?? {}
+
     const response: SiteSettings = {
       general: {
         ...defaultSettings.general,
-        ...(values.general?.[locale] ?? {}),
+        ...generalGlobalValues,
+        ...generalLocaleValues,
       },
       navbar: {
         ...defaultSettings.navbar,

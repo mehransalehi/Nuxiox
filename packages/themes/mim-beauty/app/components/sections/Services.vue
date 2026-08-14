@@ -10,9 +10,9 @@ const modalStore = useModalStore()
     <!-- Section Title -->
     <div class="max-w-7xl mx-auto px-6 sm:px-12 md:px-16 relative z-10 mb-16">
       <div class="text-center max-w-2xl mx-auto space-y-3 reveal active">
-        <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('services.eyebrow') }}</span>
-        <h2 class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">{{ $t('services.title') }}</h2>
-        <p class="text-[#666666] text-sm sm:text-base font-normal">
+        <span data-i18n="services.eyebrow" class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('services.eyebrow') }}</span>
+        <h2 data-i18n="services.title" class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans">{{ $t('services.title') }}</h2>
+        <p data-i18n="services.subtitle" class="text-[#666666] text-sm sm:text-base font-normal">
           {{ $t('services.subtitle') }}
         </p>
       </div>
@@ -45,11 +45,11 @@ const modalStore = useModalStore()
                 src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=800&q=80"
                 alt="Style & Makeup"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
+               data-nuxiox-img="style_makeup">
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white text-center">
-                <span class="font-serif italic text-xs text-amber-300 tracking-widest uppercase mb-1">{{ $t('services.s1.tag') }}</span>
-                <h3 class="text-xl font-bold font-sans tracking-tight">{{ $t('services.s1.title') }}</h3>
-                <span class="text-[11px] text-stone-300 font-light mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span data-i18n="services.s1.tag" class="font-serif italic text-xs text-amber-300 tracking-widest uppercase mb-1">{{ $t('services.s1.tag') }}</span>
+                <h3 data-i18n="services.s1.title" class="text-xl font-bold font-sans tracking-tight">{{ $t('services.s1.title') }}</h3>
+                <span data-i18n="services.s1.action" class="text-[11px] text-stone-300 font-light mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {{ $t('services.s1.action') }}
                 </span>
               </div>
@@ -63,11 +63,11 @@ const modalStore = useModalStore()
                 src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80"
                 alt="Hair Drying & Balayage"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
+               data-nuxiox-img="hair_drying_balayage">
               <div class="absolute inset-0 bg-[#3A2016]/65 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-white text-center group-hover:bg-[#3A2016]/45 transition-colors duration-500">
-                <span class="font-serif italic text-xs text-amber-200 tracking-widest uppercase mb-2">{{ $t('services.s2.tag') }}</span>
-                <h3 class="text-2xl font-serif tracking-wide text-amber-100 font-normal border-b border-amber-400/30 pb-2">{{ $t('services.s2.title') }}</h3>
-                <p class="text-xs text-stone-200 mt-2 font-light">{{ $t('services.s2.sub') }}</p>
+                <span data-i18n="services.s2.tag" class="font-serif italic text-xs text-amber-200 tracking-widest uppercase mb-2">{{ $t('services.s2.tag') }}</span>
+                <h3 data-i18n="services.s2.title" class="text-2xl font-serif tracking-wide text-amber-100 font-normal border-b border-amber-400/30 pb-2">{{ $t('services.s2.title') }}</h3>
+                <p data-i18n="services.s2.sub" class="text-xs text-stone-200 mt-2 font-light">{{ $t('services.s2.sub') }}</p>
               </div>
             </div>
           </div>
@@ -79,11 +79,11 @@ const modalStore = useModalStore()
                 src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
                 alt="Keratin & Hair Spa"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
+               data-nuxiox-img="keratin_hair_spa">
               <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white text-center">
-                <span class="font-serif italic text-xs text-amber-300 tracking-widest uppercase mb-1">{{ $t('services.s3.tag') }}</span>
-                <h3 class="text-xl font-bold font-sans tracking-tight">{{ $t('services.s3.title') }}</h3>
-                <span class="text-[11px] text-stone-300 font-light mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span data-i18n="services.s3.tag" class="font-serif italic text-xs text-amber-300 tracking-widest uppercase mb-1">{{ $t('services.s3.tag') }}</span>
+                <h3 data-i18n="services.s3.title" class="text-xl font-bold font-sans tracking-tight">{{ $t('services.s3.title') }}</h3>
+                <span data-i18n="services.s3.action" class="text-[11px] text-stone-300 font-light mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {{ $t('services.s3.action') }}
                 </span>
               </div>
@@ -97,11 +97,11 @@ const modalStore = useModalStore()
                 src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80"
                 alt="Crystal Gloss & Shine"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
+               data-nuxiox-img="crystal_gloss_shine">
               <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-6 text-white text-center">
-                <span class="font-serif italic text-xs text-amber-300 tracking-widest uppercase mb-1">{{ $t('services.s4.tag') }}</span>
-                <h3 class="text-xl font-bold font-sans tracking-tight">{{ $t('services.s4.title') }}</h3>
-                <span class="text-[11px] text-stone-300 font-light mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span data-i18n="services.s4.tag" class="font-serif italic text-xs text-amber-300 tracking-widest uppercase mb-1">{{ $t('services.s4.tag') }}</span>
+                <h3 data-i18n="services.s4.title" class="text-xl font-bold font-sans tracking-tight">{{ $t('services.s4.title') }}</h3>
+                <span data-i18n="services.s4.action" class="text-[11px] text-stone-300 font-light mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {{ $t('services.s4.action') }}
                 </span>
               </div>

@@ -99,10 +99,10 @@ onMounted(() => {
       
       <!-- Section Header -->
       <div class="space-y-2 mb-10">
-        <span class="text-xs font-semibold text-stone-500 tracking-wider uppercase block">{{ $t('testimonials.eyebrow') }}</span>
-        <h2 class="text-3xl sm:text-5xl font-extrabold text-stone-900 font-sans tracking-tight">
+        <span data-i18n="testimonials.eyebrow" class="text-xs font-semibold text-stone-500 tracking-wider uppercase block">{{ $t('testimonials.eyebrow') }}</span>
+        <h2 data-i18n="testimonials.titleLine1" class="text-3xl sm:text-5xl font-extrabold text-stone-900 font-sans tracking-tight">
           {{ $t('testimonials.titleLine1') }} <br class="sm:hidden">
-          <span class="text-[#B68E56] font-serif italic">{{ $t('testimonials.titleLine2') }}</span>
+          <span data-i18n="testimonials.titleLine2" class="text-[#B68E56] font-serif italic">{{ $t('testimonials.titleLine2') }}</span>
         </h2>
       </div>
 
@@ -126,7 +126,7 @@ onMounted(() => {
       <!-- Slider Controls & Review Card -->
       <div class="relative max-w-3xl mx-auto flex items-center justify-between gap-4 sm:gap-8">
         
-        <button
+        <button data-i18n="testimonials.prev"
           @click="prevTestimonial"
           :aria-label="$t('testimonials.prev')"
           class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#C5A059] hover:bg-[#a88443] text-white flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 shrink-0 cursor-pointer"
@@ -165,7 +165,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <button
+        <button data-i18n="testimonials.next"
           @click="nextTestimonial"
           :aria-label="$t('testimonials.next')"
           class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1e3223] hover:bg-[#122016] text-white flex items-center justify-center shadow-lg transition-all duration-300 transform hover:scale-110 shrink-0 cursor-pointer"

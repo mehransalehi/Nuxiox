@@ -27,15 +27,19 @@ export default defineEventHandler(async (event) => {
     type: fileEntry.type || "application/octet-stream",
   });
 
-  // Validate file type — images only
+  // Validate file type — images only (+ .ico for favicons)
   const allowedTypes = [
     "image/jpeg",
     "image/jpg",
     "image/png",
     "image/webp",
     "image/gif",
+    "image/x-icon",
+    "image/vnd.microsoft.icon",
   ];
-  if (!allowedTypes.includes(file.type)) {
+  const ext = (file.name.split(".").pop() || "").toLowerCase();
+  const allowedExts = ["jpg", "jpeg", "png", "webp", "gif", "ico"];
+  if (!allowedTypes.includes(file.type) && !allowedExts.includes(ext)) {
     throw createError({ statusCode: 400, message: "Invalid file type — only images allowed" });
   }
 
@@ -48,7 +52,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const timestamp = Date.now();
-  const ext = file.name.split(".").pop();
   const filename = `${timestamp}-${Math.random().toString(36).substring(7)}.${ext}`;
   const filePath = `uploads/${new Date().getFullYear()}/${new Date().getMonth() + 1}/${filename}`;
 

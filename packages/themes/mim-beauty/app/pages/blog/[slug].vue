@@ -135,16 +135,16 @@ onMounted(() => {
 
       <!-- Comments Section -->
       <div class="space-y-8 pt-8 border-t border-stone-200">
-        <h2 class="text-2xl font-bold text-[#222222] text-right">
+        <h2 data-i18n="blog.comments" class="text-2xl font-bold text-[#222222] text-right">
           {{ $t('blog.comments') }} ({{ comments.length }})
         </h2>
 
         <!-- Leave Comment Form -->
         <div class="card-light-journal p-8 rounded-2xl space-y-4">
-          <h3 class="text-base font-bold text-[#222222] text-right">{{ $t('blog.leaveComment') }}</h3>
+          <h3 data-i18n="blog.leaveComment" class="text-base font-bold text-[#222222] text-right">{{ $t('blog.leaveComment') }}</h3>
           <form @submit="handleCommentSubmit" class="space-y-4 text-right">
             <div>
-              <label class="block text-xs text-stone-600 mb-1">{{ $t('blog.yourName') }}</label>
+              <label data-i18n="blog.yourName" class="block text-xs text-stone-600 mb-1">{{ $t('blog.yourName') }}</label>
               <input
                 v-model="commentAuthor"
                 type="text"
@@ -153,8 +153,8 @@ onMounted(() => {
               />
             </div>
             <div>
-              <label class="block text-xs text-stone-600 mb-1">{{ $t('blog.yourComment') }}</label>
-              <textarea
+              <label data-i18n="blog.yourComment" class="block text-xs text-stone-600 mb-1">{{ $t('blog.yourComment') }}</label>
+              <textarea data-i18n="blog.yourComment"
                 v-model="commentText"
                 rows="4"
                 required
@@ -162,7 +162,7 @@ onMounted(() => {
                 class="w-full bg-stone-50 border border-stone-200 rounded-lg px-4 py-3 text-xs text-[#222222] focus:outline-none focus:border-[#C5A059] transition-colors"
               ></textarea>
             </div>
-            <button type="submit" class="btn-gold-dark px-8 py-3 rounded-lg text-xs font-semibold">
+            <button data-i18n="blog.postComment" type="submit" class="btn-gold-dark px-8 py-3 rounded-lg text-xs font-semibold">
               {{ $t('blog.postComment') }}
             </button>
           </form>

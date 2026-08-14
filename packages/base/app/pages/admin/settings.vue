@@ -184,6 +184,11 @@ const saveSettings = async () => {
             v-model="form.general.language"
           />
         </div>
+        <AdminUiUrl
+          :label="$t('admin.settings.favicon')"
+          v-model="form.general.favicon"
+          mediaPicker
+        />
       </div>
     </AdminCard>
 

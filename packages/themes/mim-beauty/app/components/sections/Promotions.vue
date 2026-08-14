@@ -14,9 +14,9 @@ const modalStore = useModalStore()
       
       <!-- Section Title -->
       <div class="text-center max-w-2xl mx-auto space-y-3 mb-16 reveal active">
-        <span class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('promotions.specialOffer') }}</span>
-        <h2 class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans leading-tight">{{ $t('promotions.title') }}</h2>
-        <p class="text-[#666666] text-sm sm:text-base font-normal">
+        <span data-i18n="promotions.specialOffer" class="font-serif italic text-2xl text-[#C5A059] tracking-widest block">{{ $t('promotions.specialOffer') }}</span>
+        <h2 data-i18n="promotions.title" class="text-3xl sm:text-5xl font-extrabold text-[#222222] font-sans leading-tight">{{ $t('promotions.title') }}</h2>
+        <p data-i18n="promotions.subtitle" class="text-[#666666] text-sm sm:text-base font-normal">
           {{ $t('promotions.subtitle') }}
         </p>
       </div>
@@ -26,7 +26,7 @@ const modalStore = useModalStore()
         
         <!-- Package 1: Light Journal Card -->
         <div class="card-light-journal rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden group reveal active delay-100">
-          <div class="absolute top-0 left-0 bg-stone-200/80 text-[#222222] font-serif text-xl font-extrabold px-5 py-3 rounded-br-2xl shadow-sm z-20">
+          <div data-i18n="promotions.pkg1.num" class="absolute top-0 left-0 bg-stone-200/80 text-[#222222] font-serif text-xl font-extrabold px-5 py-3 rounded-br-2xl shadow-sm z-20">
             {{ $t('promotions.pkg1.num') }}
           </div>
 
@@ -36,16 +36,16 @@ const modalStore = useModalStore()
                 src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80"
                 alt="Keratin & Recovery"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
+               data-nuxiox-img="keratin_recovery">
             </div>
 
             <div class="space-y-2 ltr:text-left rtl:text-right">
-              <span class="font-serif italic text-xs text-[#C5A059] tracking-widest uppercase block">{{ $t('promotions.pkg1.tag') }}</span>
-              <h3 class="text-2xl sm:text-3xl font-black text-[#222222] leading-tight tracking-tight">
+              <span data-i18n="promotions.pkg1.tag" class="font-serif italic text-xs text-[#C5A059] tracking-widest uppercase block">{{ $t('promotions.pkg1.tag') }}</span>
+              <h3 data-i18n="promotions.pkg1.title" class="text-2xl sm:text-3xl font-black text-[#222222] leading-tight tracking-tight">
                 {{ $t('promotions.pkg1.title') }}
               </h3>
               <div class="w-12 h-0.5 bg-[#C5A059]/60 rounded-full my-3"></div>
-              <p class="text-xs text-[#666666] leading-relaxed font-normal">
+              <p data-i18n="promotions.pkg1.desc" class="text-xs text-[#666666] leading-relaxed font-normal">
                 {{ $t('promotions.pkg1.desc') }}
               </p>
             </div>
@@ -55,27 +55,27 @@ const modalStore = useModalStore()
                 <div class="w-7 h-7 rounded-full bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] shrink-0">
                   <i class="fa-solid fa-sparkles text-xs"></i>
                 </div>
-                <span>{{ $t('promotions.pkg1.f1') }}</span>
+                <span data-i18n="promotions.pkg1.f1">{{ $t('promotions.pkg1.f1') }}</span>
               </div>
               <div class="flex items-center gap-3">
                 <div class="w-7 h-7 rounded-full bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] shrink-0">
                   <i class="fa-solid fa-droplet text-xs"></i>
                 </div>
-                <span>{{ $t('promotions.pkg1.f2') }}</span>
+                <span data-i18n="promotions.pkg1.f2">{{ $t('promotions.pkg1.f2') }}</span>
               </div>
               <div class="flex items-center gap-3">
                 <div class="w-7 h-7 rounded-full bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] shrink-0">
                   <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
                 </div>
-                <span>{{ $t('promotions.pkg1.f3') }}</span>
+                <span data-i18n="promotions.pkg1.f3">{{ $t('promotions.pkg1.f3') }}</span>
               </div>
             </div>
           </div>
 
           <div class="pt-6 border-t border-stone-200/80 flex items-center justify-between mt-6">
-            <span class="text-sm font-extrabold text-[#C5A059]">{{ $t('promotions.pkg1.price') }}</span>
+            <span data-i18n="promotions.pkg1.price" class="text-sm font-extrabold text-[#C5A059]">{{ $t('promotions.pkg1.price') }}</span>
             <button @click="modalStore.openBooking()" class="flex items-center gap-2 text-xs font-bold text-[#222222] hover:text-[#C5A059] transition-colors">
-              <span>{{ $t('promotions.pkg1.btn') }}</span>
+              <span data-i18n="promotions.pkg1.btn">{{ $t('promotions.pkg1.btn') }}</span>
               <i class="fa-solid fa-arrow-left text-xs"></i>
             </button>
           </div>
@@ -86,7 +86,7 @@ const modalStore = useModalStore()
           <div class="absolute -top-10 -right-10 w-48 h-48 bg-[#C5A059]/15 blur-3xl rounded-full pointer-events-none"></div>
           <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-[#D4AF37]/10 blur-3xl rounded-full pointer-events-none"></div>
 
-          <div class="absolute top-0 left-0 bg-stone-800 text-[#D4AF37] font-serif text-xl font-extrabold px-5 py-3 rounded-br-2xl shadow-sm z-20 border-b border-r border-amber-500/20">
+          <div data-i18n="promotions.pkg2.num" class="absolute top-0 left-0 bg-stone-800 text-[#D4AF37] font-serif text-xl font-extrabold px-5 py-3 rounded-br-2xl shadow-sm z-20 border-b border-r border-amber-500/20">
             {{ $t('promotions.pkg2.num') }}
           </div>
 
@@ -96,16 +96,16 @@ const modalStore = useModalStore()
                 src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=800&q=80"
                 alt="Brazilian Balayage"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
+               data-nuxiox-img="brazilian_balayage">
             </div>
 
             <div class="space-y-2 ltr:text-left rtl:text-right">
-              <span class="font-serif italic text-xs text-[#D4AF37] tracking-widest uppercase block">{{ $t('promotions.pkg2.tag') }}</span>
-              <h3 class="text-2xl sm:text-3xl font-black text-[#D4AF37] leading-tight tracking-tight">
+              <span data-i18n="promotions.pkg2.tag" class="font-serif italic text-xs text-[#D4AF37] tracking-widest uppercase block">{{ $t('promotions.pkg2.tag') }}</span>
+              <h3 data-i18n="promotions.pkg2.title" class="text-2xl sm:text-3xl font-black text-[#D4AF37] leading-tight tracking-tight">
                 {{ $t('promotions.pkg2.title') }}
               </h3>
               <div class="w-12 h-0.5 bg-[#D4AF37]/70 rounded-full my-3"></div>
-              <p class="text-xs text-stone-300 leading-relaxed font-light">
+              <p data-i18n="promotions.pkg2.desc" class="text-xs text-stone-300 leading-relaxed font-light">
                 {{ $t('promotions.pkg2.desc') }}
               </p>
             </div>
@@ -113,23 +113,23 @@ const modalStore = useModalStore()
             <div class="space-y-3 pt-2 text-xs text-stone-200 font-light">
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-circle-check text-[#D4AF37] text-xs"></i>
-                <span>{{ $t('promotions.pkg2.f1') }}</span>
+                <span data-i18n="promotions.pkg2.f1">{{ $t('promotions.pkg2.f1') }}</span>
               </div>
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-circle-check text-[#D4AF37] text-xs"></i>
-                <span>{{ $t('promotions.pkg2.f2') }}</span>
+                <span data-i18n="promotions.pkg2.f2">{{ $t('promotions.pkg2.f2') }}</span>
               </div>
               <div class="flex items-center gap-3">
                 <i class="fa-solid fa-circle-check text-[#D4AF37] text-xs"></i>
-                <span>{{ $t('promotions.pkg2.f3') }}</span>
+                <span data-i18n="promotions.pkg2.f3">{{ $t('promotions.pkg2.f3') }}</span>
               </div>
             </div>
           </div>
 
           <div class="pt-6 border-t border-white/10 flex items-center justify-between mt-6 relative z-10">
-            <span class="text-sm font-extrabold text-[#D4AF37]">{{ $t('promotions.pkg2.price') }}</span>
+            <span data-i18n="promotions.pkg2.price" class="text-sm font-extrabold text-[#D4AF37]">{{ $t('promotions.pkg2.price') }}</span>
             <button @click="modalStore.openBooking()" class="flex items-center gap-2 text-xs font-bold text-white hover:text-[#D4AF37] transition-colors tracking-wider uppercase">
-              <span>{{ $t('promotions.pkg2.btn') }}</span>
+              <span data-i18n="promotions.pkg2.btn">{{ $t('promotions.pkg2.btn') }}</span>
               <i class="fa-solid fa-play text-[9px] text-[#D4AF37]"></i>
             </button>
           </div>
@@ -137,7 +137,7 @@ const modalStore = useModalStore()
 
         <!-- Package 3: Light Journal Card -->
         <div class="card-light-journal rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden group reveal active delay-300">
-          <div class="absolute top-0 left-0 bg-stone-200/80 text-[#222222] font-serif text-xl font-extrabold px-5 py-3 rounded-br-2xl shadow-sm z-20">
+          <div data-i18n="promotions.pkg3.num" class="absolute top-0 left-0 bg-stone-200/80 text-[#222222] font-serif text-xl font-extrabold px-5 py-3 rounded-br-2xl shadow-sm z-20">
             {{ $t('promotions.pkg3.num') }}
           </div>
 
@@ -147,16 +147,16 @@ const modalStore = useModalStore()
                 src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=800&q=80"
                 alt="Color Gloss"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
+               data-nuxiox-img="color_gloss">
             </div>
 
             <div class="space-y-2 ltr:text-left rtl:text-right">
-              <span class="font-serif italic text-xs text-[#C5A059] tracking-widest uppercase block">{{ $t('promotions.pkg3.tag') }}</span>
-              <h3 class="text-2xl sm:text-3xl font-black text-[#222222] leading-tight tracking-tight">
+              <span data-i18n="promotions.pkg3.tag" class="font-serif italic text-xs text-[#C5A059] tracking-widest uppercase block">{{ $t('promotions.pkg3.tag') }}</span>
+              <h3 data-i18n="promotions.pkg3.title" class="text-2xl sm:text-3xl font-black text-[#222222] leading-tight tracking-tight">
                 {{ $t('promotions.pkg3.title') }}
               </h3>
               <div class="w-12 h-0.5 bg-[#C5A059]/60 rounded-full my-3"></div>
-              <p class="text-xs text-[#666666] leading-relaxed font-normal">
+              <p data-i18n="promotions.pkg3.desc" class="text-xs text-[#666666] leading-relaxed font-normal">
                 {{ $t('promotions.pkg3.desc') }}
               </p>
             </div>
@@ -166,27 +166,27 @@ const modalStore = useModalStore()
                 <div class="w-7 h-7 rounded-full bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] shrink-0">
                   <i class="fa-solid fa-eye-dropper text-xs"></i>
                 </div>
-                <span>{{ $t('promotions.pkg3.f1') }}</span>
+                <span data-i18n="promotions.pkg3.f1">{{ $t('promotions.pkg3.f1') }}</span>
               </div>
               <div class="flex items-center gap-3">
                 <div class="w-7 h-7 rounded-full bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] shrink-0">
                   <i class="fa-solid fa-gem text-xs"></i>
                 </div>
-                <span>{{ $t('promotions.pkg3.f2') }}</span>
+                <span data-i18n="promotions.pkg3.f2">{{ $t('promotions.pkg3.f2') }}</span>
               </div>
               <div class="flex items-center gap-3">
                 <div class="w-7 h-7 rounded-full bg-amber-50 border border-[#E6DFC9] flex items-center justify-center text-[#C5A059] shrink-0">
                   <i class="fa-solid fa-scissors text-xs"></i>
                 </div>
-                <span>{{ $t('promotions.pkg3.f3') }}</span>
+                <span data-i18n="promotions.pkg3.f3">{{ $t('promotions.pkg3.f3') }}</span>
               </div>
             </div>
           </div>
 
           <div class="pt-6 border-t border-stone-200/80 flex items-center justify-between mt-6">
-            <span class="text-sm font-extrabold text-[#C5A059]">{{ $t('promotions.pkg3.price') }}</span>
+            <span data-i18n="promotions.pkg3.price" class="text-sm font-extrabold text-[#C5A059]">{{ $t('promotions.pkg3.price') }}</span>
             <button @click="modalStore.openBooking()" class="flex items-center gap-2 text-xs font-bold text-[#222222] hover:text-[#C5A059] transition-colors">
-              <span>{{ $t('promotions.pkg3.btn') }}</span>
+              <span data-i18n="promotions.pkg3.btn">{{ $t('promotions.pkg3.btn') }}</span>
               <i class="fa-solid fa-arrow-left text-xs"></i>
             </button>
           </div>

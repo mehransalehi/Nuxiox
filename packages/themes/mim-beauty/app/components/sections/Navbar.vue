@@ -76,8 +76,8 @@ onUnmounted(() => {
           <span class="font-serif italic text-4xl sm:text-5xl font-normal tracking-tight text-[#3A2016]">MB</span>
         </div>
         <div class="flex flex-col ltr:text-left rtl:text-right leading-tight">
-          <span class="font-bold text-base text-[#3A2016] tracking-wide">{{ $t('site.name') }}</span>
-          <span class="font-serif text-[11px] text-stone-500 tracking-widest font-normal">{{ $t('site.englishName') }}</span>
+          <span data-i18n="site.name" class="font-bold text-base text-[#3A2016] tracking-wide">{{ $t('site.name') }}</span>
+          <span data-i18n="site.englishName" class="font-serif text-[11px] text-stone-500 tracking-widest font-normal">{{ $t('site.englishName') }}</span>
         </div>
       </NuxtLink>
 
@@ -93,12 +93,12 @@ onUnmounted(() => {
             >{{ item.label }}</a>
           </template>
           <template v-else>
-            <a href="#hero" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.home') }}</a>
-            <a href="#about" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.about') }}</a>
-            <a href="#services" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.services') }}</a>
-            <a href="#promotions" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.pricing') }}</a>
-            <NuxtLink :to="$localePath('/blog')" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.blog') }}</NuxtLink>
-            <a href="#contact" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.contact') }}</a>
+            <a data-i18n="nav.home" href="#hero" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.home') }}</a>
+            <a data-i18n="nav.about" href="#about" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.about') }}</a>
+            <a data-i18n="nav.services" href="#services" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.services') }}</a>
+            <a data-i18n="nav.pricing" href="#promotions" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.pricing') }}</a>
+            <NuxtLink data-i18n="nav.blog" :to="$localePath('/blog')" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.blog') }}</NuxtLink>
+            <a data-i18n="nav.contact" href="#contact" class="hover:text-[#B68E56] transition-colors py-1">{{ $t('nav.contact') }}</a>
           </template>
         </nav>
 
@@ -129,13 +129,13 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <button @click="modalStore.openBooking()" class="btn-outline-hero px-6 py-2 text-sm font-semibold">
+        <button data-i18n="nav.bookAppointment" @click="modalStore.openBooking()" class="btn-outline-hero px-6 py-2 text-sm font-semibold">
           {{ $t('nav.bookAppointment') }}
         </button>
       </div>
 
       <!-- Mobile Menu Toggle -->
-      <button @click="toggleMobileMenu" class="lg:hidden text-[#3A2016] text-xl focus:outline-none p-2" :aria-label="$t('nav.home')">
+      <button data-i18n="nav.home" @click="toggleMobileMenu" class="lg:hidden text-[#3A2016] text-xl focus:outline-none p-2" :aria-label="$t('nav.home')">
         <i class="fa-solid fa-bars"></i>
       </button>
     </div>
@@ -161,12 +161,12 @@ onUnmounted(() => {
         >{{ item.label }}</a>
       </template>
       <template v-else>
-        <a href="#hero" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.home') }}</a>
-        <a href="#about" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.about') }}</a>
-        <a href="#services" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.services') }}</a>
-        <a href="#promotions" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.pricing') }}</a>
-        <NuxtLink :to="$localePath('/blog')" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.blog') }}</NuxtLink>
-        <a href="#contact" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.contact') }}</a>
+        <a data-i18n="nav.home" href="#hero" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.home') }}</a>
+        <a data-i18n="nav.about" href="#about" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.about') }}</a>
+        <a data-i18n="nav.services" href="#services" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.services') }}</a>
+        <a data-i18n="nav.pricing" href="#promotions" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.pricing') }}</a>
+        <NuxtLink data-i18n="nav.blog" :to="$localePath('/blog')" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.blog') }}</NuxtLink>
+        <a data-i18n="nav.contact" href="#contact" @click="toggleMobileMenu" class="hover:text-[#B68E56] transition-colors">{{ $t('nav.contact') }}</a>
       </template>
 
       <!-- Mobile locale selector -->
@@ -182,7 +182,7 @@ onUnmounted(() => {
         </button>
       </div>
 
-      <button @click="toggleMobileMenu(); modalStore.openBooking()" class="btn-outline-hero px-8 py-2.5 text-sm font-semibold mt-4">
+      <button data-i18n="nav.bookAppointment" @click="toggleMobileMenu(); modalStore.openBooking()" class="btn-outline-hero px-8 py-2.5 text-sm font-semibold mt-4">
         {{ $t('nav.bookAppointment') }}
       </button>
     </div>

@@ -655,6 +655,42 @@ DB_NAME=${dbNameInput}
         success('R2 bucket configured')
       }
 
+      // --- Cloudflare Polish (automatic WebP/AVIF conversion) ---
+      if (await confirm('Enable Cloudflare Polish for automatic WebP conversion? (free, zero CPU cost)', false)) {
+        info('Cloudflare Polish is a zone-level setting. To enable it, we need your zone ID and API token.')
+        info('Find them at: Cloudflare Dashboard → Your site → Overview → Zone ID')
+        info('API token: Dashboard → My Profile → API Tokens → Create Token (Zone:Settings:Edit)')
+
+        const zoneId = await ask(`  ${C.dim}Zone ID:${C.reset}`)
+        const apiToken = await ask(`  ${C.dim}API Token:${C.reset}`)
+
+        if (zoneId && apiToken) {
+          try {
+            const resp = await fetch(
+              `https://api.cloudflare.com/client/v4/zones/${zoneId}/settings/polish`,
+              {
+                method: 'PATCH',
+                headers: {
+                  Authorization: `Bearer ${apiToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ value: 'lossy' }),
+              },
+            )
+            const json = await resp.json() as any
+            if (json.success) {
+              success('Cloudflare Polish enabled (lossy mode) — WebP delivered automatically')
+            } else {
+              warn(`Cloudflare API error: ${json.errors?.[0]?.message || JSON.stringify(json.errors)}`)
+            }
+          } catch (e: any) {
+            warn(`Could not reach Cloudflare API: ${e.message}`)
+          }
+        } else {
+          warn('Skipped — enable Polish manually via Dashboard → Speed → Optimization → Polish → Lossy')
+        }
+      }
+
       if (await confirm('Set NUXT_SESSION_PASSWORD secret for Cloudflare?', true)) {
         const sessionSecret = await ask(`  ${C.dim}Enter a session secret (or leave blank to generate one):${C.reset}`)
         const secret = sessionSecret || [...Array(64)].map(() => Math.random().toString(36)[2]).join('')
