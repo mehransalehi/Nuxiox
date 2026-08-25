@@ -98,6 +98,18 @@ ALL visible text MUST use the `$t('key')` helper available in templates:
 
 Never hardcode English or any language text in the template.
 
+### Edit-mode attributes (admin inline editing)
+
+Every element can be made editable by the admin via one of these attributes (the converter adds them automatically):
+
+| Attribute | Edits | Badge color | Example |
+|-----------|-------|-------------|---------|
+| `data-i18n="key"` | Text content (via $t('key') override) | Blue | `<span data-i18n="hero.title">{{ $t('hero.title') }}</span>` |
+| `data-nuxiox-img="key"` | Image src | Purple | `<img src="..." data-nuxiox-img="hero_photo">` |
+| `data-nuxiox-link="key"` | Anchor href | Green | `<a href="https://..." data-nuxiox-link="social_instagram">Instagram</a>` |
+
+The converter automatically injects `data-i18n` to elements using `$t()`, `data-nuxiox-img` to static `<img>` tags, and `data-nuxiox-link` to static `<a>` tags. You don't need to write these by hand.
+
 ### RTL / LTR Direction
 
 The theme must support both RTL (Persian, Arabic) and LTR (English) locales. The layout sets `dir` on `<html>` automatically. The converter will auto-fix `text-right`/`text-left` and horizontal margins (`ml-*`/`mr-*`) to use direction-aware Tailwind variants. Just write your design normally — the converter handles the flipping.

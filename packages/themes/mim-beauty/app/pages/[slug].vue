@@ -12,6 +12,8 @@ import Contact from '../components/sections/Contact.vue'
 import Team from '../components/sections/Team.vue'
 import Blog from '../components/sections/Blog.vue'
 import Results from '../components/sections/Results.vue'
+import Technology from '../components/sections/Technology.vue'
+import Whyus from '../components/sections/Whyus.vue'
 import { useSiteSettings } from '~~/packages/base/app/composables/useSiteSettings'
 
 const route = useRoute()
@@ -50,7 +52,9 @@ const sectionComponentMap: Record<string, any> = {
   Contact,
   Hours,
   Portfolio,
-  Results
+  Results,
+  Technology,
+  Whyus,
 }
 
 async function fetchPage() {

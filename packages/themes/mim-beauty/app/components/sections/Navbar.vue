@@ -65,7 +65,7 @@ onUnmounted(() => {
   >
     <div class="w-full px-6 sm:px-12 md:px-16 lg:px-24 flex items-center justify-between">
       <!-- Logo Left -->
-      <NuxtLink :to="$localePath('/')" class="flex items-center gap-3 group">
+      <NuxtLink :to="$localePath('/')" data-nuxiox-link="nav_logo" class="flex items-center gap-3 group">
         <img
           v-if="lightLogo"
           :src="lightLogo"

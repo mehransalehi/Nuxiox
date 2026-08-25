@@ -54,6 +54,10 @@ export default defineEventHandler(async (event) => {
         ...defaultSettings.theme,
         ...(values.theme?.[locale] ?? {}),
       },
+      i18n: {
+        ...defaultSettings.i18n,
+        ...(values.i18n?.globals ?? {}),
+      },
       about: {
         ...defaultSettings.about,
         ...(values.about?.[locale] ?? {}),

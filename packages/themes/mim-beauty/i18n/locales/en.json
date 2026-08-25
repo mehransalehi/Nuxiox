@@ -184,5 +184,30 @@
   },
   "cms": {
     "notFound": "Page not found."
+  },
+  "technology": {
+    "eyebrow": "PREMIUM BRANDS WE USE",
+    "brands": ["L'Oréal Professionnel", "Olaplex", "Schwarzkopf VIP", "Wella Professionals", "Floractive"]
+  },
+  "whyus": {
+    "eyebrow": "WHY MIM BEAUTY",
+    "title": "Why Mim Beauty?",
+    "cards": [
+      {
+        "icon": "gem",
+        "title": "100% Original Materials",
+        "desc": "Direct use of the best French and German brands without formaldehyde or harmful substances."
+      },
+      {
+        "icon": "user-check",
+        "title": "Expert Hair Analysis Consultation",
+        "desc": "Precise examination of hair shaft thickness and scalp health before any chemical process."
+      },
+      {
+        "icon": "shield-halved",
+        "title": "Hair Health Guarantee",
+        "desc": "Complete preservation of natural hair softness with lasting pearl shine and gloss."
+      }
+    ]
   }
 }

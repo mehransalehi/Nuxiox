@@ -36,4 +36,11 @@ export default defineNuxtConfig({
 
   extends: ['./packages/themes/mim-beauty'],
   watch: ['packages/**/*'],
+
+  hooks: {
+    'nitro:build:before': async () => {
+      const { execSync } = await import('node:child_process')
+      execSync('npx tsx scripts/generate-sections-manifest.ts', { stdio: 'inherit' })
+    }
+  },
 })

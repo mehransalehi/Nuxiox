@@ -184,5 +184,30 @@
   },
   "cms": {
     "notFound": "الصفحة غير موجودة."
+  },
+  "technology": {
+    "eyebrow": "أفضل الماركات التي نستخدمها",
+    "brands": ["L'Oréal Professionnel", "Olaplex", "Schwarzkopf VIP", "Wella Professionals", "Floractive"]
+  },
+  "whyus": {
+    "eyebrow": "WHY MIM BEAUTY",
+    "title": "لماذا ميم بيوتي؟",
+    "cards": [
+      {
+        "icon": "gem",
+        "title": "مواد أصلية ١٠٠٪",
+        "desc": "استخدام مباشر لأفضل الماركات الفرنسية والألمانية بدون فورمالديهايد أو مواد ضارة."
+      },
+      {
+        "icon": "user-check",
+        "title": "استشارة تحليل شعر متخصصة",
+        "desc": "فحص دقيق لسمك جذع الشعر وصحة فروة الرأس قبل أي عملية كيميائية."
+      },
+      {
+        "icon": "shield-halved",
+        "title": "ضمان صحة الشعر",
+        "desc": "الحفاظ الكامل على نعومة الشعر الطبيعية مع لمعان لؤلؤي دائم وتصبيغة لونية."
+      }
+    ]
   }
 }

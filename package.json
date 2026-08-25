@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare",
     "db:sync": "tsx scripts/sync-schema.ts",
     "db:generate": "pnpm run db:sync && drizzle-kit generate",
+    "generate:sections": "tsx scripts/generate-sections-manifest.ts",
     "setup": "tsx scripts/setup.ts",
     "convert-theme": "tsx scripts/convert-theme.ts",
     "db:seed": "tsx scripts/seed.ts",

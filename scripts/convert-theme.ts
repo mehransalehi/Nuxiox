@@ -675,6 +675,36 @@ ${C.bold}Example:${C.reset}
               )
             }
 
+            // 11. Auto-add data-nuxiox-link attributes to static <a> tags
+            // Uses the href hostname, text content, or data-i18n key as hint
+            if (content.includes('<a ')) {
+              content = content.replace(
+                /<a(\s[^>]*?)>/g,
+                (match, attrs) => {
+                  // Skip if already has data-nuxiox-link
+                  if (attrs.includes('data-nuxiox-link=')) return match
+                  // Skip if it's a dynamic href (:href or v-bind:href)
+                  if (attrs.includes(':href') || attrs.includes('v-bind:href')) return match
+                  // Skip if it's a NuxtLink (not an <a>)
+                  return match
+                }
+              )
+              // Generate a key from the first <a> within the match for non-dynamic anchors
+              // This second pass handles actual <a> tags that have static href
+              content = content.replace(
+                /(<a\s)((?![^>]*:href)(?![^>]*v-bind:href)(?![^>]*data-nuxiox-link=)[^>]*?href=["']([^"']+)["'][^>]*)>/g,
+                (match, prefix, attrs, href) => {
+                  // Skip anchors that are fragments (#) or mailto: — those aren't meaningful to edit
+                  if (href.startsWith('#') || href.startsWith('mailto:')) return match
+                  // Derive a key from href
+                  const url = href.replace(/^https?:\/\//, '').replace(/\/$/, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || 'link'
+                  const key = url.slice(0, 40)
+                  return `${prefix}${attrs} data-nuxiox-link="${key}">`
+                }
+              )
+              ok(`  Added data-nuxiox-link to static <a> tags in ${file}`)
+            }
+
             ensureDir(path.dirname(destPath))
     fs.writeFileSync(destPath, content, 'utf-8')
     ok(`Copied ${path.relative(ROOT, srcPath)} → ${path.relative(ROOT, destPath)}`)

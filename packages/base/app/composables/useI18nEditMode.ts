@@ -1,6 +1,6 @@
 // app/composables/useI18nEditMode.ts
 // Provides edit-mode state for inline i18n translation editing on public pages.
-// Handles both text editing (data-i18n) and image replace (data-nuxiox-img).
+// Handles text editing (data-i18n), image replace (data-nuxiox-img), and link editing (data-nuxiox-link).
 import { unflatten } from "~~/packages/base/utils/flatten"
 
 export const useI18nEditMode = () => {
@@ -11,8 +11,14 @@ export const useI18nEditMode = () => {
   const editPosition = ref({ x: 0, y: 0 })
   // Image editing state
   const editingImageKey = ref<string | null>(null)
+  // Link editing state
+  const editingLinkKey = ref<string | null>(null)
+  const editingLinkHref = ref("")
   let badgeElements: HTMLElement[] = []
   let imageBadgeElements: HTMLElement[] = []
+  let linkBadgeElements: HTMLElement[] = []
+  // MutationObserver — re-injects badges when async-loaded sections mount
+  let domObserver: MutationObserver | null = null
 
   const { t, mergeLocaleMessage, locale } = useI18n()
 
@@ -21,11 +27,17 @@ export const useI18nEditMode = () => {
     if (!isEditMode.value) {
       editingKey.value = null
       editingImageKey.value = null
+      editingLinkKey.value = null
       cleanupBadges()
+      cleanupImageBadges()
+      cleanupLinkBadges()
       cleanupStyles()
+      stopDomObserver()
     } else {
       injectBadges()
       injectImageBadges()
+      injectLinkBadges()
+      startDomObserver()
     }
   }
 
@@ -58,6 +70,64 @@ export const useI18nEditMode = () => {
     }
   }
 
+  // ─── DOM Observer — watches for async-loaded sections ──────────────
+
+  function startDomObserver() {
+    stopDomObserver()
+    let timer: ReturnType<typeof setTimeout> | null = null
+    domObserver = new MutationObserver(() => {
+      // Debounce: batch rapid mutations within 100ms
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(() => {
+        // Text badges
+        document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((el) => {
+          if (badgeElements.some((b) => b.parentElement === el)) return
+          el.style.position = "relative"
+          el.style.outline = "2px dashed transparent"
+          el.style.outlineOffset = "0px"
+          el.style.transition = "outline-color 0.2s"
+          el.addEventListener("mouseenter", onElMouseEnter)
+          el.addEventListener("mouseleave", onElMouseLeave)
+          el.addEventListener("click", onElClick)
+          const badge = createBadge("&#xf044;", "#3b82f6")
+          el.appendChild(badge)
+          badgeElements.push(badge)
+        })
+        // Image badges
+        document.querySelectorAll<HTMLElement>("[data-nuxiox-img]").forEach((el) => {
+          if (imageBadgeElements.some((b) => b.parentElement === el)) return
+          el.style.position = "relative"
+          const badge = createBadge("&#xf030;", "#8b5cf6")
+          el.appendChild(badge)
+          imageBadgeElements.push(badge)
+          el.addEventListener("mouseenter", onImgMouseEnter)
+          el.addEventListener("mouseleave", onImgMouseLeave)
+          el.addEventListener("click", onImgClick)
+        })
+        // Link badges
+        document.querySelectorAll<HTMLElement>("[data-nuxiox-link]").forEach((el) => {
+          if (linkBadgeElements.some((b) => b.parentElement === el)) return
+          el.style.position = "relative"
+          const badge = createBadge("&#xf0c1;", "#059669")
+          el.appendChild(badge)
+          linkBadgeElements.push(badge)
+          el.addEventListener("mouseenter", onLinkMouseEnter)
+          el.addEventListener("mouseleave", onLinkMouseLeave)
+          el.addEventListener("click", onLinkClick)
+        })
+        timer = null
+      }, 100)
+    })
+    domObserver.observe(document.body, { childList: true, subtree: true })
+  }
+
+  function stopDomObserver() {
+    if (domObserver) {
+      domObserver.disconnect()
+      domObserver = null
+    }
+  }
+
   // ─── Text badges (data-i18n) ────────────────────────────────────────
 
   function injectBadges() {
@@ -81,18 +151,33 @@ export const useI18nEditMode = () => {
     badgeElements.push(badge)
   }
 
-  // ─── Image badges (data-nuxiox-img) ───────────────────────────────────
+  // ─── Image badges (data-nuxiox-img) ─────────────────────────────────
 
   function injectImageBadges() {
     cleanupImageBadges()
     document.querySelectorAll<HTMLElement>("[data-nuxiox-img]").forEach((el) => {
       el.style.position = "relative"
-      const badge = createBadge("&#xf030;", "#8b5cf6") // camera icon, purple
+      const badge = createBadge("&#xf030;", "#8b5cf6")
       el.appendChild(badge)
       imageBadgeElements.push(badge)
       el.addEventListener("mouseenter", onImgMouseEnter)
       el.addEventListener("mouseleave", onImgMouseLeave)
       el.addEventListener("click", onImgClick)
+    })
+  }
+
+  // ─── Link badges (data-nuxiox-link) ─────────────────────────────────
+
+  function injectLinkBadges() {
+    cleanupLinkBadges()
+    document.querySelectorAll<HTMLElement>("[data-nuxiox-link]").forEach((el) => {
+      el.style.position = "relative"
+      const badge = createBadge("&#xf0c1;", "#059669")
+      el.appendChild(badge)
+      linkBadgeElements.push(badge)
+      el.addEventListener("mouseenter", onLinkMouseEnter)
+      el.addEventListener("mouseleave", onLinkMouseLeave)
+      el.addEventListener("click", onLinkClick)
     })
   }
 
@@ -124,6 +209,8 @@ export const useI18nEditMode = () => {
     ].join(";")
     return badge
   }
+
+  // ─── Image handlers ────────────────────────────────────────────────
 
   function onImgMouseEnter(e: Event) {
     const el = e.currentTarget as HTMLElement
@@ -170,10 +257,64 @@ export const useI18nEditMode = () => {
         method: "PUT",
         body: { _images: { [key]: url } },
       })
+      // Refresh overrides so the i18n-overrides plugin picks up the new value
+      // This prevents the MutationObserver from reverting to stale data
+      await refreshNuxtData("i18n-overrides")
     } catch (e) {
       console.error("Failed to save image override:", e)
     }
     editingImageKey.value = null
+  }
+
+  // ─── Link handlers ──────────────────────────────────────────────────
+
+  function onLinkMouseEnter(e: Event) {
+    const el = e.currentTarget as HTMLElement
+    el.style.outline = "2px dashed #059669"
+    el.style.outlineOffset = "2px"
+    const badge = el.querySelector(".i18n-edit-badge") as HTMLElement
+    if (badge) badge.style.opacity = "1"
+  }
+
+  function onLinkMouseLeave(e: Event) {
+    const el = e.currentTarget as HTMLElement
+    el.style.outline = ""
+    el.style.outlineOffset = ""
+    const badge = el.querySelector(".i18n-edit-badge") as HTMLElement
+    if (badge) badge.style.opacity = "0"
+  }
+
+  function onLinkClick(e: Event) {
+    if (!isEditMode.value) return
+    e.preventDefault()
+    e.stopPropagation()
+    const el = e.currentTarget as HTMLElement
+    const key = el.getAttribute("data-nuxiox-link") || ""
+    editingLinkKey.value = key
+    editingLinkHref.value = (el as HTMLAnchorElement).href || ""
+  }
+
+  // Called from toolbar when user saves a new link URL
+  async function onLinkSaved(key: string, newHref: string) {
+    if (!key) return
+
+    // Update the href immediately
+    const el = document.querySelector<HTMLElement>(`[data-nuxiox-link="${key}"]`)
+    if (el && el.tagName === "A") {
+      ;(el as HTMLAnchorElement).href = newHref
+    }
+
+    // Save to API
+    try {
+      await $fetch("/api/i18n", {
+        method: "PUT",
+        body: { _links: { [key]: newHref } },
+      })
+      await refreshNuxtData("i18n-overrides")
+    } catch (e) {
+      console.error("Failed to save link override:", e)
+    }
+    editingLinkKey.value = null
   }
 
   // ─── Text event handlers ────────────────────────────────────────────
@@ -231,11 +372,24 @@ export const useI18nEditMode = () => {
     })
   }
 
+  function cleanupLinkBadges() {
+    linkBadgeElements.forEach((b) => b.remove())
+    linkBadgeElements = []
+    document.querySelectorAll<HTMLElement>("[data-nuxiox-link]").forEach((el) => {
+      el.removeEventListener("mouseenter", onLinkMouseEnter)
+      el.removeEventListener("mouseleave", onLinkMouseLeave)
+      el.removeEventListener("click", onLinkClick)
+      el.style.outline = ""
+      el.style.outlineOffset = ""
+      el.style.position = ""
+    })
+  }
+
   function cleanupStyles() {
     document.querySelectorAll(".i18n-edit-badge").forEach((b) => b.remove())
   }
 
-  // ─── Sidebar helpers ──────────────────────────────────────────────────
+  // ─── Sidebar helpers ────────────────────────────────────────────────
 
   function collectTextItems() {
     const items: { key: string; text: string }[] = []
@@ -257,11 +411,21 @@ export const useI18nEditMode = () => {
     return items
   }
 
+  function collectLinkItems() {
+    const items: { key: string; href: string; text: string }[] = []
+    document.querySelectorAll<HTMLElement>("[data-nuxiox-link]").forEach((el) => {
+      const key = el.getAttribute("data-nuxiox-link") || ""
+      const href = (el as HTMLAnchorElement).href || ""
+      const text = (el.textContent || "").trim().slice(0, 60)
+      items.push({ key, href, text })
+    })
+    return items
+  }
+
   function scrollToElement(key: string) {
-    const el = document.querySelector<HTMLElement>(`[data-i18n="${key}"], [data-nuxiox-img="${key}"]`)
+    const el = document.querySelector<HTMLElement>(`[data-i18n="${key}"], [data-nuxiox-img="${key}"], [data-nuxiox-link="${key}"]`)
     if (!el) return
     el.scrollIntoView({ behavior: "smooth", block: "center" })
-    // Highlight
     document.querySelectorAll(".nuxiox-highlight").forEach((h) => {
       h.classList.remove("nuxiox-highlight")
       ;(h as HTMLElement).style.outline = ""
@@ -284,13 +448,17 @@ export const useI18nEditMode = () => {
     editingLocales,
     editPosition,
     editingImageKey,
+    editingLinkKey,
+    editingLinkHref,
     toggleEditMode,
     openEditor,
     closeEditor,
     saveOverride,
     onImageSelected,
+    onLinkSaved,
     collectTextItems,
     collectImageItems,
+    collectLinkItems,
     scrollToElement,
   })
 }

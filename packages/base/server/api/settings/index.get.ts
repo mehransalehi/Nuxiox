@@ -4,9 +4,7 @@ import {
   defaultSeoSettingsGlobal,
   defaultSeoSettingsLocale,
   type SiteSettings,
-  type SiteSettingsLocale,
 } from "~~/packages/base/utils/settings";
- ;
 import { getLocale } from "~~/server/utils/getLocale";
 import { requireAdmin } from "~~/server/utils/checkAdmin";
 
@@ -19,7 +17,6 @@ export default defineEventHandler(async (event) => {
 
   const values = rows.reduce<Record<string, any>>((acc, row) => {
     acc[row.key] = typeof row.value == 'string' ? JSON.parse(row.value) : row.value
-
     return acc
   }, {})
 
@@ -34,39 +31,42 @@ export default defineEventHandler(async (event) => {
   const generalGlobalValues = generalFromDB.globals ?? {}
 
   const response: SiteSettings = {
-  general: {
-    ...defaultSettings.general,
-    ...generalGlobalValues,
-    ...generalLocaleValues,
-  },
-  navbar: {
-    ...defaultSettings.navbar,
-    ...(values.navbar?.[locale] ?? {}),
-  },
-  footer: {
-    ...defaultSettings.footer,
-    ...(values.footer?.[locale] ?? {}),
-  },
-  blog: {
-    ...defaultSettings.blog,
-    ...(values.blog?.[locale] ?? {}),
-  },
-  seo: {
-    ...defaultSeoSettingsGlobal,
-    ...seoGlobalValues,
-    ...defaultSeoSettingsLocale,
-    ...seoLocaleValues,
-  },
-  theme: {
-    ...defaultSettings.theme,
-    ...(values.theme?.[locale] ?? {}),
-  },
-  about: {
-    ...defaultSettings.about,
-    ...(values.about?.[locale] ?? {}),
-  },
-}
-
+    general: {
+      ...defaultSettings.general,
+      ...generalGlobalValues,
+      ...generalLocaleValues,
+    },
+    navbar: {
+      ...defaultSettings.navbar,
+      ...(values.navbar?.[locale] ?? {}),
+    },
+    footer: {
+      ...defaultSettings.footer,
+      ...(values.footer?.[locale] ?? {}),
+    },
+    blog: {
+      ...defaultSettings.blog,
+      ...(values.blog?.[locale] ?? {}),
+    },
+    seo: {
+      ...defaultSeoSettingsGlobal,
+      ...seoGlobalValues,
+      ...defaultSeoSettingsLocale,
+      ...seoLocaleValues,
+    },
+    theme: {
+      ...defaultSettings.theme,
+      ...(values.theme?.[locale] ?? {}),
+    },
+    i18n: {
+      ...defaultSettings.i18n,
+      ...(values.i18n?.globals ?? {}),
+    },
+    about: {
+      ...defaultSettings.about,
+      ...(values.about?.[locale] ?? {}),
+    },
+  }
 
   return response
 })

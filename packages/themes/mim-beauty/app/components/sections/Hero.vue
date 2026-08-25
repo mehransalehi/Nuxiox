@@ -63,13 +63,13 @@ onMounted(() => {
         
         <!-- Social Icons Right -->
         <div class="w-full md:w-auto flex md:flex-col items-center md:justify-center rtl:justify-end flex-row gap-6 order-2 md:order-1">
-          <a data-i18n="hero.instagram" href="https://instagram.com" target="_blank" :title="$t('hero.instagram')" class="social-icon text-2xl p-1" :aria-label="$t('hero.instagram')">
+          <a data-i18n="hero.instagram" href="https://instagram.com" target="_blank" :title="$t('hero.instagram')" class="social-icon text-2xl p-1" :aria-label="$t('hero.instagram')" data-nuxiox-link="hero_instagram">
             <i class="fa-brands fa-instagram"></i>
           </a>
-          <a data-i18n="hero.vk" href="https://vk.com" target="_blank" :title="$t('hero.vk')" class="social-icon text-xl p-1" :aria-label="$t('hero.vk')">
+          <a data-i18n="hero.vk" href="https://vk.com" target="_blank" :title="$t('hero.vk')" class="social-icon text-xl p-1" :aria-label="$t('hero.vk')" data-nuxiox-link="hero_vk">
             <i class="fa-brands fa-vk"></i>
           </a>
-          <a data-i18n="hero.facebook" href="https://facebook.com" target="_blank" :title="$t('hero.facebook')" class="social-icon text-xl p-1" :aria-label="$t('hero.facebook')">
+          <a data-i18n="hero.facebook" href="https://facebook.com" target="_blank" :title="$t('hero.facebook')" class="social-icon text-xl p-1" :aria-label="$t('hero.facebook')" data-nuxiox-link="hero_facebook">
             <i class="fa-brands fa-facebook-f"></i>
           </a>
         </div>

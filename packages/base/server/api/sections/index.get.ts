@@ -1,29 +1,10 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { readFileSync } from 'node:fs'
 
 type SectionItem = {
   id: string
   label: string
   type: 'section' | 'navbar' | 'footer'
-}
-
-/**
- * Extract the active theme name from the root nuxt.config.ts `extends` field.
- * Looks for the pattern `extends: ['./packages/themes/<theme-name>']`.
- */
-function getActiveThemeName(): string {
-  try {
-    const configPath = path.resolve(process.cwd(), 'nuxt.config.ts')
-    const content = readFileSync(configPath, 'utf-8')
-    const match = content.match(/extends:\s*\[[^\]]*['"]\.\/packages\/themes\/([^'"/]+)['"]/)
-    if (match && match[1]) {
-      return match[1]
-    }
-  } catch {
-    // fall through to env var or default
-  }
-  return process.env.NUXT_LAYER || 'dentist'
 }
 
 const toLabel = (value: string) =>
@@ -33,14 +14,23 @@ const toLabel = (value: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event)
-  if (session?.user?.role !== 'admin') {
-    throw createError({ statusCode: 403, message: 'Forbidden' })
+/**
+ * Fallback: scan the filesystem to discover sections.
+ * Used only in dev mode when the build-time manifest isn't bundled yet.
+ */
+async function scanFilesystem(): Promise<SectionItem[]> {
+  let themeName = process.env.NUXT_LAYER || 'dentist'
+  try {
+    const configPath = path.resolve(process.cwd(), 'nuxt.config.ts')
+    const content = await fs.readFile(configPath, 'utf-8')
+    const match = content.match(/extends:\s*\[[^\]]*['"]\.\/packages\/themes\/([^'"/]+)['"]/)
+    if (match && match[1]) {
+      themeName = match[1]
+    }
+  } catch {
+    // fall through
   }
 
-  // Check packages/themes/<themeName>/ first, then packages/<themeName>/
-  const themeName = getActiveThemeName()
   const themeDir = path.resolve(process.cwd(), `packages/themes/${themeName}/app/components/sections`)
   const pkgDir = path.resolve(process.cwd(), `packages/${themeName}/app/components/sections`)
 
@@ -54,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
   const entries = await fs.readdir(sectionsDir)
 
-  const sections: SectionItem[] = entries
+  return entries
     .filter((entry) => entry.endsWith('.vue'))
     .map((entry) => {
       const id = path.basename(entry, '.vue')
@@ -63,6 +53,25 @@ export default defineEventHandler(async (event) => {
         lower.includes('navbar') ? 'navbar' : lower.includes('footer') ? 'footer' : 'section'
       return { id, label: toLabel(id), type }
     })
+}
+
+export default defineEventHandler(async (event) => {
+  const session = await requireUserSession(event)
+  if (session?.user?.role !== 'admin') {
+    throw createError({ statusCode: 403, message: 'Forbidden' })
+  }
+
+  let sections: SectionItem[]
+
+  // 1. Try build-time generated manifest (bundled — works on Cloudflare Workers)
+  try {
+    const manifest = await import('../../utils/sections-manifest.gen')
+    sections = manifest.SECTIONS_MANIFEST
+  } catch {
+    // 2. Fall back to filesystem scan (dev mode, or before manifest is generated)
+    console.warn('[sections] Build-time manifest not found, scanning filesystem...')
+    sections = await scanFilesystem()
+  }
 
   return { sections }
 })

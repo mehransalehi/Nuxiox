@@ -46,9 +46,9 @@ function localeHref(href: string) {
 
       <!-- Social links -->
       <div class="flex items-center gap-4 text-white text-base">
-        <a data-i18n="hero.instagram" href="https://instagram.com" target="_blank" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" :aria-label="$t('hero.instagram')"><i class="fa-brands fa-instagram"></i></a>
-        <a href="https://t.me" target="_blank" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
-        <a href="https://whatsapp.com" target="_blank" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://instagram.com" target="_blank" data-nuxiox-link="footer_instagram" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" :aria-label="$t('hero.instagram')"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://t.me" target="_blank" data-nuxiox-link="footer_telegram" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" aria-label="Telegram"><i class="fa-brands fa-telegram"></i></a>
+        <a href="https://whatsapp.com" target="_blank" data-nuxiox-link="footer_whatsapp" class="w-9 h-9 rounded-full bg-stone-800 flex items-center justify-center hover:bg-[#C5A059] transition-colors" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
       </div>
 
       <p data-i18n="site.copyright" class="text-xs text-stone-500">

@@ -54,10 +54,19 @@ export default defineEventHandler(async (event) => {
       [locale]: {
         showSidebar: body.general.showSidebar,
         direction: body.general.direction,
-        language: body.general.language,
       },
       globals: {
         favicon: body.general.favicon,
+        language: body.general.language, // admin panel language — global, not per-locale
+      },
+    }
+  }
+
+  // Override i18n payload: store under globals (site-wide, not per-locale)
+  if (body.i18n) {
+    payload.i18n = {
+      globals: {
+        defaultLocale: body.i18n.defaultLocale,
       },
     }
   }
@@ -111,6 +120,7 @@ export default defineEventHandler(async (event) => {
     blog: { desc: "Blog settings", isPublic: false },
     seo: { desc: "SEO settings" },
     theme: { desc: "Theme settings" },
+    i18n: { desc: "i18n locale settings" },
     about: { desc: "About section settings" },
   };
 

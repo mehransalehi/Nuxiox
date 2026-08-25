@@ -184,5 +184,30 @@
   },
   "cms": {
     "notFound": "صفحه مورد نظر یافت نشد."
+  },
+  "technology": {
+    "eyebrow": "برندهای برتر مورد استفاده",
+    "brands": ["L'Oréal Professionnel", "Olaplex", "Schwarzkopf VIP", "Wella Professionals", "Floractive"]
+  },
+  "whyus": {
+    "eyebrow": "WHY MIM BEAUTY",
+    "title": "چرا سالن میم بیوتی؟",
+    "cards": [
+      {
+        "icon": "gem",
+        "title": "متریال ۱۰۰٪ اورجینال",
+        "desc": "استفاده مستقیم از بهترین برندهای فرانسوی و آلمانی بدون فرمالدئید و مواد مضر."
+      },
+      {
+        "icon": "user-check",
+        "title": "مشاوره تخصصی آنالیز مو",
+        "desc": "بررسی دقیق ضخامت ساقه و سلامت اسکالپ قبل از شروع هرگونه فرایند شیمیایی."
+      },
+      {
+        "icon": "shield-halved",
+        "title": "ضمانت سلامت مو",
+        "desc": "حفظ کامل لطافت طبیعی مو همراه با ماندگاری شاین مرواریدی و رنگساژ."
+      }
+    ]
   }
 }
