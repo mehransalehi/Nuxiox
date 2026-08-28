@@ -107,6 +107,7 @@
       "subtitle": "مرحبًا بك في مساحة إدارة موقعك",
       "openSidebar": "فتح الشريط الجانبي",
       "openUserMenu": "فتح قائمة المستخدم",
+      "selectLocale": "اختر اللغة",
       "logout": "تسجيل الخروج"
     },
     "sidebarToggle": {

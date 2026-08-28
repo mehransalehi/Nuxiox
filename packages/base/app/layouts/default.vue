@@ -6,14 +6,6 @@ const route = useRoute()
 
 const direction = computed(() => (locale.value === 'fa' || locale.value === 'ar') ? "rtl": 'ltr')
 
-/*watch(
-  () => settings.value.general.language,
-  (value) => {
-    setLocale(value)
-  },
-  { immediate: true }
-)*/
-
 useHead(() => ({
   titleTemplate: (titleChunk?: string) => {
     const defaultTitle = settings.value.seo.defaultTitle || settings.value.seo.siteName

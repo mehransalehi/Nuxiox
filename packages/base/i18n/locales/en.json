@@ -111,6 +111,7 @@
       "subtitle": "Welcome to your admin workspace",
       "openSidebar": "Open sidebar",
       "openUserMenu": "Open user menu",
+      "selectLocale": "Select language",
       "logout": "Logout"
     },
     "sidebarToggle": {

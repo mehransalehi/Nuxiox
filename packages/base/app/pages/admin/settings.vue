@@ -48,7 +48,6 @@ watch(
     form.blog = structuredClone(value.blog)
     form.seo = structuredClone(value.seo)
     form.theme = structuredClone(value.theme)
-    form.i18n = structuredClone(value.i18n)
     form.about = structuredClone(value.about)
   },
   { immediate: true }
@@ -171,31 +170,6 @@ const saveSettings = async () => {
           :label="$t('admin.settings.showSidebar')"
           v-model="form.general.showSidebar"
         />
-        <div class="grid gap-4 md:grid-cols-2">
-          <AdminUiSelect
-            :label="$t('admin.settings.direction')"
-            v-model="form.general.direction"
-            :options="[
-              { key: $t('admin.settings.directionLtr'), value: 'ltr' },
-              { key: $t('admin.settings.directionRtl'), value: 'rtl' },
-            ]"
-          />
-          <AdminLocaleSelector
-            :label="$t('admin.settings.language')"
-            v-model="form.general.language"
-          />
-        </div>
-        <div class="grid gap-4 md:grid-cols-2">
-          <AdminUiSelect
-            label="Default Locale"
-            v-model="form.i18n.defaultLocale"
-            :options="[
-              { key: 'English', value: 'en' },
-              { key: 'Persian', value: 'fa' },
-              { key: 'Arabic', value: 'ar' },
-            ]"
-          />
-        </div>
         <AdminUiUrl
           :label="$t('admin.settings.favicon')"
           v-model="form.general.favicon"

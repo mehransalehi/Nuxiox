@@ -17,14 +17,6 @@ const themeCss = computed(() => {
   return `:root{--color-primary:${light?.primary};--color-secondary:${light?.secondary};--color-accent:${light?.accent};--color-neutral:${light?.neutral};}[data-theme="dark"]{--color-primary:${dark?.primary};--color-secondary:${dark?.secondary};--color-accent:${dark?.accent};--color-neutral:${dark?.neutral};}`
 })
 
-/*watch(
-  () => settings.value.general.language,
-  (value) => {
-    setLocale(value)
-  },
-  { immediate: true }
-)*/
-
 useHead(() => ({
   titleTemplate: (titleChunk?: string) => {
     const defaultTitle = settings.value.seo.defaultTitle || settings.value.seo.siteName

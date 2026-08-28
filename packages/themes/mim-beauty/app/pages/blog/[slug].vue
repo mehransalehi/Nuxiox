@@ -26,28 +26,14 @@ interface PostDetail {
 }
 
 const post = ref<PostDetail>({
-  id: 1,
-  title: 'تکنیک‌های مراقبت از موهای بالیاژ شده در تابستان',
-  slug: 'balayage-summer-care',
-  content: `<p class="mb-4">بالیاژ یکی از محبوب‌ترین و لوکس‌ترین تکنیک‌های رنگ مو در دنیا است که با ایجاد سایه‌روشن‌های طبیعی، جذابیت فوق‌العاده‌ای به چهره می‌بخشد. اما در فصل تابستان، قرار گرفتن در معرض اشعه ماوراء بنفش خورشید، کلر استخر و آب شور دریا می‌تواند خشکی و تغییر تناژ رنگساژ را به همراه داشته باشد.</p>
-  <h3 class="text-xl font-bold my-4 text-[#222222]">۱. استفاده از سرم‌های محافظ حرارت و UV</h3>
-  <p class="mb-4">قبل از خروج از منزل یا رفتن به ساحل، حتماً از اسپری‌ها و روغن‌های محافظ ضد آفتاب مو استفاده کنید تا لایه کوتیکول مو آسیب نبیند.</p>
-  <h3 class="text-xl font-bold my-4 text-[#222222]">۲. شستشو با شامپوی بدون سولفات و آب ولرم</h3>
-  <p class="mb-4">شامپوهای حاوی سولفات باعث شسته شدن سریع‌تر رنگساژ کوکتل مرواریدی می‌شوند. همواره از محصولات ارگانیک تخصصی سالن میم بیوتی استفاده نمایید.</p>`,
-  featuredImage: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=1200&q=80',
-  createdAt: '۲۰۲۶/۰۷/۱۵'
+  id: 0,
+  title: '',
+  slug: '',
+  content: '',
+  createdAt: ''
 })
 
-const comments = ref<CommentNode[]>([
-  {
-    id: 1,
-    authorName: 'مریم سلیمانی',
-    content: 'مقاله بسیار کاربردی و مفیدی بود. ممنون از نکات عالی سالن میم بیوتی.',
-    createdAt: '۲۰۲۶/۰۷/۱۶',
-    likeCount: 4,
-    replies: []
-  }
-])
+const comments = ref<CommentNode[]>([])
 
 const commentAuthor = ref('')
 const commentText = ref('')
@@ -55,12 +41,14 @@ const commentText = ref('')
 async function fetchPostDetail() {
   try {
     const res = await $fetch<{ post: PostDetail; comments: CommentNode[] }>(`/api/blog/posts/${slug.value}`)
-    if (res && res.post) {
+    if (res && res.post && res.post.id) {
       post.value = res.post
       comments.value = res.comments || []
     }
   } catch (e) {
-    // Keep fallback
+    // Post not found — show empty state
+  } finally {
+    loaded.value = true
   }
 }
 
@@ -97,10 +85,16 @@ async function handleCommentSubmit(e: Event) {
 onMounted(() => {
   fetchPostDetail()
 })
+
+// Hide the page until data is fetched to avoid flash of hardcoded content
+const loaded = ref(false)
 </script>
 
 <template>
-  <div class="w-full bg-[#FAF8F5] min-h-screen pt-32 pb-24 relative overflow-hidden">
+  <div v-if="!loaded" class="w-full bg-[#FAF8F5] min-h-screen pt-32 pb-24 relative overflow-hidden flex items-center justify-center">
+    <div class="loading loading-spinner loading-lg text-[#C5A059]"></div>
+  </div>
+  <div v-else class="w-full bg-[#FAF8F5] min-h-screen pt-32 pb-24 relative overflow-hidden">
     <!-- Decorative background lamps, bulbs, and grid overlay -->
     <DecorativeBg />
 

@@ -16,7 +16,7 @@ const schema = z.object({
   excerpt: z.string().max(500).nullable().optional(),
   content: z.string().min(2),
   seo: z.record(z.string(), z.string()).optional().default({}),
-  featuredImage: z.string().url().nullable().optional().or(z.literal("")),
+  featuredImage: z.string().nullable().optional().or(z.literal("")),
   status: z.enum(["draft", "published", "archived"]),
   allowComments: z.boolean(),
   allowAnonymousComments: z.boolean(),

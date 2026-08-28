@@ -3,6 +3,7 @@ import { useToastStore } from '~~/packages/base/app/stores/toast'
 import { useLoadingStore } from '~~/packages/base/app/stores/loading'
 import type { PageRecord } from '~~/packages/base/types/page-builder'
 const { locale, locales, setLocale } = useI18n()
+const localePath = useLocalePath()
 
 definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
 
@@ -48,7 +49,7 @@ const createPage = async () => {
       form.slug = ''
       form.locale = ''
       await refresh()
-      await navigateTo(`/admin/pages/${result.pages.id}?locale=${createdLocale}`)
+      await navigateTo(localePath(`/admin/pages/${result.pages.id}`, createdLocale).replace(/\/+$/, '') + `?locale=${createdLocale}`)
     } catch (err: any) {
       toastStore.push(err ? (err.statusMessage ? err.statusMessage : err.message) : $t('admin.pages.createFailed'), 'error')
     } finally {

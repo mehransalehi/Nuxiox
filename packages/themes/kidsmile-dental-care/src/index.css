@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "../assets/theme.css";
+
+:root {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+[dir="rtl"] {
+  font-family: 'Vazirmatn', 'Plus Jakarta Sans', system-ui, sans-serif;
+}

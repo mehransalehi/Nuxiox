@@ -28,6 +28,7 @@ const isNew = computed(() => idParam.value === 'new')
 const toastStore = useToastStore()
 const loadingStore = useLoadingStore()
 const { locale, locales, setLocale } = useI18n()
+const localePath = useLocalePath()
 
 type SeoEntry = { key: string; value: string }
 
@@ -137,7 +138,7 @@ const save = async () => {
       if (isNew.value) {
         const created = await $fetch<{ id: number }>('/api/admin/blog/posts', { method: 'POST', body: payload })
         toastStore.push($t('admin.blog.postCreated'), 'success')
-        await navigateTo(`/admin/blog/posts/${created.id}?locale=${payload.locale}`)
+        await navigateTo(localePath(`/admin/blog/posts/${created.id}`, payload.locale).replace(/\/+$/, '') + `?locale=${payload.locale}`)
       } else {
         await $fetch(`/api/admin/blog/posts/${idParam.value}?locale=${localeParam.value}`, { method: 'PUT', body: payload })
         toastStore.push($t('admin.blog.postSaved'), 'success')

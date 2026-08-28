@@ -117,7 +117,7 @@ async function handleLogout() {
           Dashboard
         </NuxtLink>
         <NuxtLink
-          to="/admin/i18n"
+          :to="$localePath('/admin/i18n')"
           class="flex items-center gap-1 rounded px-2 py-0.5 transition-colors hover:bg-blue-500"
         >
           <i class="fa-solid fa-language" />

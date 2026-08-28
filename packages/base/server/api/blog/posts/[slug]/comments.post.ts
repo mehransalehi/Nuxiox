@@ -18,7 +18,7 @@ const schema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const slug = getRouterParam(event, "slug");
+  const slug = decodeURIComponent(getRouterParam(event, "slug") || "");
   if (!slug)
     throw createError({ statusCode: 400, message: "Slug is required" });
 

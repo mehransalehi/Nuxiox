@@ -17,6 +17,8 @@ const emit = defineEmits<{
 
 const editorEl = ref<HTMLDivElement | null>(null)
 const pickerRef = ref<{ open: () => void } | null>(null)
+const htmlSource = ref('')
+const showHtml = ref(false)
 let quill: { root: HTMLElement; on: (eventName: string, handler: () => void) => void } | null = null
 let syncing = false
 
@@ -47,6 +49,27 @@ const ensureQuillLoaded = async () => {
     script.onerror = () => reject(new Error('Failed to load Quill script.'))
     document.head.appendChild(script)
   })
+}
+
+function toggleHtmlSource() {
+  if (!showHtml.value) {
+    // Switching to HTML source mode — copy current content to textarea
+    htmlSource.value = quill ? quill.root.innerHTML : (props.modelValue || '')
+    showHtml.value = true
+  } else {
+    // Switching back to WYSIWYG — update quill from textarea content
+    showHtml.value = false
+    if (quill) {
+      quill.root.innerHTML = htmlSource.value || ''
+      emit('update:modelValue', quill.root.innerHTML)
+    } else {
+      emit('update:modelValue', htmlSource.value || '')
+    }
+  }
+}
+
+function onHtmlInput() {
+  emit('update:modelValue', htmlSource.value)
 }
 
 function openMediaLibrary() {
@@ -103,13 +126,31 @@ watch(
   <div class="space-y-2">
     <div class="flex items-center justify-between">
       <span class="text-sm font-medium text-base-content/70">Content</span>
-      <button class="btn btn-ghost btn-xs gap-1 text-primary" type="button" @click="openMediaLibrary">
-        <i class="fa-solid fa-image" />
-        Media Library
-      </button>
+      <div class="flex items-center gap-1">
+        <button
+          class="btn btn-ghost btn-xs gap-1"
+          :class="showHtml ? 'text-primary font-semibold' : 'text-base-content/60'"
+          type="button"
+          @click="toggleHtmlSource"
+        >
+          <i class="fa-solid fa-code" />
+          Source
+        </button>
+        <button class="btn btn-ghost btn-xs gap-1 text-primary" type="button" @click="openMediaLibrary">
+          <i class="fa-solid fa-image" />
+          Media Library
+        </button>
+      </div>
     </div>
     <div class="rounded-lg border border-base-300 bg-base-100 p-2">
-      <div ref="editorEl" class="min-h-[14rem]" />
+      <div v-show="!showHtml" ref="editorEl" class="min-h-[14rem]" />
+      <textarea
+        v-show="showHtml"
+        v-model="htmlSource"
+        class="textarea textarea-bordered w-full min-h-[14rem] font-mono text-sm"
+        placeholder="Write HTML directly..."
+        @input="onHtmlInput"
+      />
     </div>
   </div>
   <AdminMediaLibraryPicker ref="pickerRef" @select="onMediaSelected" />

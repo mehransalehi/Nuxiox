@@ -9,8 +9,19 @@ const emit = defineEmits<{
   toggleSidebar: []
   toggleMobileSidebar: []
   toggleTheme: []
+  toggleLocale: [locale: string]
   logout: []
 }>()
+
+
+const { locale, locales } = useI18n()
+
+const localeOptions = computed(() =>
+  locales.value.map((cur: any) => ({
+    key: cur.name as string,
+    value: cur.code as string,
+  }))
+)
 
 
 </script>
@@ -38,6 +49,33 @@ const emit = defineEmits<{
 
     <div class="flex items-center gap-2">
       <AdminThemeToggleButton :is-dark="isDark" @toggle="emit('toggleTheme')" />
+
+      <!-- Admin Locale Selector -->
+      <div class="dropdown ltr:dropdown-end rtl:dropdown-start">
+        <button
+          tabindex="0"
+          class="btn btn-ghost btn-sm border px-2"
+          type="button"
+          :aria-label="$t('admin.topbar.selectLocale')"
+        >
+          <i class="fa-solid fa-language" aria-hidden="true" />
+          <span class="hidden sm:inline">{{ locale }}</span>
+        </button>
+        <ul
+          tabindex="0"
+          class="menu dropdown-content z-60 mt-2 w-40 rounded-box border border-base-300 bg-base-100 p-2 shadow"
+        >
+          <li v-for="opt in localeOptions" :key="opt.value">
+            <button
+              type="button"
+              :class="{ 'text-primary font-semibold': locale === opt.value }"
+              @click="emit('toggleLocale', opt.value)"
+            >
+              {{ opt.key }}
+            </button>
+          </li>
+        </ul>
+      </div>
 
       <div class="dropdown ltr:dropdown-end rtl:dropdown-start">
         <button

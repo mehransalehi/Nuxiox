@@ -10,8 +10,6 @@ export type InfoItem = {
 
 export type GeneralSettings = {
   showSidebar: boolean
-  direction: 'ltr' | 'rtl'
-  language: 'en' | 'fa' | 'ar'
   favicon: string
 }
 
@@ -56,10 +54,6 @@ export type SeoSettingsGlobal = {
 
 export type SeoSettings = SeoSettingsLocale & SeoSettingsGlobal
 
-export type I18nSettings = {
-  defaultLocale: 'en' | 'fa' | 'ar'
-}
-
 export type AboutSettings = {
   info: InfoItem[]
 }
@@ -71,7 +65,6 @@ export type SiteSettings = {
   blog: BlogSettings
   seo: SeoSettings
   theme: ThemeSettings
-  i18n: I18nSettings
   about: AboutSettings
 }
 export type SiteSettingsLocale = {
@@ -81,7 +74,6 @@ export type SiteSettingsLocale = {
   blog: Record<string,BlogSettings>
   seo: Record<string,SeoSettings>
   theme: Record<string,ThemeSettings>
-  i18n: Record<string,I18nSettings>
   about: Record<string,AboutSettings>
 }
 
@@ -125,8 +117,6 @@ export const defaultSeoSettingsGlobal: SeoSettingsGlobal = {
 export const defaultSettings: SiteSettings = {
   general: {
     showSidebar: true,
-    direction: 'ltr',
-    language: 'en',
     favicon: '',
   },
   navbar: {
@@ -176,8 +166,5 @@ export const defaultSettings: SiteSettings = {
       { key: 'Experience', value: '10+ years' },
       { key: 'Projects', value: '120+' },
     ],
-  },
-  i18n: {
-    defaultLocale: 'en',
   },
 }

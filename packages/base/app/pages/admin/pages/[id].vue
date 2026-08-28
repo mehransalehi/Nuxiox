@@ -18,6 +18,8 @@ type SeoEntry = { key: string; value: string }
 
 const route = useRoute()
 const pageId = computed(() => route.params.id as string)
+const pageLocale = computed(() => (route.query.locale as string) || 'en')
+const localePath = useLocalePath()
 
 const { data, refresh } = await useFetch<PageRecord>(`/api/pages/${pageId.value}?locale=${route.query.locale}`)
 console.log(data.value);
@@ -201,7 +203,7 @@ const deletePage = async () => {
     try {
       await $fetch(`/api/pages/${pageId.value}?locale=${form.pages_locales.locale}`, { method: 'DELETE' })
       toastStore.push($t('admin.pages.deleteSuccess'), 'success')
-      await navigateTo('/admin/pages')
+      await navigateTo(localePath('/admin/pages', pageLocale.value))
     } catch (err) {
       toastStore.push(err instanceof Error ? err.message : $t('admin.pages.deleteFailed'), 'error')
     } finally {

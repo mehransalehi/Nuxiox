@@ -19,7 +19,7 @@ type CommentNode = {
 }
 
 export default defineEventHandler(async (event) => {
-  const slug = getRouterParam(event, 'slug')
+  const slug = decodeURIComponent(getRouterParam(event, 'slug') || '')
   const locale = getLocale(event)
 
   if (!slug)

@@ -1,0 +1,98 @@
+/* KidSmile Theme CSS - Playful, Bright, Direction-Aware */
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(-2deg);
+  }
+}
+
+@keyframes pulse-gentle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.animate-float {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 5s ease-in-out infinite;
+}
+
+.animate-pulse-gentle {
+  animation: pulse-gentle 2.5s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* RTL Arrow & Icon Flipping as required by Nuxiox Spec */
+[dir="rtl"] .icon-flip-rtl,
+[dir="rtl"] .fa-arrow-left,
+[dir="rtl"] .fa-arrow-right,
+[dir="rtl"] .arrow-dir {
+  transform: scaleX(-1);
+  display: inline-block;
+}
+
+/* Scalloped & Wavy Decorative Dividers */
+.scallop-divider-top {
+  background-image: radial-gradient(circle at 10px 0, transparent 0, transparent 10px, #ffffff 10px, #ffffff 100%);
+  background-size: 20px 10px;
+  background-repeat: repeat-x;
+  height: 10px;
+}
+
+.scallop-divider-bottom {
+  background-image: radial-gradient(circle at 10px 10px, transparent 0, transparent 10px, #ffffff 10px, #ffffff 100%);
+  background-size: 20px 10px;
+  background-repeat: repeat-x;
+  height: 10px;
+}
+
+/* Custom Playful Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

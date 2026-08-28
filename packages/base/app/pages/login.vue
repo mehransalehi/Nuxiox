@@ -41,11 +41,13 @@ const login = async () => {
     toastStore.push('Login successful.', 'success')
 
     if (res.user.role === 'admin') {
+      const localePath = useLocalePath()
+      const redirectTo = localePath('/admin')
       if (import.meta.client) {
-        window.location.assign('/admin')
+        window.location.assign(redirectTo)
         return
       }
-      await navigateTo('/admin', { replace: true })
+      await navigateTo(redirectTo, { replace: true })
       return
     }
 

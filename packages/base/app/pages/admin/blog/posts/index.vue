@@ -21,7 +21,7 @@ const removePost = async (id: number) => {
 <template>
   <AdminPage :title="$t('admin.blog.posts')">
     <template #header>
-      <NuxtLink class="btn btn-primary" to="/admin/blog/posts/new">{{ $t('admin.blog.createPost') }}</NuxtLink>
+      <NuxtLink :to="$localePath('/admin/blog/posts/new')" class="btn btn-primary">{{ $t('admin.blog.createPost') }}</NuxtLink>
     </template>
     <AdminCard>
       <table class="table" v-if="data.length > 0">

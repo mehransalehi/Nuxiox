@@ -1,0 +1,6 @@
+{
+  "name": "KidSmile Dental Care",
+  "description": "A playful, bright, and interactive pediatric dental clinic website built with Vue.js following the Nuxiox Theme Spec and joyful design principles.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

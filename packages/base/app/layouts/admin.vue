@@ -5,8 +5,8 @@ const mobileSidebarOpen = ref(false)
 const sidebarCollapsed = ref(false)
 const isDark = ref(false)
 const { settings } = useSiteSettings()
-const { locale, setLocale } = useI18n()
-
+const { locale } = useI18n()
+const switchLocalePath = useSwitchLocalePath()
 
 const direction = computed(() => (locale.value === 'fa' || locale.value === 'ar') ? "rtl" : 'ltr')
 
@@ -40,22 +40,21 @@ const logout = async () => {
   await navigateTo('/login')
 }
 
+const switchAdminLocale = (newLocale: string) => {
+  if (newLocale === locale.value) return
+  if (import.meta.client) {
+    const targetPath = switchLocalePath(newLocale)
+    if (targetPath) {
+      navigateTo(targetPath)
+    }
+  }
+}
+
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme')
   isDark.value = savedTheme ? savedTheme === 'dark' : false
   applyTheme(isDark.value)
 })
-
-// Admin panel locale follows the admin "website language" setting
-// This ensures admin panel always uses the admin's selected language
-// regardless of the public locale the user selected via the navbar
-watch(
-  () => settings.value.general.language,
-  (value) => {
-    if (value && value !== locale.value) setLocale(value)
-  },
-  { immediate: true }
-)
 
 useHead(() => ({
   htmlAttrs: {
@@ -87,7 +86,7 @@ useHead(() => ({
     <div class="flex min-w-0 flex-1 flex-col">
       <AdminTopbar :sidebar-collapsed="sidebarCollapsed" :is-dark="isDark" :user-email="user?.email"
         @toggle-sidebar="toggleSidebar" @toggle-mobile-sidebar="toggleMobileSidebar" @toggle-theme="toggleTheme"
-        @logout="logout" />
+        @toggle-locale="switchAdminLocale" @logout="logout" />
 
       <main class="p-4 sm:p-6">
         <div class="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm sm:p-6">
