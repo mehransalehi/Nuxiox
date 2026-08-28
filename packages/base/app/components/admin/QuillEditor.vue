@@ -53,23 +53,19 @@ const ensureQuillLoaded = async () => {
 
 function toggleHtmlSource() {
   if (!showHtml.value) {
-    // Switching to HTML source mode — copy current content to textarea
-    htmlSource.value = quill ? quill.root.innerHTML : (props.modelValue || '')
+    // Switching TO source mode: copy current v-model content to textarea
+    // textarea will now be the source of truth via its v-model + watcher
+    htmlSource.value = props.modelValue || ''
     showHtml.value = true
   } else {
-    // Switching back to WYSIWYG — update quill from textarea content
+    // Switching BACK to WYSIWYG: textarea content is already in the v-model
+    // (synced via the watcher below). Set Quill from it for display purposes.
     showHtml.value = false
     if (quill) {
+      // Update Quill's display — it may mangle the HTML but the v-model is safe
       quill.root.innerHTML = htmlSource.value || ''
-      emit('update:modelValue', quill.root.innerHTML)
-    } else {
-      emit('update:modelValue', htmlSource.value || '')
     }
   }
-}
-
-function onHtmlInput() {
-  emit('update:modelValue', htmlSource.value)
 }
 
 function openMediaLibrary() {
@@ -79,9 +75,10 @@ function openMediaLibrary() {
 function onMediaSelected(media: any) {
   if (!quill) return
   const imgUrl = `/api/admin/media/${media.id}/file`
-  // Insert an <img> at the current cursor position
   quill.root.innerHTML = quill.root.innerHTML + `<img src="${imgUrl}" alt="${media.alt || ''}" />`
-  emit('update:modelValue', quill.root.innerHTML)
+  if (!showHtml.value) {
+    emit('update:modelValue', quill.root.innerHTML)
+  }
 }
 
 onMounted(async () => {
@@ -105,14 +102,24 @@ onMounted(async () => {
 
   quill.root.innerHTML = props.modelValue || ''
   quill.on('text-change', () => {
-    if (!quill || syncing) return
+    if (!quill || syncing || showHtml.value) return
     emit('update:modelValue', quill.root.innerHTML)
   })
 })
 
+// When in source mode, the watcher syncs textarea back to the v-model
+// When in WYSIWYG mode, it syncs external v-model changes to Quill
 watch(
   () => props.modelValue,
   (value) => {
+    if (showHtml.value) {
+      // Sync textarea if v-model changed externally (e.g. loading new post)
+      if (htmlSource.value !== value) {
+        htmlSource.value = value || ''
+      }
+      return
+    }
+    // WYSIWYG mode: sync external v-model changes to Quill
     if (!quill) return
     if (quill.root.innerHTML === value) return
     syncing = true
@@ -120,6 +127,12 @@ watch(
     syncing = false
   },
 )
+
+function onSourceInput(e: Event) {
+  const value = (e.target as HTMLTextAreaElement).value
+  htmlSource.value = value
+  emit('update:modelValue', value)
+}
 </script>
 
 <template>
@@ -146,10 +159,10 @@ watch(
       <div v-show="!showHtml" ref="editorEl" class="min-h-[14rem]" />
       <textarea
         v-show="showHtml"
-        v-model="htmlSource"
+        :value="htmlSource"
         class="textarea textarea-bordered w-full min-h-[14rem] font-mono text-sm"
         placeholder="Write HTML directly..."
-        @input="onHtmlInput"
+        @input="onSourceInput"
       />
     </div>
   </div>
