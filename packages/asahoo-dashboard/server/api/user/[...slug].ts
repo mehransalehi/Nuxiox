@@ -1,27 +1,28 @@
-import { settings } from '~~/server/database/schema.gen'
+import { users } from '~~/server/database/schema.gen'
 import { eq } from 'drizzle-orm'
 
 export default defineEventHandler(async (event) => {
   try {
+    // 1. Get user session
+    const session = await getUserSession(event)
+    if (!session?.user?.id) {
+      throw createError({ statusCode: 401, statusMessage: 'احراز هویت نشده‌اید' })
+    }
+
+    // 2. Look up user's bot credentials
     const db = useDb(event)
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, session.user.id),
+    }) as any
 
-    // Read bot_config from settings
-    const rows = await db
-      .select()
-      .from(settings)
-      .where(eq(settings.key, 'bot_config'))
-
-    if (!rows.length) {
-      throw createError({ statusCode: 503, statusMessage: 'Bot not configured' })
+    if (!user || !user.bot_url || !user.bot_token) {
+      throw createError({ statusCode: 503, statusMessage: 'اعتبارنامه ربات پیکربندی نشده است. با مدیر تماس بگیرید.' })
     }
 
-    const botConfig = typeof rows[0].value === 'string' ? JSON.parse(rows[0].value) : rows[0].value
+    const botUrl = user.bot_url.replace(/\/+$/, '')
+    const botToken = user.bot_token
 
-    if (!botConfig.url || !botConfig.token) {
-      throw createError({ statusCode: 503, statusMessage: 'Bot not configured' })
-    }
-
-    // Extract slug from route params — for [...slug] this captures everything after /api/user/
+    // 3. Extract slug from route params — for [...slug] this captures everything after /api/user/
     const slug = getRouterParam(event, 'slug') || ''
 
     // Forward query params
@@ -30,11 +31,11 @@ export default defineEventHandler(async (event) => {
       ? '?' + new URLSearchParams(query).toString()
       : ''
 
-    const targetUrl = `${botConfig.url}/api/${slug}${queryString}`
+    const targetUrl = `${botUrl}/api/${slug}${queryString}`
 
     const method = event.method
     const headers: Record<string, string> = {
-      'X-Admin-Key': botConfig.token,
+      'X-Admin-Key': botToken,
     }
 
     // Forward request body for mutating methods
@@ -53,7 +54,7 @@ export default defineEventHandler(async (event) => {
         const errorText = await response.text()
         throw createError({
           statusCode: 502,
-          statusMessage: errorText || 'Bot returned an error',
+          statusMessage: errorText || 'خطا از سمت ربات',
         })
       }
 
@@ -71,7 +72,7 @@ export default defineEventHandler(async (event) => {
       const errorText = await response.text()
       throw createError({
         statusCode: 502,
-        statusMessage: errorText || 'Bot returned an error',
+        statusMessage: errorText || 'خطا از سمت ربات',
       })
     }
 
@@ -87,7 +88,7 @@ export default defineEventHandler(async (event) => {
     }
     throw createError({
       statusCode: 500,
-      statusMessage: error.message || 'Internal server error',
+      statusMessage: error.message || 'خطای داخلی سرور',
     })
   }
 })

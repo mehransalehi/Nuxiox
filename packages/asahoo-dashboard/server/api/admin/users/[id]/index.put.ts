@@ -7,6 +7,9 @@ const updateUserSchema = z.object({
   username: z.string().min(2).max(100).optional(),
   email: z.string().email().optional(),
   password: z.string().min(8, 'Password must be at least 8 characters').optional(),
+  bot_url: z.string().optional(),
+  bot_token: z.string().optional(),
+  cf_token: z.string().optional(),
 })
 
 export default defineEventHandler(async (event) => {
@@ -34,6 +37,9 @@ export default defineEventHandler(async (event) => {
   if (body.password !== undefined) {
     updateValues.password_hash = await bcrypt.hash(body.password, 10)
   }
+  if (body.bot_url !== undefined) updateValues.bot_url = body.bot_url
+  if (body.bot_token !== undefined) updateValues.bot_token = body.bot_token
+  if (body.cf_token !== undefined) updateValues.cf_token = body.cf_token
   updateValues.updated_at = new Date()
 
   await db.update(users).set(updateValues).where(eq(users.id, id))

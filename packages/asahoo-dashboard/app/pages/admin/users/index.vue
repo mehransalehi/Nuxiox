@@ -15,6 +15,9 @@ const form = reactive({
   username: '',
   email: '',
   password: '',
+  bot_url: '',
+  bot_token: '',
+  cf_token: '',
 })
 const isSubmitting = ref(false)
 
@@ -33,6 +36,9 @@ function resetForm() {
   form.username = ''
   form.email = ''
   form.password = ''
+  form.bot_url = ''
+  form.bot_token = ''
+  form.cf_token = ''
   editingUser.value = null
   showForm.value = false
 }
@@ -47,6 +53,9 @@ function openEdit(user: any) {
   form.username = user.username
   form.email = user.email
   form.password = ''
+  form.bot_url = user.bot_url || ''
+  form.bot_token = user.bot_token || ''
+  form.cf_token = user.cf_token || ''
   showForm.value = true
 }
 
@@ -57,6 +66,9 @@ async function save() {
     if (editingUser.value) {
       const body: Record<string, string> = { username: form.username, email: form.email }
       if (form.password) body.password = form.password
+      if (form.bot_url) body.bot_url = form.bot_url
+      if (form.bot_token) body.bot_token = form.bot_token
+      if (form.cf_token) body.cf_token = form.cf_token
       await $fetch(`/api/admin/users/${editingUser.value.id}`, {
         method: 'PUT',
         body,
@@ -69,6 +81,9 @@ async function save() {
           username: form.username,
           email: form.email,
           password: form.password,
+          bot_url: form.bot_url || undefined,
+          bot_token: form.bot_token || undefined,
+          cf_token: form.cf_token || undefined,
         },
       })
       toastStore.push('کاربر با موفقیت ایجاد شد', 'success')
@@ -106,6 +121,9 @@ async function remove(id: number) {
           type="password"
           v-model="form.password"
         />
+        <AdminUiText label="آدرس بات" v-model="form.bot_url" placeholder="https://asahoo-bot.workers.dev" />
+        <AdminUiText label="توکن بات" v-model="form.bot_token" placeholder="API token" />
+        <AdminUiText label="توکن ابری" type="password" v-model="form.cf_token" placeholder="Cloudflare API token (اختیاری)" />
         <div class="flex gap-2 mt-2">
           <button class="btn btn-primary" :disabled="isSubmitting" @click="save">
             {{ isSubmitting ? 'در حال ذخیره...' : 'ذخیره' }}
@@ -143,6 +161,7 @@ async function remove(id: number) {
                 <th>شناسه</th>
                 <th>نام کاربری</th>
                 <th>ایمیل</th>
+                <th>بات</th>
                 <th>تاریخ ایجاد</th>
                 <th>عملیات</th>
               </tr>
@@ -152,6 +171,10 @@ async function remove(id: number) {
                 <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
+                <td>
+                  <span v-if="user.bot_url" class="badge badge-success badge-sm">فعال</span>
+                  <span v-else class="badge badge-ghost badge-sm">غیرفعال</span>
+                </td>
                 <td>{{ new Date(user.created_at).toLocaleDateString('fa-IR') }}</td>
                 <td>
                   <div class="flex gap-2">

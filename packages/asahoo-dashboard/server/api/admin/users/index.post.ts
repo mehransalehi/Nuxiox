@@ -6,6 +6,9 @@ const createUserSchema = z.object({
   username: z.string().min(2).max(100),
   email: z.string().email(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  bot_url: z.string().optional(),
+  bot_token: z.string().optional(),
+  cf_token: z.string().optional(),
 })
 
 export default defineEventHandler(async (event) => {
@@ -24,7 +27,10 @@ export default defineEventHandler(async (event) => {
       email: body.email,
       password_hash: passwordHash,
       role: 'user',
-    })
+      bot_url: body.bot_url || null,
+      bot_token: body.bot_token || null,
+      cf_token: body.cf_token || null,
+    } as any)
     .returning()
 
   if (!user) {

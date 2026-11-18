@@ -15,7 +15,7 @@ async function login() {
       method: 'POST',
       body: { email: email.value, password: password.value },
     })
-    await router.push('/user')
+    window.location.href = '/user'
   } catch (e: any) {
     error.value = e?.data?.message || 'خطا در ورود'
   } finally {
