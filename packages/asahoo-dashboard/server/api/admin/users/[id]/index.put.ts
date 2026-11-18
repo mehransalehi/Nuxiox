@@ -42,6 +42,21 @@ export default defineEventHandler(async (event) => {
   if (body.cf_token !== undefined) updateValues.cf_token = body.cf_token
   updateValues.updated_at = new Date()
 
+  // Auto-fetch bot token from one-time setup endpoint
+  if (body.bot_url && body.bot_token === undefined) {
+    try {
+      const res = await fetch(`${body.bot_url.replace(/\/+$/, '')}/api/setup/token`)
+      if (res.ok) {
+        const data = await res.json()
+        if (data.token) {
+          updateValues.bot_token = data.token
+        }
+      }
+    } catch {
+      // Silently fail — token can be set manually later
+    }
+  }
+
   await db.update(users).set(updateValues).where(eq(users.id, id))
 
   return { success: true }
