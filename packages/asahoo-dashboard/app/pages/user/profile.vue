@@ -18,27 +18,60 @@ const { data, status, refresh } = await useFetch<ProfileData>('/api/user/profile
   default: () => ({
     name: '',
     description: '',
-    contact_info: '',
+    contact_info: '{}',
     timezone: 'Asia/Tehran',
-    policies: '',
+    policies: '{}',
   }),
 })
 
 const form = reactive<ProfileData>({
   name: '',
   description: '',
-  contact_info: '',
+  contact_info: '{}',
   timezone: 'Asia/Tehran',
-  policies: '',
+  policies: '{}',
 })
+
+/** Parse a JSON object string into a { key, value }[] list for ListCreator */
+function jsonToList(jsonStr: string): { key: string, value: string }[] {
+  try {
+    const obj = JSON.parse(jsonStr || '{}')
+    return Object.entries(obj).map(([key, value]) => ({
+      key,
+      value: value != null ? String(value) : '',
+    }))
+  } catch {
+    return []
+  }
+}
+
+/** Convert a { key, value }[] list back to a JSON object string */
+function listToJson(list: { key: string, value: string }[]): string {
+  const obj: Record<string, string> = {}
+  for (const item of list) {
+    if (item.key) {
+      obj[item.key] = item.value
+    }
+  }
+  return JSON.stringify(obj)
+}
+
+const contactInfoList = ref<{ key: string, value: string }[]>([])
+const policiesList = ref<{ key: string, value: string }[]>([])
 
 watch(data, (val) => {
   if (val) {
     Object.assign(form, val)
+    contactInfoList.value = jsonToList(val.contact_info)
+    policiesList.value = jsonToList(val.policies)
   }
 }, { immediate: true })
 
 async function save() {
+  // Convert ListCreator arrays back to JSON strings before sending
+  form.contact_info = listToJson(contactInfoList.value)
+  form.policies = listToJson(policiesList.value)
+
   try {
     await $fetch('/api/user/profile', {
       method: 'PUT',
@@ -64,8 +97,22 @@ async function save() {
           <AdminUiText label="منطقه زمانی" v-model="form.timezone" placeholder="Asia/Tehran" />
         </div>
         <AdminUiTextarea label="توضیحات" v-model="form.description" placeholder="توضیحات کسب و کار" />
-        <AdminUiTextarea label="اطلاعات تماس (JSON)" v-model="form.contact_info" placeholder='{"phone":"","email":"","address":""}' />
-        <AdminUiTextarea label="خط مشی‌ها (JSON)" v-model="form.policies" placeholder='{"refund":"","terms":""}' />
+        <AdminCard title="اطلاعات تماس">
+          <ListCreator
+            :list="contactInfoList"
+            @update="contactInfoList = $event"
+            title="اطلاعات تماس"
+            button-text="+ افزودن"
+          />
+        </AdminCard>
+        <AdminCard title="خط مشی‌ها">
+          <ListCreator
+            :list="policiesList"
+            @update="policiesList = $event"
+            title="خط مشی‌ها"
+            button-text="+ افزودن"
+          />
+        </AdminCard>
         <div class="mt-4">
           <button class="btn btn-primary" @click="save">ذخیره تغییرات</button>
         </div>

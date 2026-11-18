@@ -43,8 +43,8 @@ const types = ref<{ id: number; name: string }[]>([])
 
 async function fetchTypes() {
   try {
-    const res = await $fetch('/api/user/knowledge-types')
-    types.value = Array.isArray(res) ? res : (res as any).types ?? []
+    const res = await $fetch<{ records: { id: number; name: string }[]; total: number }>('/api/user/knowledge-types?limit=500')
+    types.value = res.records ?? []
   } catch {
     types.value = []
   }

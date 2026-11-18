@@ -14,9 +14,28 @@ interface KnowledgeType {
   sort_order: number
 }
 
-const { data, refresh, status } = await useFetch<KnowledgeType[]>('/api/user/knowledge-types', {
-  default: () => [],
+const page = ref(1)
+const perPage = 20
+
+const query = computed(() => {
+  const params = new URLSearchParams()
+  params.set('page', String(page.value))
+  params.set('limit', String(perPage))
+  return params.toString()
 })
+
+const { data, refresh, status } = await useFetch<{ records: KnowledgeType[]; total: number }>(
+  () => `/api/user/knowledge-types?${query.value}`,
+  {
+    default: () => ({ records: [], total: 0 }),
+  },
+)
+
+const totalPages = computed(() => Math.ceil((data.value?.total ?? 0) / perPage) || 1)
+
+function goToPage(p: number) {
+  page.value = p
+}
 
 const editingId = ref<number | null>(null)
 const newForm = reactive({ name: '', description: '', icon: '', sort_order: 0 })
@@ -107,7 +126,7 @@ async function removeType(id: number) {
       <div v-if="status === 'pending'" class="flex justify-center py-4">
         <AdminLoadingSpinner title="در حال بارگذاری..." />
       </div>
-      <div v-else-if="data.length === 0" class="overflow-x-auto">
+      <div v-else-if="data.records.length === 0" class="overflow-x-auto">
         <AdminThereIsNo>نوع دانشی تعریف نشده است</AdminThereIsNo>
       </div>
       <div v-else class="overflow-x-auto">
@@ -123,7 +142,7 @@ async function removeType(id: number) {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="row in data" :key="row.id">
+            <tr v-for="row in data.records" :key="row.id">
               <template v-if="editingId === row.id">
                 <td>{{ row.id }}</td>
                 <td><input v-model="editForm.name" class="input input-bordered input-sm w-full" /></td>
@@ -149,6 +168,26 @@ async function removeType(id: number) {
             </tr>
           </tbody>
         </table>
+
+        <div v-if="totalPages > 1" class="mt-4 flex items-center justify-center gap-2">
+          <button
+            class="btn btn-sm"
+            :disabled="page <= 1"
+            @click="goToPage(page - 1)"
+          >
+            قبلی
+          </button>
+          <span class="text-sm opacity-70">
+            صفحه {{ page }} از {{ totalPages }}
+          </span>
+          <button
+            class="btn btn-sm"
+            :disabled="page >= totalPages"
+            @click="goToPage(page + 1)"
+          >
+            بعدی
+          </button>
+        </div>
       </div>
     </AdminCard>
   </AdminPage>

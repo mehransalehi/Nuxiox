@@ -14,7 +14,7 @@ interface KnowledgeForm {
   type_id: number | null
   title: string
   description: string
-  data_json: string
+  data_json: { key: string; value: string }[]
   status: string
 }
 
@@ -22,7 +22,7 @@ const form = reactive<KnowledgeForm>({
   type_id: null,
   title: '',
   description: '',
-  data_json: '',
+  data_json: [],
   status: 'draft',
 })
 
@@ -32,8 +32,8 @@ const isSaving = ref(false)
 
 async function fetchTypes() {
   try {
-    const res = await $fetch('/api/user/knowledge-types')
-    types.value = Array.isArray(res) ? res : (res as any).types ?? []
+    const res = await $fetch<{ records: { id: number; name: string }[]; total: number }>('/api/user/knowledge-types?limit=500')
+    types.value = res.records ?? []
   } catch {
     types.value = []
   }
@@ -49,7 +49,8 @@ async function loadRecord() {
     form.type_id = record.type_id ?? null
     form.title = record.title ?? ''
     form.description = record.description ?? ''
-    form.data_json = typeof record.data_json === 'object' ? JSON.stringify(record.data_json, null, 2) : (record.data_json ?? '')
+    const rawData = typeof record.data_json === 'object' ? record.data_json : JSON.parse(record.data_json || '{}')
+    form.data_json = Object.entries(rawData || {}).map(([key, value]) => ({ key, value: String(value) }))
     form.status = record.status ?? 'draft'
   } catch (error: any) {
     toastStore.push('خطا در بارگذاری رکورد', 'error')
@@ -70,7 +71,10 @@ const statusOptions = [
 async function save() {
   isSaving.value = true
   try {
-    const body = { ...form }
+    const body = {
+      ...form,
+      data_json: JSON.stringify(Object.fromEntries(form.data_json.map(item => [item.key, item.value])))
+    }
     if (isNew.value) {
       await $fetch('/api/user/knowledge-records', { method: 'POST', body })
       toastStore.push('رکورد با موفقیت ایجاد شد', 'success')
@@ -102,7 +106,7 @@ async function save() {
           />
           <AdminUiText v-model="form.title" label="عنوان" placeholder="عنوان رکورد" />
           <AdminUiTextarea v-model="form.description" label="توضیحات" placeholder="توضیحات رکورد" />
-          <AdminUiTextarea v-model="form.data_json" label="داده (JSON)" placeholder='{"key": "value"}' />
+          <ListCreator :list="form.data_json" title="داده (Key-Value)" buttonText="افزودن" @update="form.data_json = $event" />
           <AdminUiSelect
             v-model="form.status"
             label="وضعیت"

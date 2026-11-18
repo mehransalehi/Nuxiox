@@ -45,13 +45,17 @@ export default defineEventHandler(async (event) => {
     // 3. Extract slug from route params — for [...slug] this captures everything after /api/user/
     const slug = getRouterParam(event, 'slug') || ''
 
+    // Map dashboard API paths to bot API paths
+    // The bot serves profile at /api/business/profile, not /api/profile
+    const apiPath = slug === 'profile' ? 'business/profile' : slug
+
     // Forward query params
     const query = getQuery(event) as Record<string, string>
     const queryString = Object.keys(query).length > 0
       ? '?' + new URLSearchParams(query).toString()
       : ''
 
-    const targetUrl = `${botUrl}/api/${slug}${queryString}`
+    const targetUrl = `${botUrl}/api/${apiPath}${queryString}`
 
     const method = event.method
     const headers: Record<string, string> = {
