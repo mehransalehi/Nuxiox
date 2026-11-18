@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'admin', middleware: 'user-auth' })
+definePageMeta({ layout: 'user', middleware: 'user-auth' })
 useHead(() => ({ title: 'داشبورد کاربری' }))
 
 interface UsageData {

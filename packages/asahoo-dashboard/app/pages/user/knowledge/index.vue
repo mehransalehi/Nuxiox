@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useToastStore } from '~~/packages/base/app/stores/toast'
 
-definePageMeta({ layout: 'admin', middleware: 'user-auth' })
+definePageMeta({ layout: 'user', middleware: 'user-auth' })
 useHead(() => ({ title: 'دانشنامه' }))
 
 const toastStore = useToastStore()
