@@ -20,6 +20,7 @@ const form = reactive({
   cf_token: '',
 })
 const isSubmitting = ref(false)
+const autoFetch = ref(true)
 
 // Search
 const searchResults = computed(() => {
@@ -67,6 +68,7 @@ async function save() {
       const body: Record<string, string> = { username: form.username, email: form.email, bot_url: form.bot_url, bot_token: form.bot_token }
       if (form.password) body.password = form.password
       if (form.cf_token) body.cf_token = form.cf_token
+      if (autoFetch.value) body.auto_fetch = 'true'
       await $fetch(`/api/admin/users/${editingUser.value.id}`, {
         method: 'PUT',
         body,
@@ -81,6 +83,7 @@ async function save() {
           password: form.password,
           bot_url: form.bot_url || undefined,
           bot_token: form.bot_token || undefined,
+          auto_fetch: autoFetch.value || undefined,
           cf_token: form.cf_token || undefined,
         },
       })
@@ -120,6 +123,10 @@ async function remove(id: number) {
           v-model="form.password"
         />
         <AdminUiText label="آدرس بات" v-model="form.bot_url" placeholder="https://asahoo-bot.workers.dev" />
+        <label class="flex items-center gap-2 mt-2">
+          <input type="checkbox" v-model="autoFetch" class="checkbox checkbox-primary" />
+          <span class="text-sm">دریافت خودکار توکن</span>
+        </label>
         <AdminUiText label="توکن بات" v-model="form.bot_token" placeholder="API token" />
         <AdminUiText label="توکن ابری" type="password" v-model="form.cf_token" placeholder="Cloudflare API token (اختیاری)" />
         <div class="flex gap-2 mt-2">

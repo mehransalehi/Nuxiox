@@ -24,3 +24,7 @@ migrations_dir = "./server/database/migrations"
 binding = "MEDIA_KV"
 id = "8d615606fa1146d8b1a47a841abaa8ea"
 preview_id = "8d615606fa1146d8b1a47a841abaa8ea"
+
+[[services]]
+binding = "BOT"
+service = "asahoo-bot"

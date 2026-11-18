@@ -3,28 +3,26 @@ definePageMeta({ layout: 'user', middleware: 'user-auth' })
 useHead(() => ({ title: 'داشبورد کاربری' }))
 
 interface UsageData {
-  totalTokens: number
-  totalCost: number
-  currentMonthTokens: number
-  currentMonthCost: number
+  lifetimeUsd: number | null
+  perDay: { day: string; usd: number; tokens: number }[]
+  perModel: { model: string; usd: number; tokens: number }[]
 }
 
 const { data, status } = await useFetch<UsageData>('/api/user/usage', {
   default: () => ({
-    totalTokens: 0,
-    totalCost: 0,
-    currentMonthTokens: 0,
-    currentMonthCost: 0,
+    lifetimeUsd: null,
+    perDay: [],
+    perModel: [],
   }),
 })
 
 const { t } = useI18n()
 
 const cards = computed(() => [
-  { label: 'توکن‌های مصرفی (کل)', value: data.value.totalTokens.toLocaleString() },
-  { label: 'هزینه کل (تومان)', value: data.value.totalCost.toLocaleString() },
-  { label: 'توکن‌های ماه جاری', value: data.value.currentMonthTokens.toLocaleString() },
-  { label: 'هزینه ماه جاری (تومان)', value: data.value.currentMonthCost.toLocaleString() },
+  { label: 'توکن‌های مصرفی (کل)', value: (data.value.perDay?.reduce((s, d) => s + d.tokens, 0) || 0).toLocaleString() },
+  { label: 'هزینه کل', value: data.value.lifetimeUsd !== null && data.value.lifetimeUsd !== undefined ? `$${data.value.lifetimeUsd.toFixed(4)}` : '---' },
+  { label: 'تعداد روزهای دارای مصرف', value: String(data.value.perDay?.length || 0) },
+  { label: 'مدل‌های استفاده شده', value: String(data.value.perModel?.length || 0) },
 ])
 </script>
 

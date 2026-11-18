@@ -12,41 +12,26 @@ const dayOptions = [
 const days = ref(30)
 const query = computed(() => `?days=${days.value}`)
 
-interface DailyUsage {
-  date: string
-  tokens: number
-  cost: number
-}
-
-interface ModelBreakdown {
-  model: string
-  tokens: number
-  cost: number
-  calls: number
-}
-
 interface UsageResponse {
-  lifetimeTokens: number
-  lifetimeCost: number
-  daily: DailyUsage[]
-  perModel: ModelBreakdown[]
+  lifetimeUsd: number | null
+  perDay: { day: string; usd: number; tokens: number }[]
+  perModel: { model: string; usd: number; tokens: number }[]
 }
 
 const { data, status, refresh } = await useFetch<UsageResponse>(
   () => `/api/user/usage${query.value}`,
   {
     default: () => ({
-      lifetimeTokens: 0,
-      lifetimeCost: 0,
-      daily: [],
+      lifetimeUsd: null,
+      perDay: [],
       perModel: [],
     }),
   },
 )
 
 const maxDailyTokens = computed(() => {
-  if (!data.value.daily.length) return 1
-  return Math.max(...data.value.daily.map((d) => d.tokens), 1)
+  if (!data.value.perDay.length) return 1
+  return Math.max(...data.value.perDay.map((d) => d.tokens), 1)
 })
 
 function formatNumber(n: number): string {
@@ -78,7 +63,7 @@ function onChangeDays() {
       <AdminLoadingSpinner title="در حال بارگذاری..." />
     </div>
 
-    <template v-else-if="data.daily.length === 0 && data.perModel.length === 0">
+    <template v-else-if="data.perDay.length === 0 && data.perModel.length === 0">
       <AdminCard>
         <AdminThereIsNo>داده‌ای برای نمایش وجود ندارد</AdminThereIsNo>
       </AdminCard>
@@ -89,24 +74,24 @@ function onChangeDays() {
         <article class="card border border-base-300 bg-base-200">
           <div class="card-body p-4">
             <p class="text-sm opacity-60">توکن مصرفی (طول عمر)</p>
-            <p class="text-2xl font-bold">{{ formatNumber(data.lifetimeTokens) }}</p>
+            <p class="text-2xl font-bold">{{ formatNumber(data.perDay.reduce((s, d) => s + d.tokens, 0)) }}</p>
           </div>
         </article>
         <article class="card border border-base-300 bg-base-200">
           <div class="card-body p-4">
-            <p class="text-sm opacity-60">هزینه کل (تومان)</p>
-            <p class="text-2xl font-bold">{{ formatNumber(data.lifetimeCost) }}</p>
+            <p class="text-sm opacity-60">هزینه کل (دلار)</p>
+            <p class="text-2xl font-bold">{{ data.lifetimeUsd !== null && data.lifetimeUsd !== undefined ? '$' + data.lifetimeUsd.toFixed(4) : '---' }}</p>
           </div>
         </article>
       </div>
 
-      <AdminCard title="نمودار مصرف روزانه (توکن)" v-if="data.daily.length > 0">
+      <AdminCard title="نمودار مصرف روزانه (توکن)" v-if="data.perDay.length > 0">
         <div class="flex items-end gap-1" style="height: 120px">
           <div
-            v-for="(day, idx) in data.daily"
+            v-for="(day, idx) in data.perDay"
             :key="idx"
             class="tooltip flex-1"
-            :data-tip="`${new Date(day.date).toLocaleDateString('fa-IR')}: ${formatNumber(day.tokens)} توکن`"
+            :data-tip="`${new Date(day.day).toLocaleDateString('fa-IR')}: ${formatNumber(day.tokens)} توکن`"
           >
             <div
               class="w-full rounded-t bg-primary transition-all hover:opacity-80"
@@ -122,17 +107,15 @@ function onChangeDays() {
             <thead>
               <tr>
                 <th>مدل</th>
-                <th>تعداد فراخوانی</th>
                 <th>توکن مصرفی</th>
-                <th>هزینه (تومان)</th>
+                <th>هزینه (دلار)</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(item, idx) in data.perModel" :key="idx">
                 <td class="font-mono text-sm">{{ item.model }}</td>
-                <td>{{ formatNumber(item.calls) }}</td>
                 <td>{{ formatNumber(item.tokens) }}</td>
-                <td>{{ formatNumber(item.cost) }}</td>
+                <td>{{ item.usd !== undefined ? '$' + item.usd.toFixed(6) : '---' }}</td>
               </tr>
             </tbody>
           </table>

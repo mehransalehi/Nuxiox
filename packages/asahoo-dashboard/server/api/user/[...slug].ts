@@ -1,5 +1,25 @@
 import { users } from '~~/server/database/schema.gen'
 import { eq } from 'drizzle-orm'
+import { getCloudflareEnv } from '~~/server/utils/cloudflare'
+
+/**
+ * Call the bot worker, preferring the Cloudflare service binding when available.
+ * Falls back to standard fetch for local dev and non-Cloudflare environments.
+ */
+async function callBot(path: string, options: { method: string; headers: Record<string, string>; body?: string }, event: any) {
+  const cloudflareEnv = getCloudflareEnv(event)
+  const botBinding = (cloudflareEnv as any).BOT as any
+
+  if (botBinding) {
+    // Service binding — works within the same Cloudflare account, avoids error 1042
+    const url = new URL(path, 'https://internal')
+    const request = new Request(url.toString(), options)
+    return await botBinding.fetch(request)
+  }
+
+  // Fallback: direct HTTP fetch (local dev, custom servers, different accounts)
+  return await fetch(path, options)
+}
 
 export default defineEventHandler(async (event) => {
   try {
@@ -41,14 +61,14 @@ export default defineEventHandler(async (event) => {
     // Forward request body for mutating methods
     if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
       const body = await readBody(event)
-      const response = await fetch(targetUrl, {
+      const response = await callBot(targetUrl, {
         method,
         headers: {
           ...headers,
           'Content-Type': 'application/json',
         },
         body: body ? JSON.stringify(body) : undefined,
-      })
+      }, event)
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -66,7 +86,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // GET, DELETE, and other methods — no body
-    const response = await fetch(targetUrl, { method, headers })
+    const response = await callBot(targetUrl, { method, headers }, event)
 
     if (!response.ok) {
       const errorText = await response.text()

@@ -39,8 +39,8 @@ export default defineEventHandler(async (event) => {
     updateValues.password_hash = await bcrypt.hash(body.password, 10)
   }
 
-  // Auto-fetch bot token if only URL is provided (no token)
-  if (body.bot_url && !body.bot_token) {
+  // Auto-fetch bot token if auto_fetch is true, URL is provided, and no token sent
+  if (body.auto_fetch && body.bot_url && !body.bot_token) {
     try {
       const res = await fetch(`${String(body.bot_url).replace(/\/+$/, '')}/api/setup/token`)
       if (res.ok) {

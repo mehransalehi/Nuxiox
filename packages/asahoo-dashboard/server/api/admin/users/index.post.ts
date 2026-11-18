@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   let botToken = body.bot_token || null
 
   // Auto-fetch bot token from one-time setup endpoint
-  if (body.bot_url && !botToken) {
+  if (body.auto_fetch && body.bot_url && !botToken) {
     try {
       const res = await fetch(`${body.bot_url.replace(/\/+$/, '')}/api/setup/token`)
       if (res.ok) {

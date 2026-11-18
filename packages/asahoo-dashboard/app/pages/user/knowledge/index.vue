@@ -14,13 +14,6 @@ interface KnowledgeRecord {
   updated_at: string
 }
 
-interface PaginationMeta {
-  total: number
-  page: number
-  perPage: number
-  totalPages: number
-}
-
 const search = ref('')
 const typeFilter = ref('')
 const statusFilter = ref('')
@@ -30,19 +23,21 @@ const perPage = 20
 const query = computed(() => {
   const params = new URLSearchParams()
   params.set('page', String(page.value))
-  params.set('perPage', String(perPage))
+  params.set('limit', String(perPage))
   if (search.value) params.set('search', search.value)
-  if (typeFilter.value) params.set('type', typeFilter.value)
+  if (typeFilter.value) params.set('type_id', typeFilter.value)
   if (statusFilter.value) params.set('status', statusFilter.value)
   return params.toString()
 })
 
-const { data, refresh, status } = await useFetch<{ records: KnowledgeRecord[]; pagination: PaginationMeta }>(
+const { data, refresh, status } = await useFetch<{ records: KnowledgeRecord[]; total: number }>(
   () => `/api/user/knowledge-records?${query.value}`,
   {
-    default: () => ({ records: [], pagination: { total: 0, page: 1, perPage: 20, totalPages: 0 } }),
+    default: () => ({ records: [], total: 0 }),
   },
 )
+
+const totalPages = computed(() => Math.ceil((data.value?.total ?? 0) / perPage) || 1)
 
 const types = ref<{ id: number; name: string }[]>([])
 
@@ -57,8 +52,8 @@ async function fetchTypes() {
 fetchTypes()
 
 const statusOptions = [
-  { key: 'فعال', value: 'active' },
-  { key: 'غیرفعال', value: 'inactive' },
+  { key: 'فعال', value: 'published' },
+  { key: 'غیرفعال', value: 'archived' },
   { key: 'پیش‌نویس', value: 'draft' },
 ]
 
@@ -135,12 +130,12 @@ function goToPage(p: number) {
                 <span
                   class="badge"
                   :class="{
-                    'badge-success': row.status === 'active',
+                    'badge-success': row.status === 'published',
                     'badge-warning': row.status === 'draft',
-                    'badge-ghost': row.status === 'inactive',
+                    'badge-ghost': row.status === 'archived',
                   }"
                 >
-                  {{ row.status === 'active' ? 'فعال' : row.status === 'draft' ? 'پیش‌نویس' : 'غیرفعال' }}
+                  {{ row.status === 'published' ? 'فعال' : row.status === 'draft' ? 'پیش‌نویس' : 'غیرفعال' }}
                 </span>
               </td>
               <td>{{ new Date(row.updated_at).toLocaleDateString('fa-IR') }}</td>
@@ -152,21 +147,21 @@ function goToPage(p: number) {
           </tbody>
         </table>
 
-        <div v-if="data.pagination.totalPages > 1" class="mt-4 flex items-center justify-center gap-2">
+        <div v-if="totalPages > 1" class="mt-4 flex items-center justify-center gap-2">
           <button
             class="btn btn-sm"
-            :disabled="data.pagination.page <= 1"
-            @click="goToPage(data.pagination.page - 1)"
+            :disabled="page <= 1"
+            @click="goToPage(page - 1)"
           >
             قبلی
           </button>
           <span class="text-sm opacity-70">
-            صفحه {{ data.pagination.page }} از {{ data.pagination.totalPages }}
+            صفحه {{ page }} از {{ totalPages }}
           </span>
           <button
             class="btn btn-sm"
-            :disabled="data.pagination.page >= data.pagination.totalPages"
-            @click="goToPage(data.pagination.page + 1)"
+            :disabled="page >= totalPages"
+            @click="goToPage(page + 1)"
           >
             بعدی
           </button>
