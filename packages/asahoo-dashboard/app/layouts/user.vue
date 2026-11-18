@@ -1,37 +1,98 @@
 <script setup lang="ts">
 import type { UserSession } from '~~/packages/base/types/user-session'
 
+const mobileSidebarOpen = ref(false)
+const sidebarCollapsed = ref(false)
+const isDark = ref(false)
+const { settings } = useSiteSettings()
+const { locale } = useI18n()
+const switchLocalePath = useSwitchLocalePath()
+
+const direction = computed(() => (locale.value === 'fa' || locale.value === 'ar') ? 'rtl' : 'ltr')
+
 const { user, clear: clearSession } = useUserSession() as {
   user: Ref<UserSession | null>
   clear: () => Promise<void>
+}
+
+const applyTheme = (darkMode: boolean) => {
+  if (import.meta.client) {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light')
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light')
+  }
+}
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  applyTheme(isDark.value)
+}
+
+const toggleSidebar = () => {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+}
+
+const toggleMobileSidebar = () => {
+  mobileSidebarOpen.value = !mobileSidebarOpen.value
 }
 
 const logout = async () => {
   await clearSession()
   await navigateTo('/user/login')
 }
+
+const switchAdminLocale = (newLocale: string) => {
+  if (newLocale === locale.value) return
+  if (import.meta.client) {
+    const targetPath = switchLocalePath(newLocale)
+    if (targetPath) {
+      navigateTo(targetPath)
+    }
+  }
+}
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme')
+  isDark.value = savedTheme ? savedTheme === 'dark' : false
+  applyTheme(isDark.value)
+})
+
+useHead(() => ({
+  htmlAttrs: {
+    dir: direction.value,
+    lang: locale.value,
+    class: direction.value,
+  },
+}))
 </script>
 
 <template>
-  <div class="min-h-screen bg-base-200">
-    <!-- Top navigation bar -->
-    <nav class="bg-base-100 border-b border-base-300 px-6 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <NuxtLink to="/user" class="font-bold text-lg">داشبورد کاربری</NuxtLink>
-        <NuxtLink to="/user" class="text-sm hover:underline">خانه</NuxtLink>
-        <NuxtLink to="/user/profile" class="text-sm hover:underline">پروفایل</NuxtLink>
-        <NuxtLink to="/user/knowledge" class="text-sm hover:underline">دانش‌ها</NuxtLink>
-        <NuxtLink to="/user/knowledge/types" class="text-sm hover:underline">انواع دانش</NuxtLink>
-        <NuxtLink to="/user/usage" class="text-sm hover:underline">مصرف</NuxtLink>
-      </div>
-      <div class="flex items-center gap-3">
-        <span class="text-sm opacity-70">{{ user?.email }}</span>
-        <button @click="logout" class="btn btn-ghost btn-sm text-error">خروج</button>
-      </div>
-    </nav>
+  <div class="relative flex min-h-screen bg-base-200 text-base-content">
+    <UiToastStack />
+    <div v-if="mobileSidebarOpen" class="fixed inset-0 z-30 bg-base-content/40 lg:hidden"
+      @click="mobileSidebarOpen = false" />
 
-    <main class="p-6 max-w-6xl mx-auto">
-      <slot />
-    </main>
+    <div :class="[
+      'fixed inset-y-0 z-40 transform transition-all duration-300 lg:static lg:translate-x-0!',
+      'ltr:left-0 rtl:right-0',
+      mobileSidebarOpen ? 'translate-x-0' : '',
+      !mobileSidebarOpen && 'ltr:-translate-x-full',
+      !mobileSidebarOpen && 'rtl:translate-x-full',
+      sidebarCollapsed ? 'w-24' : 'w-72',
+      sidebarCollapsed ? 'w-24' : 'w-72',
+    ]">
+      <UserSidebar :collapsed="sidebarCollapsed" :user-email="user?.email" @logout="logout" />
+    </div>
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <AdminTopbar :sidebar-collapsed="sidebarCollapsed" :is-dark="isDark" :user-email="user?.email"
+        @toggle-sidebar="toggleSidebar" @toggle-mobile-sidebar="toggleMobileSidebar" @toggle-theme="toggleTheme"
+        @toggle-locale="switchAdminLocale" @logout="logout" />
+
+      <main class="p-4 sm:p-6">
+        <div class="rounded-2xl border border-base-300 bg-base-100 p-4 shadow-sm sm:p-6">
+          <slot />
+        </div>
+      </main>
+    </div>
   </div>
 </template>
