@@ -1,22 +1,20 @@
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
 import { users } from '~~/server/database/schema.gen'
-import { z } from 'zod'
-
-const createUserSchema = z.object({
-  username: z.string().min(2).max(100),
-  email: z.string().email(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  bot_url: z.string().optional(),
-  bot_token: z.string().optional(),
-  cf_token: z.string().optional(),
-})
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
 
-  const body = await readValidatedBody(event, createUserSchema.parse)
+  const body = await readBody(event)
   const db = useDb(event)
+
+  if (!body || !body.username || !body.email || !body.password) {
+    throw createError({ statusCode: 400, message: 'نام کاربری، ایمیل و رمز عبور الزامی است' })
+  }
+
+  if (body.password.length < 8) {
+    throw createError({ statusCode: 400, message: 'رمز عبور باید حداقل ۸ کاراکتر باشد' })
+  }
 
   // Hash password with bcrypt
   const passwordHash = await bcrypt.hash(body.password, 10)
@@ -31,23 +29,21 @@ export default defineEventHandler(async (event) => {
         const data = await res.json()
         botToken = data.token || null
       }
-    } catch {
-      // Silently fail — token can be set manually later
+    } catch (e) {
+      console.error('Auto-fetch bot token failed:', e)
     }
   }
 
   // Insert user (D1 RETURNING is unreliable — query back after insert)
-  await db
-    .insert(users)
-    .values({
-      username: body.username,
-      email: body.email,
-      password_hash: passwordHash,
-      role: 'user',
-      bot_url: body.bot_url || null,
-      bot_token: botToken,
-      cf_token: body.cf_token || null,
-    } as any)
+  await (db.insert(users) as any).values({
+    username: body.username,
+    email: body.email,
+    password_hash: passwordHash,
+    role: 'user',
+    bot_url: body.bot_url || null,
+    bot_token: botToken,
+    cf_token: body.cf_token || null,
+  })
 
   // Query back the inserted user by email
   const [user] = await db
@@ -57,12 +53,7 @@ export default defineEventHandler(async (event) => {
     .limit(1)
 
   if (!user) {
-    throw createError({ statusCode: 400, message: 'User not created' })
-  }
-
-  // If bot token was auto-fetched but initial insert had null, update it
-  if (botToken && !user.bot_token) {
-    await db.update(users).set({ bot_token: botToken }).where(eq(users.id, user.id))
+    throw createError({ statusCode: 400, message: 'کاربر ایجاد نشد' })
   }
 
   // Exclude password_hash from response
