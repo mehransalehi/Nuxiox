@@ -48,6 +48,7 @@ const sections = computed(() => [
       { to: '/admin/custom-images', label: $t('admin.sidebar.customImages'), icon: 'fa-solid fa-wand-magic-sparkles' },
       { to: '/admin/custom-links', label: 'Custom Links', icon: 'fa-solid fa-link' },
       { to: '/admin/contact-messages', label: $t('admin.sidebar.contactMessages'), icon: 'fa-solid fa-envelope' },
+      { to: '/admin/users', label: 'کاربران', icon: 'fa-solid fa-users' },
       { to: '/admin/i18n', label: $t('admin.sidebar.i18n'), icon: 'fa-solid fa-language' },
     ],
   },

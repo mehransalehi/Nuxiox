@@ -17,10 +17,10 @@ assets = { directory = "./.output/public/", binding = "ASSETS" }
 [[d1_databases]]
 binding = "DB"
 database_name = "nuxiox_db"
-database_id = "6dfbec2f-73f5-4883-8b2f-1b75abfca90a"
+database_id = "12c6657a-4e96-4642-9363-07b15a07f5b7"
 migrations_dir = "./server/database/migrations"
 
 [[kv_namespaces]]
 binding = "MEDIA_KV"
-id = "be3b2a25c7aa4b0884f457f7441b739b"
-preview_id = "be3b2a25c7aa4b0884f457f7441b739b"
+id = "8d615606fa1146d8b1a47a841abaa8ea"
+preview_id = "8d615606fa1146d8b1a47a841abaa8ea"

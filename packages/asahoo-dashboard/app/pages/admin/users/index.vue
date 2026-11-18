@@ -1,0 +1,175 @@
+<script setup lang="ts">
+import { useToastStore } from '~~/packages/base/app/stores/toast'
+definePageMeta({ middleware: ['authenticated'], layout: 'admin' })
+
+useHead(() => ({ title: 'مدیریت کاربران' }))
+
+const toastStore = useToastStore()
+const { data: usersList, refresh } = await useFetch('/api/admin/users', {
+  default: () => [] as any[],
+})
+const searchQuery = ref('')
+const showForm = ref(false)
+const editingUser = ref<any>(null)
+const form = reactive({
+  username: '',
+  email: '',
+  password: '',
+})
+const isSubmitting = ref(false)
+
+// Search
+const searchResults = computed(() => {
+  if (!searchQuery.value) return usersList.value
+  const q = searchQuery.value.toLowerCase()
+  return usersList.value.filter(
+    (u: any) =>
+      u.email?.toLowerCase().includes(q) ||
+      u.username?.toLowerCase().includes(q)
+  )
+})
+
+function resetForm() {
+  form.username = ''
+  form.email = ''
+  form.password = ''
+  editingUser.value = null
+  showForm.value = false
+}
+
+function openCreate() {
+  resetForm()
+  showForm.value = true
+}
+
+function openEdit(user: any) {
+  editingUser.value = user
+  form.username = user.username
+  form.email = user.email
+  form.password = ''
+  showForm.value = true
+}
+
+async function save() {
+  if (isSubmitting.value) return
+  isSubmitting.value = true
+  try {
+    if (editingUser.value) {
+      const body: Record<string, string> = { username: form.username, email: form.email }
+      if (form.password) body.password = form.password
+      await $fetch(`/api/admin/users/${editingUser.value.id}`, {
+        method: 'PUT',
+        body,
+      })
+      toastStore.push('کاربر با موفقیت به‌روزرسانی شد', 'success')
+    } else {
+      await $fetch('/api/admin/users', {
+        method: 'POST',
+        body: {
+          username: form.username,
+          email: form.email,
+          password: form.password,
+        },
+      })
+      toastStore.push('کاربر با موفقیت ایجاد شد', 'success')
+    }
+    resetForm()
+    await refresh()
+  } catch (error: any) {
+    toastStore.showZodError(error)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+async function remove(id: number) {
+  if (!confirm('آیا از حذف این کاربر اطمینان دارید؟')) return
+  try {
+    await $fetch(`/api/admin/users/${id}`, { method: 'DELETE' })
+    toastStore.push('کاربر با موفقیت حذف شد', 'success')
+    await refresh()
+  } catch (error: any) {
+    toastStore.push(error.message || 'خطا در حذف کاربر', 'error')
+  }
+}
+</script>
+
+<template>
+  <AdminPage>
+    <div class="grid gap-4 md:grid-cols-2">
+      <!-- Form Card -->
+      <AdminCard v-if="showForm" :title="editingUser ? 'ویرایش کاربر' : 'کاربر جدید'">
+        <AdminUiText label="نام کاربری" v-model="form.username" />
+        <AdminUiText label="ایمیل" v-model="form.email" />
+        <AdminUiText
+          :label="editingUser ? 'رمز عبور (خالی بگذارید تا تغییر نکند)' : 'رمز عبور'"
+          type="password"
+          v-model="form.password"
+        />
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-primary" :disabled="isSubmitting" @click="save">
+            {{ isSubmitting ? 'در حال ذخیره...' : 'ذخیره' }}
+          </button>
+          <button class="btn" @click="resetForm">انصراف</button>
+        </div>
+      </AdminCard>
+
+      <!-- Users List Card -->
+      <AdminCard title="کاربران">
+        <!-- Search -->
+        <div class="mb-4">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="جستجوی کاربر..."
+            class="input input-bordered w-full"
+          />
+        </div>
+
+        <!-- New User Button -->
+        <button v-if="!showForm" class="btn btn-primary mb-4" @click="openCreate">
+          <i class="fa-solid fa-plus ml-1" />
+          کاربر جدید
+        </button>
+
+        <!-- Table -->
+        <div v-if="searchResults.length === 0" class="text-center py-8 opacity-60">
+          <AdminThereIsNo />
+        </div>
+        <div v-else class="overflow-x-auto">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th>شناسه</th>
+                <th>نام کاربری</th>
+                <th>ایمیل</th>
+                <th>تاریخ ایجاد</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in searchResults" :key="user.id">
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ new Date(user.created_at).toLocaleDateString('fa-IR') }}</td>
+                <td>
+                  <div class="flex gap-2">
+                    <button class="btn btn-xs" @click="openEdit(user)">
+                      <i class="fa-solid fa-pen" />
+                      ویرایش
+                    </button>
+                    <button class="btn btn-xs btn-error" @click="remove(user.id)">
+                      <i class="fa-solid fa-trash" />
+                      حذف
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </AdminCard>
+    </div>
+  </AdminPage>
+</template>
