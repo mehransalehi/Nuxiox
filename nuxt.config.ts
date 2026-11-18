@@ -40,7 +40,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  extends: ['./packages/themes/mim-beauty'],
+  extends: ['./packages/themes/mim-beauty', './packages/asahoo-dashboard'],
   watch: ['packages/**/*'],
 
   hooks: {
