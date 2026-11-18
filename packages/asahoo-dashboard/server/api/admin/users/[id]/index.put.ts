@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
   updateValues.updated_at = new Date()
 
   // Auto-fetch bot token from one-time setup endpoint
-  if (body.bot_url && body.bot_token === undefined) {
+  if (body.bot_url && !body.bot_token) {
     try {
       const res = await fetch(`${body.bot_url.replace(/\/+$/, '')}/api/setup/token`)
       if (res.ok) {

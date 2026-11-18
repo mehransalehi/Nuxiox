@@ -64,10 +64,8 @@ async function save() {
   isSubmitting.value = true
   try {
     if (editingUser.value) {
-      const body: Record<string, string> = { username: form.username, email: form.email }
+      const body: Record<string, string> = { username: form.username, email: form.email, bot_url: form.bot_url, bot_token: form.bot_token }
       if (form.password) body.password = form.password
-      if (form.bot_url) body.bot_url = form.bot_url
-      if (form.bot_token) body.bot_token = form.bot_token
       if (form.cf_token) body.cf_token = form.cf_token
       await $fetch(`/api/admin/users/${editingUser.value.id}`, {
         method: 'PUT',

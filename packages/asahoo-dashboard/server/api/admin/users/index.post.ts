@@ -36,7 +36,8 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const [user] = await db
+  // Insert user (D1 RETURNING is unreliable — query back after insert)
+  await db
     .insert(users)
     .values({
       username: body.username,
@@ -47,14 +48,20 @@ export default defineEventHandler(async (event) => {
       bot_token: botToken,
       cf_token: body.cf_token || null,
     } as any)
-    .returning()
+
+  // Query back the inserted user by email
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, body.email))
+    .limit(1)
 
   if (!user) {
     throw createError({ statusCode: 400, message: 'User not created' })
   }
 
-  // If bot token was auto-fetched, ensure it's saved to the record
-  if (botToken) {
+  // If bot token was auto-fetched but initial insert had null, update it
+  if (botToken && !user.bot_token) {
     await db.update(users).set({ bot_token: botToken }).where(eq(users.id, user.id))
   }
 
