@@ -97,22 +97,22 @@ async function save() {
           <AdminUiText label="منطقه زمانی" v-model="form.timezone" placeholder="Asia/Tehran" />
         </div>
         <AdminUiTextarea label="توضیحات" v-model="form.description" placeholder="توضیحات کسب و کار" />
-        <AdminCard title="اطلاعات تماس">
+        <div class="mt-4">
           <ListCreator
             :list="contactInfoList"
             @update="contactInfoList = $event"
             title="اطلاعات تماس"
             button-text="+ افزودن"
           />
-        </AdminCard>
-        <AdminCard title="خط مشی‌ها">
+        </div>
+        <div class="mt-4">
           <ListCreator
             :list="policiesList"
             @update="policiesList = $event"
             title="خط مشی‌ها"
             button-text="+ افزودن"
           />
-        </AdminCard>
+        </div>
         <div class="mt-4">
           <button class="btn btn-primary" @click="save">ذخیره تغییرات</button>
         </div>

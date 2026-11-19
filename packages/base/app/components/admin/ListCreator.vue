@@ -1,9 +1,11 @@
 <script setup lang="ts">
-const props = defineProps<{
-  list: { key: String, value: String }[],
-  title?: String,
-  buttonText?: String,
-}>()
+import type { PropType } from 'vue'
+
+const props = defineProps({
+  list: { type: Array as PropType<{ key: string, value: string }[]>, required: true },
+  title: { type: String, default: '' },
+  buttonText: { type: String, default: '' },
+})
 const emit = defineEmits(['update'])
 
 const myList = ref([...props.list])
