@@ -8,27 +8,14 @@ const props = defineProps({
 })
 const emit = defineEmits(['update'])
 
-const myList = ref([...props.list])
-
-// Watch parent list for updates, and update local copy
-watch(() => props.list, (newVal) => {
-  if (!newVal || typeof newVal[Symbol.iterator] !== 'function') return
-  myList.value = [...newVal]
-}, { deep: true })
-
-/* watch(myList, (newVal) => {
-  emit('update', newVal)
-}, { deep: true }) */
-
 const addToList = () => {
-  myList.value.push({ key: '', value: '' });
+  const updated = [...props.list, { key: '', value: '' }]
+  emit('update', updated)
 }
 const removeFromList = (index: number) => {
-  myList.value.splice(index, 1);
-  emit('update', myList.value)
+  const updated = props.list.filter((_, i) => i !== index)
+  emit('update', updated)
 }
-
-
 
 </script>
 <template>
@@ -38,10 +25,10 @@ const removeFromList = (index: number) => {
       <button class="btn btn-sm" @click="addToList">{{ props.buttonText ? props.buttonText : $t('common.addInfo')
         }}</button>
     </div>
-    <div v-for="(item, index) in myList" :key="`${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-      <input v-model="item.key" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" @input="emit('update', myList.value)"/>
+    <div v-for="(item, index) in props.list" :key="`${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+      <input v-model="item.key" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" @input="emit('update', props.list)"/>
       <input v-model="item.value" class="input input-bordered" type="text"
-        :placeholder="$t('common.pathPlaceholder') as any"  @input="emit('update', myList.value)"/>
+        :placeholder="$t('common.pathPlaceholder') as any"  @input="emit('update', props.list)"/>
       <button class="btn btn-ghost btn-square" @click="removeFromList(index)">✕</button>
     </div>
   </div>
