@@ -34,6 +34,10 @@ const form = reactive<ProfileData>({
 
 /** Parse a JSON object string into a { key, value }[] list for ListCreator */
 function jsonToList(jsonStr: string): { key: string, value: string }[] {
+  // If it doesn't look like JSON, wrap the raw string as a single entry
+  if (!jsonStr || !jsonStr.trimStart().startsWith('{')) {
+    return [{ key: 'content', value: jsonStr || '' }]
+  }
   try {
     const obj = JSON.parse(jsonStr || '{}')
     return Object.entries(obj).map(([key, value]) => ({
@@ -41,7 +45,8 @@ function jsonToList(jsonStr: string): { key: string, value: string }[] {
       value: value != null ? String(value) : '',
     }))
   } catch {
-    return []
+    // Not valid JSON — wrap as a single content entry
+    return [{ key: 'content', value: jsonStr }]
   }
 }
 
