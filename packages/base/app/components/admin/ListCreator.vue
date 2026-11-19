@@ -11,25 +11,24 @@ const emit = defineEmits(['update'])
 // Local copy — mutate freely
 const myList = ref([...props.list])
 
-// Sync from parent when prop changes
+// Sync from parent when prop changes (new reference from outside)
 watch(() => props.list, (newVal) => {
   if (!newVal || typeof newVal[Symbol.iterator] !== 'function') return
   myList.value = [...newVal]
 }, { deep: true })
 
-// Emit changes to parent whenever local copy changes
-watch(myList, (newVal) => {
-  emit('update', newVal)
-}, { deep: true })
+function emitUpdate() {
+  emit('update', myList.value)
+}
 
 const addToList = () => {
   myList.value.push({ key: '', value: '' })
-  // emit will fire via watcher
+  emitUpdate()
 }
 
 const removeFromList = (index: number) => {
   myList.value.splice(index, 1)
-  // emit will fire via watcher
+  emitUpdate()
 }
 </script>
 <template>
@@ -39,9 +38,9 @@ const removeFromList = (index: number) => {
       <button class="btn btn-sm" @click="addToList">{{ buttonText || $t('common.addInfo') }}</button>
     </div>
     <div v-for="(item, index) in myList" :key="`${index}`" class="grid gap-3 md:grid-cols-[1fr_1fr_auto]">
-      <input v-model="item.key" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" />
+      <input v-model="item.key" class="input input-bordered" type="text" :placeholder="$t('common.label') as any" @input="emitUpdate" />
       <input v-model="item.value" class="input input-bordered" type="text"
-        :placeholder="$t('common.pathPlaceholder') as any" />
+        :placeholder="$t('common.pathPlaceholder') as any" @input="emitUpdate" />
       <button class="btn btn-ghost btn-square" @click="removeFromList(index)">✕</button>
     </div>
   </div>
