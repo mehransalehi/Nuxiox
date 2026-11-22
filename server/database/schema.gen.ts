@@ -22,4 +22,5 @@ export const servicesLocales = base.servicesLocales.table;
 export const settings = base.settings.table;
 export const testimonials = base.testimonials.table;
 export const testimonialsLocales = base.testimonialsLocales.table;
+export const userData = base.userData.table;
 export const users = base.users.table;

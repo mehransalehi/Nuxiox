@@ -41,6 +41,7 @@ const sections = computed(() => [
       { to: '/admin/custom-links', label: 'Custom Links', icon: 'fa-solid fa-link' },
       { to: '/admin/contact-messages', label: $t('admin.sidebar.contactMessages'), icon: 'fa-solid fa-envelope' },
       { to: '/admin/i18n', label: $t('admin.sidebar.i18n'), icon: 'fa-solid fa-language' },
+      { to: '/admin/users', label: $t('admin.sidebar.users'), icon: 'fa-solid fa-language' },
     ],
   },
 ])

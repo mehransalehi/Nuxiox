@@ -91,7 +91,8 @@
       "contactMessages": "پیامهای تماس",
       "i18n": "ترجمه‌ها",
       "customImages": "تصاویر سفارشی",
-      "logout": "خروج"
+      "logout": "خروج",
+      "users" : "مدیریت کاربران"
     },
     "customImages": {
       "title": "تصاویر سفارشی",

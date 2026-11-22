@@ -24,6 +24,7 @@ const { data, status, refresh } = await useFetch<ProfileData>('/api/user/profile
   }),
 })
 
+    // console.log(data.toString)
 const form = reactive<ProfileData>({
   name: '',
   description: '',
@@ -67,6 +68,7 @@ const policiesList = ref<{ key: string, value: string }[]>([])
 watch(data, (val) => {
   if (val) {
     Object.assign(form, val)
+    console.log(val)
     contactInfoList.value = jsonToList(val.contact_info)
     policiesList.value = jsonToList(val.policies)
   }
@@ -103,7 +105,7 @@ async function save() {
         </div>
         <AdminUiTextarea label="توضیحات" v-model="form.description" placeholder="توضیحات کسب و کار" />
         <div class="mt-4">
-          <ListCreator
+          <AdminListCreator
             :list="contactInfoList"
             @update="contactInfoList = $event"
             title="اطلاعات تماس"
@@ -111,7 +113,7 @@ async function save() {
           />
         </div>
         <div class="mt-4">
-          <ListCreator
+          <AdminListCreator
             :list="policiesList"
             @update="policiesList = $event"
             title="خط مشی‌ها"

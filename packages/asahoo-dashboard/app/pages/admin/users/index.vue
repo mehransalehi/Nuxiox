@@ -18,9 +18,13 @@ const form = reactive({
   bot_url: '',
   bot_token: '',
   cf_token: '',
+  instagram_account_id: '',
+  instagram_user_id: '',
+  instagram_page_id: '',
 })
 const isSubmitting = ref(false)
 const autoFetch = ref(true)
+const connectingInstagram = ref<number | null>(null)
 
 // Search
 const searchResults = computed(() => {
@@ -40,6 +44,9 @@ function resetForm() {
   form.bot_url = ''
   form.bot_token = ''
   form.cf_token = ''
+  form.instagram_account_id = ''
+  form.instagram_user_id = ''
+  form.instagram_page_id = ''
   editingUser.value = null
   showForm.value = false
 }
@@ -57,6 +64,9 @@ function openEdit(user: any) {
   form.bot_url = user.bot_url || ''
   form.bot_token = user.bot_token || ''
   form.cf_token = user.cf_token || ''
+  form.instagram_account_id = user.instagram_account_id || ''
+  form.instagram_user_id = user.instagram_user_id || ''
+  form.instagram_page_id = user.instagram_page_id || ''
   showForm.value = true
 }
 
@@ -65,7 +75,15 @@ async function save() {
   isSubmitting.value = true
   try {
     if (editingUser.value) {
-      const body: Record<string, string> = { username: form.username, email: form.email, bot_url: form.bot_url, bot_token: form.bot_token }
+      const body: Record<string, any> = {
+        username: form.username,
+        email: form.email,
+        bot_url: form.bot_url,
+        bot_token: form.bot_token,
+        instagram_account_id: form.instagram_account_id || undefined,
+        instagram_user_id: form.instagram_user_id || undefined,
+        instagram_page_id: form.instagram_page_id || undefined,
+      }
       if (form.password) body.password = form.password
       if (form.cf_token) body.cf_token = form.cf_token
       if (autoFetch.value) body.auto_fetch = 'true'
@@ -108,6 +126,21 @@ async function remove(id: number) {
     toastStore.push(error.message || 'خطا در حذف کاربر', 'error')
   }
 }
+
+async function connectInstagram(userId: number) {
+  connectingInstagram.value = userId
+  try {
+    const res: any = await $fetch(`/api/admin/instagram/auth-url?user_id=${userId}`)
+    if (res.url) {
+      window.open(res.url, '_blank', 'noopener,noreferrer')
+      toastStore.push('لینک اتصال اینستاگرام در تب جدید باز شد', 'success')
+    }
+  } catch (error: any) {
+    toastStore.push(error?.data?.message || error?.message || 'خطا در دریافت لینک اتصال', 'error')
+  } finally {
+    connectingInstagram.value = null
+  }
+}
 </script>
 
 <template>
@@ -129,6 +162,10 @@ async function remove(id: number) {
         </label>
         <AdminUiText label="توکن بات" v-model="form.bot_token" placeholder="API token" />
         <AdminUiText label="توکن ابری" type="password" v-model="form.cf_token" placeholder="Cloudflare API token (اختیاری)" />
+        <div class="divider text-sm opacity-60 mt-4">اینستاگرام</div>
+        <AdminUiText label="شناسه حساب اینستاگرام" v-model="form.instagram_account_id" placeholder="BoxAPI account_id (UUID)" />
+        <AdminUiText label="شناسه کاربر اینستاگرام" v-model="form.instagram_user_id" placeholder="Instagram user ID" />
+        <AdminUiText label="شناسه پیج" v-model="form.instagram_page_id" placeholder="Facebook Page ID" />
         <div class="flex gap-2 mt-2">
           <button class="btn btn-primary" :disabled="isSubmitting" @click="save">
             {{ isSubmitting ? 'در حال ذخیره...' : 'ذخیره' }}
@@ -167,6 +204,7 @@ async function remove(id: number) {
                 <th>نام کاربری</th>
                 <th>ایمیل</th>
                 <th>بات</th>
+                <th>اینستاگرام</th>
                 <th>تاریخ ایجاد</th>
                 <th>عملیات</th>
               </tr>
@@ -180,12 +218,26 @@ async function remove(id: number) {
                   <span v-if="user.bot_url" class="badge badge-success badge-sm">فعال</span>
                   <span v-else class="badge badge-ghost badge-sm">غیرفعال</span>
                 </td>
+                <td>
+                  <span v-if="user.instagram_account_id" class="badge badge-success badge-sm">
+                    {{ user.instagram_user_id || 'متصل' }}
+                  </span>
+                  <span v-else class="badge badge-ghost badge-sm">غیرفعال</span>
+                </td>
                 <td>{{ new Date(user.created_at).toLocaleDateString('fa-IR') }}</td>
                 <td>
                   <div class="flex gap-2">
                     <button class="btn btn-xs" @click="openEdit(user)">
                       <i class="fa-solid fa-pen" />
                       ویرایش
+                    </button>
+                    <button
+                      class="btn btn-xs btn-info"
+                      :disabled="connectingInstagram === user.id"
+                      @click="connectInstagram(user.id)"
+                    >
+                      <i class="fa-brands fa-instagram" />
+                      {{ connectingInstagram === user.id ? '...' : 'اتصال اینستاگرام' }}
                     </button>
                     <button class="btn btn-xs btn-error" @click="remove(user.id)">
                       <i class="fa-solid fa-trash" />

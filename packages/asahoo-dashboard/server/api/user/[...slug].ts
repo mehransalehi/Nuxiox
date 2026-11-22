@@ -1,4 +1,4 @@
-import { users } from '~~/server/database/schema.gen'
+import { users, userData } from '~~/server/database/schema.gen'
 import { eq } from 'drizzle-orm'
 import { getCloudflareEnv } from '~~/server/utils/cloudflare'
 
@@ -29,18 +29,19 @@ export default defineEventHandler(async (event) => {
       throw createError({ statusCode: 401, statusMessage: 'احراز هویت نشده‌اید' })
     }
 
-    // 2. Look up user's bot credentials
+    // 2. Look up user's bot credentials from user_data table
     const db = useDb(event)
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, session.user.id),
-    }) as any
+    const [botConfig] = await db.select({
+      bot_url: userData.bot_url,
+      bot_token: userData.bot_token,
+    }).from(userData).where(eq(userData.user_id, session.user.id)).limit(1)
 
-    if (!user || !user.bot_url || !user.bot_token) {
+    if (!botConfig || !botConfig.bot_url || !botConfig.bot_token) {
       throw createError({ statusCode: 503, statusMessage: 'اعتبارنامه ربات پیکربندی نشده است. با مدیر تماس بگیرید.' })
     }
 
-    const botUrl = user.bot_url.replace(/\/+$/, '')
-    const botToken = user.bot_token
+    const botUrl = botConfig.bot_url.replace(/\/+$/, '')
+    const botToken = botConfig.bot_token
 
     // 3. Extract slug from route params — for [...slug] this captures everything after /api/user/
     const slug = getRouterParam(event, 'slug') || ''

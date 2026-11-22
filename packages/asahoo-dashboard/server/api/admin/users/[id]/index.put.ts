@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
-import { users } from '~~/server/database/schema.gen'
+import { users, userData } from '~~/server/database/schema.gen'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -25,28 +25,30 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'کاربر یافت نشد' })
   }
 
-  // Build update values — ALWAYS include bot fields (allow clearing)
-  const updateValues: Record<string, unknown> = {
+  // Update user base fields
+  const userUpdate: Record<string, unknown> = {
     username: body.username,
     email: body.email,
-    bot_url: body.bot_url || null,
-    bot_token: body.bot_token || null,
-    cf_token: body.cf_token || null,
     updated_at: new Date(),
   }
 
   if (body.password && body.password.length >= 8) {
-    updateValues.password_hash = await bcrypt.hash(body.password, 10)
+    userUpdate.password_hash = await bcrypt.hash(body.password, 10)
   }
 
+  await (db.update(users) as any).set(userUpdate).where(eq(users.id, id))
+
+  // Upsert bot credentials into user_data
+  let botToken = body.bot_token || null
+
   // Auto-fetch bot token if auto_fetch is true, URL is provided, and no token sent
-  if (body.auto_fetch && body.bot_url && !body.bot_token) {
+  if (body.auto_fetch && body.bot_url && !botToken) {
     try {
       const res = await fetch(`${String(body.bot_url).replace(/\/+$/, '')}/api/setup/token`)
       if (res.ok) {
         const data = await res.json()
         if (data.token) {
-          updateValues.bot_token = data.token
+          botToken = data.token
         }
       }
     } catch (e) {
@@ -54,12 +56,38 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  await (db.update(users) as any).set(updateValues).where(eq(users.id, id))
+  await (db.insert(userData) as any).values({
+    user_id: id,
+    bot_url: body.bot_url || null,
+    bot_token: botToken,
+    cf_token: body.cf_token || null,
+    instagram_account_id: body.instagram_account_id || null,
+    instagram_user_id: body.instagram_user_id || null,
+    instagram_page_id: body.instagram_page_id || null,
+    instagram_access_token: body.instagram_access_token || null,
+    instagram_is_active: body.instagram_is_active !== undefined ? body.instagram_is_active : true,
+  }).onConflictDoUpdate({
+    target: (userData as any).user_id,
+    set: {
+      bot_url: body.bot_url || null,
+      bot_token: botToken,
+      cf_token: body.cf_token || null,
+      instagram_account_id: body.instagram_account_id || null,
+      instagram_user_id: body.instagram_user_id || null,
+      instagram_page_id: body.instagram_page_id || null,
+      instagram_access_token: body.instagram_access_token || null,
+      instagram_is_active: body.instagram_is_active !== undefined ? body.instagram_is_active : true,
+      updated_at: new Date(),
+    },
+  })
 
   return {
     success: true,
-    bot_url: updateValues.bot_url as string | null,
-    bot_token: updateValues.bot_token ? '(set)' : null,
-    cf_token: updateValues.cf_token ? '(set)' : null,
+    bot_url: body.bot_url || null,
+    bot_token: botToken ? '(set)' : null,
+    cf_token: body.cf_token ? '(set)' : null,
+    instagram_account_id: body.instagram_account_id || null,
+    instagram_user_id: body.instagram_user_id || null,
+    instagram_is_active: body.instagram_is_active !== undefined ? body.instagram_is_active : true,
   }
 })

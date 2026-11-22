@@ -384,9 +384,33 @@ export const MEDIA = entity('media', 'media', [
   { name: 'media_uploaded_by_idx', columns: ['uploaded_by'] },
 ])
 
+export const USER_DATA = entity('userData', 'user_data', [
+  col('id', 'int', { primaryKey: { autoIncrement: true } }),
+  col('user_id', 'int', {
+    notNull: true,
+    unique: true,
+    references: { table: 'users', column: 'id', onDelete: 'cascade' },
+  }),
+  col('bot_url', 'text'),
+  col('bot_token', 'text'),
+  col('cf_token', 'text'),
+  col('instagram_account_id', 'text', { description: 'BoxAPI UUID for Instagram webhook routing' }),
+  col('instagram_user_id', 'text', { description: 'IG scoped user ID (sender.id format)' }),
+  col('instagram_page_id', 'text', { description: 'FB Page ID if linked via Business Manager' }),
+  col('instagram_access_token', 'text', { description: 'Page access token for BoxAPI calls' }),
+  col('instagram_is_active', 'boolean', { notNull: true, default: true }),
+  col('created_at', 'timestamp', { notNull: true, defaultRaw: '(CURRENT_TIMESTAMP)' }),
+  col('updated_at', 'timestamp', {
+    notNull: true,
+    defaultRaw: '(CURRENT_TIMESTAMP)',
+    onUpdateRaw: '(CURRENT_TIMESTAMP)',
+  }),
+])
+
 // --- Registry of all entities ---
 export const ALL_ENTITIES: EntityDef[] = [
   USERS,
+  USER_DATA,
   SETTINGS,
   PAGES,
   PAGES_LOCALES,

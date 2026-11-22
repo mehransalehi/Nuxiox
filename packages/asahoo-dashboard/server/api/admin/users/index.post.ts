@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
-import { users } from '~~/server/database/schema.gen'
+import { users, userData } from '~~/server/database/schema.gen'
 
 export default defineEventHandler(async (event) => {
   await requireAdmin(event)
@@ -40,9 +40,6 @@ export default defineEventHandler(async (event) => {
     email: body.email,
     password_hash: passwordHash,
     role: 'user',
-    bot_url: body.bot_url || null,
-    bot_token: botToken,
-    cf_token: body.cf_token || null,
   })
 
   // Query back the inserted user by email
@@ -56,7 +53,18 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'کاربر ایجاد نشد' })
   }
 
-  // Exclude password_hash from response
-  const { password_hash, ...userWithoutPassword } = user
-  return userWithoutPassword
+  // Insert bot credentials into user_data
+  await (db.insert(userData) as any).values({
+    user_id: user.id,
+    bot_url: body.bot_url || null,
+    bot_token: botToken,
+    cf_token: body.cf_token || null,
+    instagram_account_id: body.instagram_account_id || null,
+    instagram_user_id: body.instagram_user_id || null,
+    instagram_page_id: body.instagram_page_id || null,
+    instagram_access_token: body.instagram_access_token || null,
+    instagram_is_active: body.instagram_is_active !== undefined ? body.instagram_is_active : true,
+  })
+
+  return { ...user, password_hash: undefined, bot_url: body.bot_url || null, bot_token: botToken ? '(set)' : null }
 })

@@ -2,6 +2,7 @@
 import * as base from './schema'
 
 export const users = base.users.table;
+export const userData = base.userData.table;
 export const settings = base.settings.table;
 export const pages = base.pages.table;
 export const pagesLocales = base.pagesLocales.table;

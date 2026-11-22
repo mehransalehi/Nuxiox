@@ -2,6 +2,7 @@
 name = "nuxiox"
 main = "./.output/server/index.mjs"
 compatibility_date = "2024-11-01"
+account_id = "ca41fdb3e1d2eb4550c19aa8d740700d"
 
 # ── Image optimization ─────────────────────────────────────────────────
 # Cloudflare Polish (automatic WebP/AVIF conversion at the edge, zero
@@ -17,14 +18,30 @@ assets = { directory = "./.output/public/", binding = "ASSETS" }
 [[d1_databases]]
 binding = "DB"
 database_name = "nuxiox_db"
-database_id = "12c6657a-4e96-4642-9363-07b15a07f5b7"
+database_id = "99c1b9e0-3b68-4f1e-8c67-075cc713d349"
 migrations_dir = "./server/database/migrations"
 
 [[kv_namespaces]]
 binding = "MEDIA_KV"
-id = "8d615606fa1146d8b1a47a841abaa8ea"
-preview_id = "8d615606fa1146d8b1a47a841abaa8ea"
+id = "d2ace81ff70b4f9b83d76b53fc2591aa"
+preview_id = "d2ace81ff70b4f9b83d76b53fc2591aa"
 
-[[services]]
-binding = "BOT"
-service = "asahoo-bot"
+# ── Webhook secrets ────────────────────────────────────────────────────
+# BOXAPI_WEBHOOK_SECRET is used to verify HMAC signatures on incoming
+# Instagram webhook events from BoxAPI. Set this via wrangler secret:
+#   echo "BOXAPI_WEBHOOK_SECRET=<value>" | wrangler secret put BOXAPI_WEBHOOK_SECRET
+# Or add to [vars] below for non-sensitive dev values:
+# [vars]
+# BOXAPI_WEBHOOK_SECRET = "your-dev-secret"
+
+# ── BoxAPI OAuth ─────────────────────────────────────────────────────────
+# BOXAPI_API_KEY is used to authenticate with the BoxAPI service for
+# Instagram OAuth flow and other integrations. Set this via wrangler secret:
+#   echo "BOXAPI_API_KEY=<value>" | wrangler secret put BOXAPI_API_KEY
+# Or add to [vars] below for non-sensitive dev values:
+# [vars]
+# BOXAPI_API_KEY = "your-dev-api-key"
+
+# [[services]]
+# binding = "BOT"
+# service = "asahoo-bot"

@@ -17,9 +17,29 @@ export const users = defineTable({
     password_hash: text("password_hash"),
     token: text("token"),
     role: text("role").notNull().$type<"admin" | "user">().default("user"),
+    created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`(CURRENT_TIMESTAMP)`),
+    updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`(CURRENT_TIMESTAMP)`),
+    },
+  ),
+})
+
+export const userData = defineTable({
+  name: "user_data",
+  priority: 10,
+  layer,
+  table: sqliteTable(
+    "user_data",
+    {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    user_id: integer("user_id").unique().notNull().references(() => users.table.id, { onDelete: "cascade" }),
     bot_url: text("bot_url"),
     bot_token: text("bot_token"),
     cf_token: text("cf_token"),
+    instagram_account_id: text("instagram_account_id"),
+    instagram_user_id: text("instagram_user_id"),
+    instagram_page_id: text("instagram_page_id"),
+    instagram_access_token: text("instagram_access_token"),
+    instagram_is_active: integer("instagram_is_active", { mode: 'boolean' }).notNull().default(true),
     created_at: integer("created_at", { mode: 'timestamp_ms' }).notNull().default(sql`(CURRENT_TIMESTAMP)`),
     updated_at: integer("updated_at", { mode: 'timestamp_ms' }).notNull().default(sql`(CURRENT_TIMESTAMP)`),
     },
