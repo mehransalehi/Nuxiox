@@ -18,7 +18,13 @@ const { data, status } = await useFetch<UsageData>('/api/user/usage', {
 
 const { t } = useI18n()
 
+const { data: msgCounts } = await useFetch('/api/user/conversations/counts', {
+  default: () => ({ received: 0, responded: 0 }),
+})
+
 const cards = computed(() => [
+  { label: 'پیام‌های دریافتی', value: (msgCounts.value?.received || 0).toLocaleString() },
+  { label: 'پاسخ‌های ارسالی', value: (msgCounts.value?.responded || 0).toLocaleString() },
   { label: 'توکن‌های مصرفی (کل)', value: (data.value.perDay?.reduce((s, d) => s + d.tokens, 0) || 0).toLocaleString() },
   { label: 'هزینه کل', value: data.value.lifetimeUsd !== null && data.value.lifetimeUsd !== undefined ? `$${data.value.lifetimeUsd.toFixed(4)}` : '---' },
   { label: 'تعداد روزهای دارای مصرف', value: String(data.value.perDay?.length || 0) },

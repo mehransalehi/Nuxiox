@@ -23,6 +23,9 @@ const sections: { title: string; items: NavItem[] }[] = [
       { to: '/user/knowledge', label: 'دانش‌ها', icon: 'fa-solid fa-database' },
       { to: '/user/knowledge/types', label: 'انواع دانش', icon: 'fa-solid fa-tags' },
       { to: '/user/usage', label: 'مصرف', icon: 'fa-solid fa-chart-line' },
+      { to: '/user/reservations', label: 'رزروها', icon: 'fa-solid fa-calendar-check' },
+      { to: '/user/conversations', label: 'گفتگوها', icon: 'fa-solid fa-comments' },
+      { to: '/user/settings', label: 'تنظیمات', icon: 'fa-solid fa-gear' },
     ],
   },
 ]
