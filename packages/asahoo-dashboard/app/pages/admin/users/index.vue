@@ -145,7 +145,7 @@ async function connectInstagram(userId: number) {
 
 <template>
   <AdminPage>
-    <div class="grid gap-4 md:grid-cols-2">
+    <div class="space-y-4">
       <!-- Form Card -->
       <AdminCard v-if="showForm" :title="editingUser ? 'ویرایش کاربر' : 'کاربر جدید'">
         <AdminUiText label="نام کاربری" v-model="form.username" />
@@ -227,6 +227,10 @@ async function connectInstagram(userId: number) {
                 <td>{{ new Date(user.created_at).toLocaleDateString('fa-IR') }}</td>
                 <td>
                   <div class="flex gap-2">
+                    <NuxtLink :to="`/admin/users/${user.id}`" class="btn btn-xs btn-ghost">
+                      <i class="fa-solid fa-eye" />
+                      جزئیات
+                    </NuxtLink>
                     <button class="btn btn-xs" @click="openEdit(user)">
                       <i class="fa-solid fa-pen" />
                       ویرایش
