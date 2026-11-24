@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useToastStore } from '~~/packages/base/app/stores/toast'
 definePageMeta({ layout: 'user', middleware: 'user-auth' })
 useHead(() => ({ title: 'گفتگوها' }))
+const toastStore = useToastStore()
 
 interface Conversation {
   id: number
@@ -355,6 +357,21 @@ async function handleExportPDF() {
     setTimeout(() => win.print(), 500)
   }
 }
+
+// ── Delete conversation ──────────────────────────────────────────────
+async function deleteConversation(conv: any) {
+  if (!confirm('آیا از حذف این گفتگو اطمینان دارید؟')) return
+  try {
+    await $fetch(
+      `/api/user/conversations/delete?id=${conv.id}&platform=${conv.platform}&user_id=${conv.external_user_id}`,
+      { method: 'DELETE' },
+    )
+    toastStore.push('گفتگو با موفقیت حذف شد', 'success')
+    await refresh()
+  } catch (error: any) {
+    toastStore.push(error?.data?.message || error?.message || 'خطا در حذف گفتگو', 'error')
+  }
+}
 </script>
 
 <template>
@@ -411,6 +428,7 @@ async function handleExportPDF() {
               <th>تعداد پیام</th>
               <th>اولین پیام</th>
               <th>آخرین پیام</th>
+              <th>عملیات</th>
             </tr>
           </thead>
           <tbody>
@@ -430,6 +448,12 @@ async function handleExportPDF() {
               <td>{{ row.message_count }}</td>
               <td>{{ formatDate(row.first_message_at) }}</td>
               <td>{{ formatDate(row.last_message_at) }}</td>
+              <td>
+                <button class="btn btn-xs btn-error" @click.stop="deleteConversation(row)">
+                  <i class="fa-solid fa-trash" />
+                  حذف
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
