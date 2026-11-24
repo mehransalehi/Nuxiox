@@ -2,45 +2,33 @@
 definePageMeta({ layout: 'user', middleware: 'user-auth' })
 useHead(() => ({ title: 'داشبورد کاربری' }))
 
-interface UsageData {
-  lifetimeUsd: number | null
-  perDay: { day: string; usd: number; tokens: number }[]
-  perModel: { model: string; usd: number; tokens: number }[]
-}
-
-const { data, status } = await useFetch<UsageData>('/api/user/usage', {
-  default: () => ({
-    lifetimeUsd: null,
-    perDay: [],
-    perModel: [],
-  }),
-})
-
 const { t } = useI18n()
 
 const { data: msgCounts } = await useFetch('/api/user/conversations/counts', {
   default: () => ({ received: 0, responded: 0 }),
 })
 
-const cards = computed(() => [
-  { label: 'پیام‌های دریافتی', value: (msgCounts.value?.received || 0).toLocaleString() },
-  { label: 'پاسخ‌های ارسالی', value: (msgCounts.value?.responded || 0).toLocaleString() },
-  { label: 'توکن‌های مصرفی (کل)', value: (data.value.perDay?.reduce((s, d) => s + d.tokens, 0) || 0).toLocaleString() },
-  { label: 'هزینه کل', value: data.value.lifetimeUsd !== null && data.value.lifetimeUsd !== undefined ? `$${data.value.lifetimeUsd.toFixed(4)}` : '---' },
-  { label: 'تعداد روزهای دارای مصرف', value: String(data.value.perDay?.length || 0) },
-  { label: 'مدل‌های استفاده شده', value: String(data.value.perModel?.length || 0) },
+const msgCards = computed(() => [
+  { label: 'پیام‌های دریافتی', value: (msgCounts.value?.received || 0).toLocaleString('fa-IR') },
+  { label: 'پاسخ‌های ارسالی', value: (msgCounts.value?.responded || 0).toLocaleString('fa-IR') },
 ])
+
+const navCards = [
+  { to: '/user/profile', label: 'پروفایل', desc: 'مدیریت اطلاعات کسب و کار', icon: 'fa-solid fa-building' },
+  { to: '/user/reservations', label: 'رزروها', desc: 'مدیریت جلسات و رزروها', icon: 'fa-solid fa-calendar-check' },
+  { to: '/user/conversations', label: 'گفتگوها', desc: 'مشاهده تاریخچه گفتگوها', icon: 'fa-solid fa-comments' },
+  { to: '/user/settings', label: 'تنظیمات', desc: 'تنظیمات حساب کاربری', icon: 'fa-solid fa-gear' },
+  { to: '/user/knowledge', label: 'دانش‌ها', desc: 'مدیریت پایگاه دانش', icon: 'fa-solid fa-database' },
+]
 </script>
 
 <template>
-  <AdminPage :title="'داشبورد کاربری'" subtitle="خلاصه مصرف سرویس هوش مصنوعی">
-    <div v-if="status === 'pending'" class="flex justify-center py-10">
-      <AdminLoadingSpinner title="در حال بارگذاری..." />
-    </div>
-    <div v-else class="space-y-6">
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+  <AdminPage title="داشبورد کاربری" subtitle="خلاصه وضعیت سرویس هوش مصنوعی">
+    <div class="space-y-6">
+      <!-- Message count cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
         <article
-          v-for="card in cards"
+          v-for="card in msgCards"
           :key="card.label"
           class="card border border-base-300 bg-base-200"
         >
@@ -50,12 +38,33 @@ const cards = computed(() => [
           </div>
         </article>
       </div>
+
+      <!-- Quick guide -->
       <AdminCard title="راهنمای سریع">
         <p class="opacity-70">
-          از منوی کناری می‌توانید به بخش‌های پروفایل، دانشنامه و گزارش مصرف دسترسی داشته باشید.
-          این داشبورد خلاصه‌ای از مصرف سرویس هوش مصنوعی شما را نمایش می‌دهد.
+          از منوی کناری یا کارت‌های زیر می‌توانید به بخش‌های مختلف داشبورد دسترسی داشته باشید.
         </p>
       </AdminCard>
+
+      <!-- Navigation cards -->
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <NuxtLink
+          v-for="nav in navCards"
+          :key="nav.to"
+          :to="nav.to"
+          class="card border border-base-300 bg-base-200 hover:border-primary/50 hover:shadow-md transition-all duration-200"
+        >
+          <div class="card-body p-4 flex flex-row items-center gap-4">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <i :class="nav.icon" class="text-xl" />
+            </div>
+            <div>
+              <p class="font-semibold">{{ nav.label }}</p>
+              <p class="text-sm opacity-60">{{ nav.desc }}</p>
+            </div>
+          </div>
+        </NuxtLink>
+      </div>
     </div>
   </AdminPage>
 </template>
