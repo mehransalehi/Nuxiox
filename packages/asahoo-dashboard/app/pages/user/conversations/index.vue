@@ -105,47 +105,48 @@ function formatMsgTime(d: string) {
   })
 }
 
-// Expand / messages per row
-const expandedId = ref<number | null>(null)
+// Modal / messages
+const modalConvId = ref<number | null>(null)
+const modalConversation = computed(() =>
+  data.value.records.find((r) => r.id === modalConvId.value) ?? null,
+)
 const messagesMap = ref<Record<number, Message[]>>({})
-const messagesLoading = ref<Record<number, boolean>>({})
+const messagesLoading = ref(false)
+const modalRef = ref<HTMLDialogElement | null>(null)
 
-async function toggleRow(id: number) {
-  if (expandedId.value === id) {
-    expandedId.value = null
-    return
+async function openModal(id: number) {
+  modalConvId.value = id
+
+  // Fetch if not already cached
+  if (!messagesMap.value[id]) {
+    const row = data.value.records.find((r) => r.id === id)
+    if (!row) return
+
+    messagesLoading.value = true
+    try {
+      const msgs = await $fetch<Message[]>(
+        `/api/user/conversations/messages?platform=${row.platform}&user_id=${row.external_user_id}&limit=100`,
+      )
+      messagesMap.value = { ...messagesMap.value, [id]: msgs }
+    } catch {
+      messagesMap.value = { ...messagesMap.value, [id]: [] }
+    } finally {
+      messagesLoading.value = false
+    }
   }
-  expandedId.value = id
 
-  // Already fetched — no need to fetch again
-  if (messagesMap.value[id]) return
+  // Open modal
+  modalRef.value?.showModal()
+}
 
-  const row = data.value.records.find((r) => r.id === id)
-  if (!row) return
-
-  messagesLoading.value = { ...messagesLoading.value, [id]: true }
-  try {
-    const msgs = await $fetch<Message[]>(
-      `/api/user/conversations/messages?platform=${row.platform}&user_id=${row.external_user_id}&limit=100`,
-    )
-    messagesMap.value = { ...messagesMap.value, [id]: msgs }
-  } catch {
-    messagesMap.value = { ...messagesMap.value, [id]: [] }
-  } finally {
-    messagesLoading.value = { ...messagesLoading.value, [id]: false }
-  }
+function closeModal() {
+  modalRef.value?.close()
 }
 
 function roleLabel(r: string) {
   if (r === 'user') return 'کاربر'
   if (r === 'assistant') return 'دستیار'
   return r
-}
-
-function roleBadgeClass(r: string) {
-  if (r === 'user') return 'badge-outline badge-info'
-  if (r === 'assistant') return 'badge-outline badge-success'
-  return 'badge-ghost'
 }
 
 // --- Export ---
@@ -416,8 +417,8 @@ async function handleExportPDF() {
             <tr
               v-for="row in data.records"
               :key="row.id"
-              class="cursor-pointer"
-              @click="toggleRow(row.id)"
+              class="cursor-pointer hover:bg-base-200"
+              @click="openModal(row.id)"
             >
               <td>{{ row.id }}</td>
               <td>
@@ -429,45 +430,6 @@ async function handleExportPDF() {
               <td>{{ row.message_count }}</td>
               <td>{{ formatDate(row.first_message_at) }}</td>
               <td>{{ formatDate(row.last_message_at) }}</td>
-            </tr>
-            <!-- Expanded detail row -->
-            <tr
-              v-if="expandedId"
-              v-for="row in data.records.filter(r => r.id === expandedId)"
-              :key="'detail-' + row.id"
-            >
-              <td :colspan="6" class="bg-base-200 p-4">
-                <div class="grid gap-2 sm:grid-cols-2 text-sm mb-3">
-                  <div><span class="opacity-60">شناسه گفتگو:</span> <strong>{{ row.id }}</strong></div>
-                  <div><span class="opacity-60">پلتفرم:</span> <strong>{{ platformLabel(row.platform) }}</strong></div>
-                  <div><span class="opacity-60">شناسه کاربر خارجی:</span> <strong dir="ltr" class="font-mono">{{ row.external_user_id }}</strong></div>
-                  <div><span class="opacity-60">تعداد پیام‌ها:</span> <strong>{{ row.message_count }}</strong></div>
-                  <div><span class="opacity-60">اولین پیام:</span> <strong>{{ formatDateTime(row.first_message_at) }}</strong></div>
-                  <div><span class="opacity-60">آخرین پیام:</span> <strong>{{ formatDateTime(row.last_message_at) }}</strong></div>
-                </div>
-
-                <!-- Messages section -->
-                <div v-if="messagesLoading[row.id]" class="flex justify-center py-3">
-                  <AdminLoadingSpinner title="در حال بارگذاری پیام‌ها..." />
-                </div>
-                <div v-else-if="messagesMap[row.id] && messagesMap[row.id].length === 0" class="text-sm opacity-60 py-2 text-center">
-                  هیچ پیامی یافت نشد
-                </div>
-                <div v-else-if="messagesMap[row.id]" class="space-y-2 max-h-96 overflow-y-auto">
-                  <div
-                    v-for="msg in messagesMap[row.id]"
-                    :key="msg.id"
-                    class="p-3 rounded-lg text-sm"
-                    :class="msg.role === 'user' ? 'bg-info/10 border-r-2 border-info' : 'bg-success/10 border-r-2 border-success'"
-                  >
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="badge badge-sm" :class="roleBadgeClass(msg.role)">{{ roleLabel(msg.role) }}</span>
-                      <span class="text-xs opacity-50">{{ formatMsgTime(msg.created_at) }}</span>
-                    </div>
-                    <div class="whitespace-pre-wrap leading-relaxed">{{ msg.content }}</div>
-                  </div>
-                </div>
-              </td>
             </tr>
           </tbody>
         </table>
@@ -485,5 +447,80 @@ async function handleExportPDF() {
         </div>
       </div>
     </AdminCard>
+
+    <!-- Message Detail Modal (Telegram-style chat) -->
+    <dialog ref="modalRef" class="modal">
+      <div class="modal-box max-w-2xl p-0 overflow-hidden">
+        <!-- Modal header -->
+        <div class="bg-base-200 px-6 py-4 border-b border-base-300">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-lg" v-if="modalConversation">
+              گفتگو #{{ modalConversation.id }}
+            </h3>
+            <form method="dialog">
+              <button class="btn btn-sm btn-circle btn-ghost">✕</button>
+            </form>
+          </div>
+          <div v-if="modalConversation" class="flex flex-wrap gap-x-6 gap-y-1 mt-2 text-sm opacity-70">
+            <span>{{ platformLabel(modalConversation.platform) }}</span>
+            <span class="font-mono" dir="ltr">{{ modalConversation.external_user_id }}</span>
+            <span>{{ modalConversation.message_count }} پیام</span>
+          </div>
+        </div>
+
+        <!-- Scrollable messages area -->
+        <div class="px-4 py-4 space-y-3 max-h-[60vh] overflow-y-auto">
+          <div v-if="messagesLoading" class="flex justify-center py-6">
+            <AdminLoadingSpinner title="در حال بارگذاری پیام‌ها..." />
+          </div>
+          <div
+            v-else-if="modalConvId && messagesMap[modalConvId] && messagesMap[modalConvId].length === 0"
+            class="text-sm opacity-60 py-6 text-center"
+          >
+            هیچ پیامی یافت نشد
+          </div>
+          <template v-else-if="modalConvId && messagesMap[modalConvId]">
+            <div
+              v-for="msg in messagesMap[modalConvId]"
+              :key="msg.id"
+              class="flex"
+              :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
+            >
+              <!-- User message: right-aligned, blue bubble -->
+              <div
+                v-if="msg.role === 'user'"
+                class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm bg-blue-500 text-white rounded-br-md"
+              >
+                <div class="text-[10px] opacity-70 mb-0.5 text-blue-100">
+                  کاربر · {{ formatMsgTime(msg.created_at) }}
+                </div>
+                <div class="text-sm whitespace-pre-wrap leading-relaxed">
+                  {{ msg.content }}
+                </div>
+              </div>
+              <!-- Assistant message: left-aligned, green bubble -->
+              <div
+                v-else
+                class="max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm bg-green-100 dark:bg-green-800/60 text-gray-800 dark:text-gray-100 rounded-bl-md"
+              >
+                <div class="text-[10px] opacity-70 mb-0.5 text-gray-500 dark:text-gray-400">
+                  دستیار · {{ formatMsgTime(msg.created_at) }}
+                </div>
+                <div class="text-sm whitespace-pre-wrap leading-relaxed">
+                  {{ msg.content }}
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="px-6 py-3 border-t border-base-300 bg-base-200 flex justify-end">
+          <form method="dialog">
+            <button class="btn btn-sm">بستن</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   </AdminPage>
 </template>
