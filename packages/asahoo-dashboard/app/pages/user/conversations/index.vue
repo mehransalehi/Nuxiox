@@ -11,6 +11,13 @@ interface Conversation {
   last_message_at: string
 }
 
+interface Message {
+  id: number
+  role: 'user' | 'assistant'
+  content: string
+  created_at: string
+}
+
 interface ConversationsResponse {
   records: Conversation[]
   total: number
@@ -87,8 +94,64 @@ function formatDateTime(d: string) {
   })
 }
 
+function formatMsgTime(d: string) {
+  if (!d) return '---'
+  return new Date(d).toLocaleString('fa-IR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+// Expand / messages per row
+const expandedId = ref<number | null>(null)
+const messagesMap = ref<Record<number, Message[]>>({})
+const messagesLoading = ref<Record<number, boolean>>({})
+
+async function toggleRow(id: number) {
+  if (expandedId.value === id) {
+    expandedId.value = null
+    return
+  }
+  expandedId.value = id
+
+  // Already fetched — no need to fetch again
+  if (messagesMap.value[id]) return
+
+  const row = data.value.records.find((r) => r.id === id)
+  if (!row) return
+
+  messagesLoading.value = { ...messagesLoading.value, [id]: true }
+  try {
+    const msgs = await $fetch<Message[]>(
+      `/api/user/conversations/messages?platform=${row.platform}&user_id=${row.external_user_id}&limit=100`,
+    )
+    messagesMap.value = { ...messagesMap.value, [id]: msgs }
+  } catch {
+    messagesMap.value = { ...messagesMap.value, [id]: [] }
+  } finally {
+    messagesLoading.value = { ...messagesLoading.value, [id]: false }
+  }
+}
+
+function roleLabel(r: string) {
+  if (r === 'user') return 'کاربر'
+  if (r === 'assistant') return 'دستیار'
+  return r
+}
+
+function roleBadgeClass(r: string) {
+  if (r === 'user') return 'badge-outline badge-info'
+  if (r === 'assistant') return 'badge-outline badge-success'
+  return 'badge-ghost'
+}
+
 // --- Export ---
-function exportToCSV(data: any[], filename: string) {
+const includeMessages = ref(false)
+
+function exportToCSVRows(data: any[], filename: string) {
   const bom = '\uFEFF'
   const headers = ['شناسه', 'پلتفرم', 'شناسه کاربر', 'تعداد پیام', 'اولین پیام', 'آخرین پیام']
   const rows = data.map((r: any) => [
@@ -109,14 +172,83 @@ function exportToCSV(data: any[], filename: string) {
   URL.revokeObjectURL(url)
 }
 
+function downloadCSV(csv: string, filename: string) {
+  const bom = '\uFEFF'
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 async function handleExportCSV() {
+  let all: Conversation[]
   try {
-    const all: Conversation[] = await $fetch('/api/user/conversations?limit=100000')
-    exportToCSV(all, `conversations-${new Date().toISOString().slice(0, 10)}.csv`)
+    all = await $fetch('/api/user/conversations?limit=100000')
   } catch {
-    // fallback: use current page data
-    exportToCSV(data.value.records, `conversations-${new Date().toISOString().slice(0, 10)}.csv`)
+    all = data.value.records
   }
+
+  const filename = `conversations-${new Date().toISOString().slice(0, 10)}.csv`
+
+  if (!includeMessages.value) {
+    exportToCSVRows(all, filename)
+    return
+  }
+
+  // Include messages — each message gets its own row
+  const headers = [
+    'شناسه گفتگو',
+    'پلتفرم',
+    'شناسه کاربر',
+    'تعداد پیام',
+    'شماره پیام',
+    'نقش',
+    'محتوا',
+    'زمان',
+  ]
+  const rows: string[] = []
+
+  for (const conv of all) {
+    let msgs: Message[] = []
+    try {
+      msgs = await $fetch<Message[]>(
+        `/api/user/conversations/messages?platform=${conv.platform}&user_id=${conv.external_user_id}&limit=100`,
+      )
+    } catch {
+      // no messages for this conversation
+    }
+
+    if (msgs.length === 0) {
+      // One row per conversation even without messages
+      rows.push(
+        [conv.id, conv.platform, conv.external_user_id, conv.message_count, '', '', '', ''].join(','),
+      )
+    } else {
+      for (let i = 0; i < msgs.length; i++) {
+        const m = msgs[i]
+        // Escape content that might contain commas or quotes
+        const content = (m.content || '').replace(/"/g, '""')
+        rows.push(
+          [
+            conv.id,
+            conv.platform,
+            conv.external_user_id,
+            conv.message_count,
+            i + 1,
+            m.role,
+            `"${content}"`,
+            m.created_at || '',
+          ].join(','),
+        )
+      }
+    }
+  }
+
+  const csv = [headers.join(','), ...rows].join('\n')
+  downloadCSV(csv, filename)
 }
 
 async function handleExportPDF() {
@@ -127,9 +259,12 @@ async function handleExportPDF() {
     all = data.value.records
   }
 
-  const rowsHtml = all
-    .map(
-      (r) => `<tr>
+  let bodyHtml: string
+
+  if (!includeMessages.value) {
+    const rowsHtml = all
+      .map(
+        (r) => `<tr>
       <td>${r.id}</td>
       <td>${platformLabel(r.platform)}</td>
       <td>${r.external_user_id}</td>
@@ -137,25 +272,10 @@ async function handleExportPDF() {
       <td>${formatDateTime(r.first_message_at)}</td>
       <td>${formatDateTime(r.last_message_at)}</td>
     </tr>`,
-    )
-    .join('')
+      )
+      .join('')
 
-  const html = `<!DOCTYPE html>
-<html dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <title>لیست گفتگوها</title>
-  <style>
-    body { font-family: Tahoma, Arial, sans-serif; padding: 20px; }
-    h2 { text-align: center; margin-bottom: 16px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #999; padding: 6px 10px; text-align: center; font-size: 13px; }
-    th { background: #eee; }
-  </style>
-</head>
-<body>
-  <h2>لیست گفتگوها</h2>
-  <table>
+    bodyHtml = `<table>
     <thead>
       <tr>
         <th>شناسه</th>
@@ -167,7 +287,62 @@ async function handleExportPDF() {
       </tr>
     </thead>
     <tbody>${rowsHtml}</tbody>
-  </table>
+  </table>`
+  } else {
+    // Include messages — build per-conversation sections
+    const sections: string[] = []
+    for (const conv of all) {
+      let msgs: Message[] = []
+      try {
+        msgs = await $fetch<Message[]>(
+          `/api/user/conversations/messages?platform=${conv.platform}&user_id=${conv.external_user_id}&limit=100`,
+        )
+      } catch {
+        // no messages
+      }
+
+      const msgHtml = msgs
+        .map(
+          (m) => `<div style="margin:6px 0;padding:8px 12px;border-radius:6px;${
+            m.role === 'user'
+              ? 'background:#e8f4fd;border-right:3px solid #0ea5e9'
+              : 'background:#f0fdf4;border-right:3px solid #22c55e'
+          }">
+        <div style="font-size:11px;color:#666;margin-bottom:2px">
+          ${roleLabel(m.role)} · ${formatMsgTime(m.created_at)}
+        </div>
+        <div style="font-size:13px">${m.content}</div>
+      </div>`,
+        )
+        .join('')
+
+      sections.push(`<div style="margin-bottom:20px;padding:10px 14px;border:1px solid #ccc;border-radius:8px">
+      <div style="margin-bottom:8px;font-size:13px;color:#333">
+        <strong>گفتگو #${conv.id}</strong> — ${platformLabel(conv.platform)} ·
+        ${conv.external_user_id} · ${conv.message_count} پیام
+      </div>
+      ${msgHtml || '<div style="color:#999;font-size:12px">پیامی وجود ندارد</div>'}
+    </div>`)
+    }
+    bodyHtml = sections.join('\n')
+  }
+
+  const html = `<!DOCTYPE html>
+<html dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>${includeMessages.value ? 'گفتگوها با پیام‌ها' : 'لیست گفتگوها'}</title>
+  <style>
+    body { font-family: Tahoma, Arial, sans-serif; padding: 20px; }
+    h2 { text-align: center; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #999; padding: 6px 10px; text-align: center; font-size: 13px; }
+    th { background: #eee; }
+  </style>
+</head>
+<body>
+  <h2>${includeMessages.value ? 'گفتگوها با پیام‌ها' : 'لیست گفتگوها'}</h2>
+  ${bodyHtml}
 </body>
 </html>`
 
@@ -178,13 +353,6 @@ async function handleExportPDF() {
     win.focus()
     setTimeout(() => win.print(), 500)
   }
-}
-
-// Expand/collapse per row
-const expandedId = ref<number | null>(null)
-
-function toggleRow(id: number) {
-  expandedId.value = expandedId.value === id ? null : id
 }
 </script>
 
@@ -210,7 +378,11 @@ function toggleRow(id: number) {
     </AdminCard>
 
     <!-- Export Buttons -->
-    <div class="flex gap-2 mb-4">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="flex items-center gap-2">
+        <input id="includeMessages" v-model="includeMessages" type="checkbox" class="checkbox checkbox-sm" />
+        <label for="includeMessages" class="text-sm cursor-pointer">همراه با پیام‌ها</label>
+      </div>
       <button class="btn btn-sm btn-outline" @click="handleExportCSV">
         <i class="fa-solid fa-file-excel ml-1" />
         خروجی Excel
@@ -259,15 +431,41 @@ function toggleRow(id: number) {
               <td>{{ formatDate(row.last_message_at) }}</td>
             </tr>
             <!-- Expanded detail row -->
-            <tr v-if="expandedId" v-for="row in data.records.filter(r => r.id === expandedId)" :key="'detail-' + row.id">
+            <tr
+              v-if="expandedId"
+              v-for="row in data.records.filter(r => r.id === expandedId)"
+              :key="'detail-' + row.id"
+            >
               <td :colspan="6" class="bg-base-200 p-4">
-                <div class="grid gap-2 sm:grid-cols-2 text-sm">
+                <div class="grid gap-2 sm:grid-cols-2 text-sm mb-3">
                   <div><span class="opacity-60">شناسه گفتگو:</span> <strong>{{ row.id }}</strong></div>
                   <div><span class="opacity-60">پلتفرم:</span> <strong>{{ platformLabel(row.platform) }}</strong></div>
                   <div><span class="opacity-60">شناسه کاربر خارجی:</span> <strong dir="ltr" class="font-mono">{{ row.external_user_id }}</strong></div>
                   <div><span class="opacity-60">تعداد پیام‌ها:</span> <strong>{{ row.message_count }}</strong></div>
                   <div><span class="opacity-60">اولین پیام:</span> <strong>{{ formatDateTime(row.first_message_at) }}</strong></div>
                   <div><span class="opacity-60">آخرین پیام:</span> <strong>{{ formatDateTime(row.last_message_at) }}</strong></div>
+                </div>
+
+                <!-- Messages section -->
+                <div v-if="messagesLoading[row.id]" class="flex justify-center py-3">
+                  <AdminLoadingSpinner title="در حال بارگذاری پیام‌ها..." />
+                </div>
+                <div v-else-if="messagesMap[row.id] && messagesMap[row.id].length === 0" class="text-sm opacity-60 py-2 text-center">
+                  هیچ پیامی یافت نشد
+                </div>
+                <div v-else-if="messagesMap[row.id]" class="space-y-2 max-h-96 overflow-y-auto">
+                  <div
+                    v-for="msg in messagesMap[row.id]"
+                    :key="msg.id"
+                    class="p-3 rounded-lg text-sm"
+                    :class="msg.role === 'user' ? 'bg-info/10 border-r-2 border-info' : 'bg-success/10 border-r-2 border-success'"
+                  >
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="badge badge-sm" :class="roleBadgeClass(msg.role)">{{ roleLabel(msg.role) }}</span>
+                      <span class="text-xs opacity-50">{{ formatMsgTime(msg.created_at) }}</span>
+                    </div>
+                    <div class="whitespace-pre-wrap leading-relaxed">{{ msg.content }}</div>
+                  </div>
                 </div>
               </td>
             </tr>

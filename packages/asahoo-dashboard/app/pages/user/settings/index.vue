@@ -13,7 +13,7 @@ interface BotSettings {
   manager_group_id: string
 }
 
-const { data, status } = await useFetch<BotSettings>('/api/user/bot/settings', {
+const { data, status, refresh } = await useFetch<BotSettings>('/api/user/bot/settings', {
   default: () => ({
     telegram_enabled: false,
     instagram_enabled: false,
@@ -85,6 +85,7 @@ async function save() {
       },
     })
     toastStore.push('تنظیمات با موفقیت ذخیره شد', 'success')
+    await refresh()
   } catch (error: any) {
     toastStore.showZodError(error)
   } finally {
